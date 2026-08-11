@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import calendarData from "./calendar-data.json";
 import data from "./directory-data.json";
 
 const zoneMeta: Record<string, { icon: string; line: string }> = {
@@ -12,14 +13,94 @@ const zoneMeta: Record<string, { icon: string; line: string }> = {
   "Águila": { icon: "A", line: "Visión elevada" },
 };
 
-const upcoming = [
-  { date: "14–16 AGO", zone: "Jaguar", title: "Experiencia mensual", detail: "Internos · Jóvenes · Adultos · Perdón y Amor" },
-  { date: "14–16 AGO", zone: "Águila", title: "Familiar · Adictos", detail: "La Magia del Amor" },
-  { date: "28–30 AGO", zone: "Delfín", title: "Sala de Primera", detail: "La Magia del Perdón" },
-  { date: "11–13 SEP", zone: "Jaguar", title: "Experiencia mensual", detail: "Llegamos a Creer · Seguimiento de Jóvenes" },
-  { date: "11–13 SEP", zone: "Colibrí", title: "Familia · Usuarios", detail: "La Magia del Amor" },
-  { date: "9–11 OCT", zone: "Nacional", title: "Aniversario FGDLL", detail: "Encuentro de la Fraternidad" },
-];
+type CalendarEvent = {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  location: string | null;
+  url: string | null;
+};
+
+const agendaEvents = calendarData as CalendarEvent[];
+
+function dateFromYmd(value: string) {
+  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day, 12));
+}
+
+function previousDay(value: string) {
+  const date = dateFromYmd(value);
+  date.setUTCDate(date.getUTCDate() - 1);
+  return date.toISOString().slice(0, 10);
+}
+
+function monthLabel(key: string) {
+  const [year, month] = key.split("-").map(Number);
+  const label = new Intl.DateTimeFormat("es-MX", { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(Date.UTC(year, month - 1, 1)));
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+function shortMonth(value: string) {
+  return new Intl.DateTimeFormat("es-MX", { month: "short", timeZone: "UTC" }).format(dateFromYmd(value)).replace(".", "");
+}
+
+function eventDate(event: CalendarEvent) {
+  const allDay = !event.start.includes("T");
+  const start = event.start.slice(0, 10);
+  const end = allDay ? previousDay(event.end) : event.end.slice(0, 10);
+  const startDay = Number(start.slice(8, 10));
+  const endDay = Number(end.slice(8, 10));
+  if (start === end) return `${startDay} de ${shortMonth(start)}`;
+  if (start.slice(0, 7) === end.slice(0, 7)) return `${startDay}–${endDay} de ${shortMonth(start)}`;
+  return `${startDay} de ${shortMonth(start)} – ${endDay} de ${shortMonth(end)}`;
+}
+
+function eventTime(event: CalendarEvent) {
+  if (!event.start.includes("T")) return "Todo el día";
+  const startTime = event.start.slice(11, 16);
+  const endTime = event.end.slice(11, 16);
+  if (event.start.slice(0, 10) === event.end.slice(0, 10)) return `${startTime}–${endTime} h`;
+  return `Inicia ${startTime} · termina ${endTime} h`;
+}
+
+function CalendarAgenda() {
+  const months = useMemo(() => Array.from(new Set(agendaEvents.map((event) => event.start.slice(0, 7)))), []);
+  const [activeMonth, setActiveMonth] = useState(months[0] ?? "");
+  const events = agendaEvents.filter((event) => event.start.startsWith(activeMonth));
+
+  return (
+    <section className="section calendar-section" id="calendario">
+      <div className="shell">
+        <div className="section-heading split-heading">
+          <div><span className="eyebrow">Agenda oficial</span><h2>Calendario por meses.</h2></div>
+          <p>Eventos vigentes y próximos tomados exclusivamente de Google Calendar <strong>AGENDA FGDLL</strong>.</p>
+        </div>
+        <div className="month-tabs" role="tablist" aria-label="Meses de la agenda">
+          {months.map((month) => (
+            <button key={month} type="button" role="tab" aria-selected={activeMonth === month} className={activeMonth === month ? "active" : ""} onClick={() => setActiveMonth(month)}>
+              {monthLabel(month)}
+            </button>
+          ))}
+        </div>
+        <div className="month-panel" role="tabpanel">
+          <div className="month-heading"><h3>{monthLabel(activeMonth)}</h3><span>{events.length} {events.length === 1 ? "evento" : "eventos"}</span></div>
+          <div className="event-list">
+            {events.map((event, index) => (
+              <article className="event-row" key={event.id}>
+                <span className="event-index">{String(index + 1).padStart(2, "0")}</span>
+                <div className="event-when"><time>{eventDate(event)}</time><span>{eventTime(event)}</span></div>
+                <div className="event-main"><h3>{event.title}</h3>{event.location && <p className="event-location"><span aria-hidden="true">⌖</span>{event.location}</p>}</div>
+                {event.url ? <a className="event-link" href={event.url} target="_blank" rel="noreferrer" aria-label={`Abrir ${event.title} en Google Calendar`}>↗</a> : <span />}
+              </article>
+            ))}
+          </div>
+        </div>
+        <p className="calendar-source">Fuente única: AGENDA FGDLL · Sincronizado el 11 de agosto de 2026.</p>
+      </div>
+    </section>
+  );
+}
 
 function Logo() {
   return <span className="brand-shield" aria-hidden="true"><img src="/logo-gdll.png" alt="" /></span>;
@@ -155,12 +236,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section calendar-section" id="calendario">
-          <div className="shell">
-            <div className="section-heading split-heading"><div><span className="eyebrow">Agenda 2026</span><h2>Lo que viene en el camino.</h2></div><p>Fechas de referencia para orientar el servicio. Confirma siempre los detalles finales con la coordinación de tu zona.</p></div>
-            <div className="event-list">{upcoming.map((e, i) => <article className="event-row" key={`${e.date}-${i}`}><span className="event-index">0{i + 1}</span><time>{e.date}</time><div><span>{e.zone}</span><h3>{e.title}</h3></div><p>{e.detail}</p><b>→</b></article>)}</div>
-          </div>
-        </section>
+        <CalendarAgenda />
 
         <section className="section zones-section" id="red">
           <div className="shell">
