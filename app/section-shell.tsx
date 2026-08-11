@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 export function Mark() {
-  return <span className="logo-mark" aria-hidden="true"><i /><b /></span>;
+  return <span className="brand-shield" aria-hidden="true"><img src="/logo-gdll.png" alt="" /></span>;
 }
 
 export function SubHeader({ label }: { label: string }) {
-  return <header className="topbar sub-topbar"><div className="shell nav-shell"><Link className="brand" href="/"><Mark /><span><strong>FGDLL</strong><small>{label}</small></span></Link><nav className="sub-nav"><Link href="/">Inicio</Link><Link href="/portal">Portal</Link><Link href="/universidad">Universidad</Link><Link href="/testimonios">Testimonios</Link><Link href="/centros">Centros</Link><Link className="button button-gold button-small" href="/etica">Ética</Link></nav></div></header>;
+  return <header className="topbar sub-topbar"><div className="shell nav-shell"><Link className="brand" href="/"><Mark /><span><strong>FGDLL</strong><small>{label}</small></span></Link><nav className="sub-nav"><Link href="/">Inicio</Link><Link href="/portal">Portal de líderes</Link><Link href="/universidad">Formación</Link><Link href="/testimonios">Testimonios</Link><Link href="/#directorio">Directorio</Link><Link href="/centros">Centros</Link><Link className="button button-gold button-small" href="/etica">Ética</Link></nav></div></header>;
 }
 
 export function SubFooter() {

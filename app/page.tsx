@@ -22,7 +22,7 @@ const upcoming = [
 ];
 
 function Logo() {
-  return <span className="logo-mark" aria-hidden="true"><i /><b /></span>;
+  return <span className="brand-shield" aria-hidden="true"><img src="/logo-gdll.png" alt="" /></span>;
 }
 
 function Header() {
@@ -38,13 +38,13 @@ function Header() {
           <span /><span /><span />
         </button>
         <nav className={open ? "main-nav open" : "main-nav"} aria-label="Navegación principal">
-          <a href="#red" onClick={() => setOpen(false)}>Red nacional</a>
-          <a href="#calendario" onClick={() => setOpen(false)}>Calendario</a>
-          <Link href="/universidad">Universidad</Link>
+          <Link href="/portal" onClick={() => setOpen(false)}>Portal de líderes</Link>
+          <Link href="/universidad" onClick={() => setOpen(false)}>Formación</Link>
           <Link href="/testimonios">Testimonios</Link>
+          <a href="#calendario" onClick={() => setOpen(false)}>Agenda</a>
+          <a href="#directorio" onClick={() => setOpen(false)}>Directorio</a>
           <Link href="/centros">Centros Teocalli</Link>
           <Link href="/etica">Ética</Link>
-          <Link className="button button-gold button-small" href="/portal">Abrir portal</Link>
         </nav>
       </div>
     </header>
@@ -141,12 +141,16 @@ export default function Home() {
 
         <section className="manifesto"><div className="shell"><p>El liderazgo no es un privilegio. <strong>Es una responsabilidad de servicio.</strong></p><span>Este portal pone orden a la información para que la luz llegue más lejos.</span></div></section>
 
-        <section className="section zones-section" id="red">
-          <div className="shell">
-            <div className="section-heading"><span className="eyebrow">Nuestra red nacional</span><h2>Cinco zonas. Una misma misión.</h2><p>Cada zona sostiene una parte del servicio y todas caminan bajo un propósito común.</p></div>
-            <div className="zone-grid">
-              {Object.entries(zoneMeta).map(([name, meta], i) => <button key={name} className={`zone-card zone-${i + 1}`} onClick={() => document.getElementById("directorio")?.scrollIntoView({ behavior: "smooth" })}><span className="zone-number">0{i + 1}</span><span className="zone-letter">{meta.icon}</span><h3>Zona {name}</h3><p>{meta.line}</p><strong>{counts[name] ?? 0} grupos <b>↗</b></strong></button>)}
-              <Link className="zone-card zone-teocalli" href="/centros"><span className="zone-number">06</span><span className="zone-letter">T</span><h3>Centros Teocalli</h3><p>Rehabilitación y acompañamiento</p><strong>28 centros <b>↗</b></strong></Link>
+        <section className="section services-section">
+          <div className="shell service-grid">
+            <div className="service-intro"><span className="eyebrow light">Empieza aquí</span><h2>Elige lo que necesitas hacer.</h2><p>La información está ordenada por propósito para que encuentres el recurso correcto sin recorrer todo el sitio.</p><Link className="button button-gold" href="/portal">Abrir Portal de Líderes →</Link></div>
+            <div className="service-cards">
+              <Link href="/portal"><span>01</span><div><h3>Portal de Líderes</h3><p>Responsabilidades, protocolos, formatos y reglamentos.</p></div><b>↗</b></Link>
+              <Link href="/universidad"><span>02</span><div><h3>Universidad FGDLL</h3><p>Diplomados, módulos, instrucciones y tareas.</p></div><b>↗</b></Link>
+              <Link href="/testimonios"><span>03</span><div><h3>Biblioteca de Testimonios</h3><p>157 temas para detectar, admitir y corregir.</p></div><b>↗</b></Link>
+              <a href="#directorio"><span>04</span><div><h3>Directorio Nacional</h3><p>Busca grupos por zona, ciudad o responsable.</p></div><b>↓</b></a>
+              <Link href="/centros"><span>05</span><div><h3>Centros Teocalli</h3><p>Red de rehabilitación y acompañamiento.</p></div><b>↗</b></Link>
+              <Link href="/etica"><span>06</span><div><h3>Ética e Integridad</h3><p>Orientación, cuidado y reporte responsable.</p></div><b>↗</b></Link>
             </div>
           </div>
         </section>
@@ -158,15 +162,12 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section services-section">
-          <div className="shell service-grid">
-            <div className="service-intro"><span className="eyebrow light">Ecosistema FGDLL</span><h2>Herramientas para servir con claridad.</h2><p>No más información perdida en mensajes aislados. Cada área tiene una entrada clara y un propósito concreto.</p><Link className="button button-gold" href="/portal">Explorar el portal →</Link></div>
-            <div className="service-cards">
-              <Link href="/portal"><span>01</span><div><h3>Centro de Operaciones</h3><p>Protocolos, reglamentos y rutas de actuación.</p></div><b>↗</b></Link>
-              <Link href="/universidad"><span>02</span><div><h3>Universidad FGDLL</h3><p>Diplomados organizados por nivel y generación.</p></div><b>↗</b></Link>
-              <Link href="/testimonios"><span>03</span><div><h3>Biblioteca de Testimonios</h3><p>Temas, fuentes y preguntas para ordenar la experiencia.</p></div><b>↗</b></Link>
-              <Link href="/centros"><span>04</span><div><h3>Red y Centros Teocalli</h3><p>Contactos autorizados y atención cercana.</p></div><b>↗</b></Link>
-              <Link href="/etica"><span>05</span><div><h3>Ética e Integridad</h3><p>Orientación, cuidado y reporte responsable.</p></div><b>↗</b></Link>
+        <section className="section zones-section" id="red">
+          <div className="shell">
+            <div className="section-heading"><span className="eyebrow">Nuestra red nacional</span><h2>Cinco zonas. Una misma misión.</h2><p>Cada zona sostiene una parte del servicio y todas caminan bajo un propósito común.</p></div>
+            <div className="zone-grid">
+              {Object.entries(zoneMeta).map(([name, meta], i) => <button key={name} className={`zone-card zone-${i + 1}`} onClick={() => document.getElementById("directorio")?.scrollIntoView({ behavior: "smooth" })}><span className="zone-number">0{i + 1}</span><span className="zone-letter">{meta.icon}</span><h3>Zona {name}</h3><p>{meta.line}</p><strong>{counts[name] ?? 0} grupos <b>↗</b></strong></button>)}
+              <Link className="zone-card zone-teocalli" href="/centros"><span className="zone-number">06</span><span className="zone-letter">T</span><h3>Centros Teocalli</h3><p>Rehabilitación y acompañamiento</p><strong>28 centros <b>↗</b></strong></Link>
             </div>
           </div>
         </section>
