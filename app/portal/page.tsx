@@ -5,7 +5,7 @@ const tools = [
   { n: "01", title: "Mi servicio", text: "Responsabilidades, compromisos y prioridades del líder.", tag: "Punto de partida" },
   { n: "02", title: "Centro de operaciones", text: "Protocolos, formatos, responsivas y reglamentos.", tag: "Operación" },
   { n: "03", title: "Universidad FGDLL", text: "Diplomados y materiales separados por generación.", tag: "Formación", href: "/universidad" },
-  { n: "04", title: "Biblioteca de la Luz", text: "Guías para coordinar, formar, orientar y cuidar.", tag: "Recursos" },
+  { n: "04", title: "Biblioteca de Testimonios", text: "71 temas con fuentes y preguntas para ordenar la experiencia.", tag: "Recursos", href: "/testimonios" },
   { n: "05", title: "Red nacional", text: "Directorio, zonas, responsables y coordinación.", tag: "Comunidad", href: "/#directorio" },
   { n: "06", title: "Ética e Integridad", text: "Orientación, límites y canal de reporte responsable.", tag: "Cuidado", href: "/etica" },
 ];

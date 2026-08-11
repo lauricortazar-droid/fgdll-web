@@ -41,6 +41,7 @@ function Header() {
           <a href="#red" onClick={() => setOpen(false)}>Red nacional</a>
           <a href="#calendario" onClick={() => setOpen(false)}>Calendario</a>
           <Link href="/universidad">Universidad</Link>
+          <Link href="/testimonios">Testimonios</Link>
           <Link href="/centros">Centros Teocalli</Link>
           <Link href="/etica">Ética</Link>
           <Link className="button button-gold button-small" href="/portal">Abrir portal</Link>
@@ -105,7 +106,7 @@ function Directory() {
 }
 
 function Footer() {
-  return <footer className="footer"><div className="shell footer-grid"><div className="footer-brand"><Logo /><div><strong>Fraternidad Guerreros de la Luz</strong><span>Unidad · Servicio · Responsabilidad</span></div></div><div className="footer-links"><Link href="/portal">Portal</Link><Link href="/universidad">Universidad</Link><Link href="/centros">Centros Teocalli</Link><Link href="/etica">Ética</Link></div><p>© 2026 FGDLL<br />Información institucional para orientar el servicio.</p></div></footer>;
+  return <footer className="footer"><div className="shell footer-grid"><div className="footer-brand"><Logo /><div><strong>Fraternidad Guerreros de la Luz</strong><span>Unidad · Servicio · Responsabilidad</span></div></div><div className="footer-links"><Link href="/portal">Portal</Link><Link href="/universidad">Universidad</Link><Link href="/testimonios">Testimonios</Link><Link href="/centros">Centros Teocalli</Link><Link href="/etica">Ética</Link></div><p>© 2026 FGDLL<br />Información institucional para orientar el servicio.</p></div></footer>;
 }
 
 export default function Home() {
@@ -130,7 +131,7 @@ export default function Home() {
               <div className="console-grid">
                 <Link href="/portal"><small>01</small><strong>Operación</strong><span>Protocolos y formatos →</span></Link>
                 <Link href="/universidad"><small>02</small><strong>Formación</strong><span>Diplomados y módulos →</span></Link>
-                <a href="#red"><small>03</small><strong>Red nacional</strong><span>Grupos y zonas →</span></a>
+                <Link href="/testimonios"><small>03</small><strong>Testimonios</strong><span>Temas y guías →</span></Link>
                 <Link href="/etica"><small>04</small><strong>Integridad</strong><span>Orientación y reporte →</span></Link>
               </div>
               <div className="console-status"><span className="pulse" /> Información actualizada para el ciclo 2026</div>
@@ -163,8 +164,9 @@ export default function Home() {
             <div className="service-cards">
               <Link href="/portal"><span>01</span><div><h3>Centro de Operaciones</h3><p>Protocolos, reglamentos y rutas de actuación.</p></div><b>↗</b></Link>
               <Link href="/universidad"><span>02</span><div><h3>Universidad FGDLL</h3><p>Diplomados organizados por nivel y generación.</p></div><b>↗</b></Link>
-              <Link href="/centros"><span>03</span><div><h3>Red y Centros Teocalli</h3><p>Contactos autorizados y atención cercana.</p></div><b>↗</b></Link>
-              <Link href="/etica"><span>04</span><div><h3>Ética e Integridad</h3><p>Orientación, cuidado y reporte responsable.</p></div><b>↗</b></Link>
+              <Link href="/testimonios"><span>03</span><div><h3>Biblioteca de Testimonios</h3><p>Temas, fuentes y preguntas para ordenar la experiencia.</p></div><b>↗</b></Link>
+              <Link href="/centros"><span>04</span><div><h3>Red y Centros Teocalli</h3><p>Contactos autorizados y atención cercana.</p></div><b>↗</b></Link>
+              <Link href="/etica"><span>05</span><div><h3>Ética e Integridad</h3><p>Orientación, cuidado y reporte responsable.</p></div><b>↗</b></Link>
             </div>
           </div>
         </section>
