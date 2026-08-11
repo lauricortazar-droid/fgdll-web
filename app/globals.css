@@ -115,3 +115,24 @@
   .testimony-modal{position:static;background:#fff;padding:0;display:block}
   .testimony-sheet{width:100%;max-height:none;overflow:visible;box-shadow:none}
 }
+
+/* Materiales para líderes */
+.leader-materials{background:#071f43;color:#fff}
+.leader-materials .section-heading h2{color:#fff}
+.leader-materials .section-heading p{color:#afbed2}
+.material-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.material-card{background:#0a2a58;border:1px solid rgba(255,255,255,.14);border-radius:14px;overflow:hidden}
+.material-preview{height:320px;background:#e8edf3;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;padding:22px 22px 0}
+.material-preview img{display:block;width:100%;height:auto;box-shadow:0 15px 40px rgba(0,0,0,.2)}
+.material-content{padding:28px}
+.material-meta{display:flex;justify-content:space-between;gap:14px;align-items:center}
+.material-meta span{color:var(--gold);font-size:.61rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.material-meta small{color:#8fa4bf;font-size:.58rem}
+.material-content h3{font-size:1.35rem;margin:20px 0 10px}
+.material-content p{min-height:66px;margin:0;color:#b6c4d6;font-size:.75rem;line-height:1.65}
+.material-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}
+.material-note{display:grid;grid-template-columns:180px 1fr;gap:20px;margin-top:18px;padding:20px 24px;border-left:3px solid var(--gold);background:rgba(255,255,255,.06)}
+.material-note strong{color:var(--gold);font-size:.75rem;text-transform:uppercase}
+.material-note span{color:#b7c4d5;font-size:.72rem;line-height:1.6}
+@media(max-width:900px){.material-grid{grid-template-columns:1fr}.material-preview{height:360px}.material-content p{min-height:auto}}
+@media(max-width:620px){.material-preview{height:260px;padding:14px 14px 0}.material-content{padding:22px}.material-meta{align-items:flex-start;flex-direction:column}.material-note{grid-template-columns:1fr}}
