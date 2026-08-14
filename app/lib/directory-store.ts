@@ -1,7 +1,7 @@
 import "server-only";
 
-import { env } from "cloudflare:workers";
 import directoryData from "../directory-data.json";
+import { getRuntimeEnv } from "./runtime-env";
 
 export const ADMIN_CONTACT_EMAIL = "admin@fgdll.org";
 export const PORTAL_ROLES = ["leader", "osg", "delegate", "council", "admin"] as const;
@@ -57,12 +57,13 @@ export class PortalError extends Error {
 }
 
 function d1() {
-  if (!env.DB) throw new PortalError("La base de datos del portal no está disponible.", 503);
-  return env.DB;
+  const database = getRuntimeEnv().DB;
+  if (!database) throw new PortalError("La base de datos del portal no está disponible.", 503);
+  return database;
 }
 
 function adminEmails() {
-  const configured = (env as unknown as { FGDLL_ADMIN_EMAILS?: string }).FGDLL_ADMIN_EMAILS ??
+  const configured = getRuntimeEnv().FGDLL_ADMIN_EMAILS ??
     "admin@fgdll.org,jaguarcortazar@gmail.com,laurcortazar@gmail.com";
   return new Set(configured.split(",").map((email) => email.trim().toLowerCase()).filter(Boolean));
 }

@@ -1,12 +1,10 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { FgdllRuntimeEnv, installRuntimeEnv } from "../app/lib/runtime-env";
 
-interface Env {
-  ASSETS: Fetcher;
-  DB: D1Database;
-  FGDLL_LEADER_EMAILS?: string;
-  FGDLL_ADMIN_EMAILS?: string;
+interface Env extends FgdllRuntimeEnv {
+  ASSETS: { fetch(request: Request): Promise<Response> };
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -77,6 +75,7 @@ interface ExecutionContext {
 
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    installRuntimeEnv(env);
     const url = new URL(request.url);
 
     const needsSignIn = matchesPrefix(url.pathname, SIGN_IN_ONLY_PREFIXES) || matchesPrefix(url.pathname, ACTIVE_ACCESS_PREFIXES);
