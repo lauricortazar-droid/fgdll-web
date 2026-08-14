@@ -119,9 +119,9 @@ function Header() {
           <span /><span /><span />
         </button>
         <nav className={open ? "main-nav open" : "main-nav"} aria-label="Navegación principal">
-          <Link href="/portal" onClick={() => setOpen(false)}>Portal de líderes</Link>
-          <Link href="/universidad" onClick={() => setOpen(false)}>Formación</Link>
-          <Link href="/testimonios">Testimonios</Link>
+          <Link href="/portal" onClick={() => setOpen(false)}>Portal privado</Link>
+          <Link href="/universidad" onClick={() => setOpen(false)}>Formación privada</Link>
+          <Link href="/testimonios">Testimonios privados</Link>
           <a href="#calendario" onClick={() => setOpen(false)}>Agenda</a>
           <a href="#directorio" onClick={() => setOpen(false)}>Directorio</a>
           <Link href="/centros">Centros Teocalli</Link>
@@ -203,16 +203,16 @@ export default function Home() {
               <span className="eyebrow light">Portal institucional · FGDLL</span>
               <h1>Una red unida.<br /><em>Un servicio con rumbo.</em></h1>
               <p>Información, formación y herramientas para fortalecer el liderazgo de quienes sirven en la Fraternidad Guerreros de la Luz.</p>
-              <div className="hero-actions"><Link className="button button-gold" href="/portal">Entrar al portal <span>→</span></Link><a className="button button-ghost" href="#directorio">Buscar mi grupo</a></div>
+              <div className="hero-actions"><Link className="button button-gold" href="/portal">🔒 Entrar al portal <span>→</span></Link><a className="button button-ghost" href="#directorio">Buscar mi grupo</a></div>
               <div className="trust-line"><span><b>79</b> grupos registrados</span><span><b>5</b> zonas nacionales</span><span><b>28</b> centros Teocalli</span></div>
             </div>
             <div className="hero-console" aria-label="Resumen del portal">
               <div className="console-header"><span><i /><i /><i /></span><small>PORTAL FGDLL / 2026</small></div>
               <div className="console-welcome"><span>BUEN SERVICIO</span><h2>Todo lo importante,<br />en un mismo lugar.</h2></div>
               <div className="console-grid">
-                <Link href="/portal"><small>01</small><strong>Operación</strong><span>Protocolos y formatos →</span></Link>
-                <Link href="/universidad"><small>02</small><strong>Formación</strong><span>Diplomados y módulos →</span></Link>
-                <Link href="/testimonios"><small>03</small><strong>Testimonios</strong><span>Temas y guías →</span></Link>
+                <Link href="/portal"><small>01 · PRIVADO</small><strong>Operación</strong><span>Protocolos y formatos →</span></Link>
+                <Link href="/universidad"><small>02 · PRIVADO</small><strong>Formación</strong><span>Diplomados y módulos →</span></Link>
+                <Link href="/testimonios"><small>03 · PRIVADO</small><strong>Testimonios</strong><span>Temas y guías →</span></Link>
                 <Link href="/etica"><small>04</small><strong>Integridad</strong><span>Orientación y reporte →</span></Link>
               </div>
               <div className="console-status"><span className="pulse" /> Información actualizada para el ciclo 2026</div>
@@ -226,9 +226,9 @@ export default function Home() {
           <div className="shell service-grid">
             <div className="service-intro"><span className="eyebrow light">Empieza aquí</span><h2>Elige lo que necesitas hacer.</h2><p>La información está ordenada por propósito para que encuentres el recurso correcto sin recorrer todo el sitio.</p><Link className="button button-gold" href="/portal">Abrir Portal de Líderes →</Link></div>
             <div className="service-cards">
-              <Link href="/portal"><span>01</span><div><h3>Portal de Líderes</h3><p>Responsabilidades, protocolos, formatos y reglamentos.</p></div><b>↗</b></Link>
-              <Link href="/universidad"><span>02</span><div><h3>Universidad FGDLL</h3><p>Diplomados, módulos, instrucciones y tareas.</p></div><b>↗</b></Link>
-              <Link href="/testimonios"><span>03</span><div><h3>Biblioteca de Testimonios</h3><p>157 temas para detectar, admitir y corregir.</p></div><b>↗</b></Link>
+              <Link href="/portal"><span>01 · 🔒</span><div><h3>Portal de Líderes</h3><p>Responsabilidades, protocolos, formatos y reglamentos.</p></div><b>↗</b></Link>
+              <Link href="/universidad"><span>02 · 🔒</span><div><h3>Universidad FGDLL</h3><p>Diplomados, módulos, instrucciones y tareas.</p></div><b>↗</b></Link>
+              <Link href="/testimonios"><span>03 · 🔒</span><div><h3>Biblioteca de Testimonios</h3><p>157 temas para detectar, admitir y corregir.</p></div><b>↗</b></Link>
               <a href="#directorio"><span>04</span><div><h3>Directorio Nacional</h3><p>Busca grupos por zona, ciudad o responsable.</p></div><b>↓</b></a>
               <Link href="/centros"><span>05</span><div><h3>Centros Teocalli</h3><p>Red de rehabilitación y acompañamiento.</p></div><b>↗</b></Link>
               <Link href="/etica"><span>06</span><div><h3>Ética e Integridad</h3><p>Orientación, cuidado y reporte responsable.</p></div><b>↗</b></Link>
