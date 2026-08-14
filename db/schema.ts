@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const directoryGroups = sqliteTable("directory_groups", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -27,10 +27,14 @@ export const portalUsers = sqliteTable("portal_users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   email: text("email").notNull().unique(),
   name: text("name").notNull().default(""),
+  phone: text("phone").notNull().default(""),
   role: text("role").notNull(),
   zone: text("zone"),
   groupId: integer("group_id").references(() => directoryGroups.id),
   active: integer("active", { mode: "boolean" }).notNull().default(true),
+  notes: text("notes").notNull().default(""),
+  source: text("source").notNull().default("manual"),
+  createdBy: text("created_by"),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
@@ -52,6 +56,18 @@ export const accessRequests = sqliteTable("access_requests", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   reviewedAt: text("reviewed_at"),
 });
+
+export const accessRequestEvents = sqliteTable("access_request_events", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  requestId: text("request_id").notNull().references(() => accessRequests.id),
+  actorEmail: text("actor_email").notNull(),
+  eventType: text("event_type").notNull(),
+  note: text("note").notNull().default(""),
+  snapshotJson: text("snapshot_json").notNull().default("{}"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+}, (table) => [
+  index("access_request_events_request_idx").on(table.requestId, table.createdAt),
+]);
 
 export const directoryChangeRequests = sqliteTable("directory_change_requests", {
   id: text("id").primaryKey(),

@@ -8,6 +8,13 @@
       "when": 1786738394824,
       "tag": "0000_yummy_beast",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1786744307357,
+      "tag": "0001_elite_fixer",
+      "breakpoints": true
     }
   ]
 }
