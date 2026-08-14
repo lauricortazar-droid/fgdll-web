@@ -10,8 +10,25 @@ export interface D1DatabaseLike {
   batch(statements: D1StatementLike[]): Promise<unknown[]>;
 }
 
+export interface R2ObjectLike {
+  body: ReadableStream<Uint8Array>;
+  size: number;
+  httpEtag?: string;
+}
+
+export interface R2BucketLike {
+  put(
+    key: string,
+    value: ReadableStream | ArrayBuffer | Uint8Array,
+    options?: { httpMetadata?: { contentType?: string; contentDisposition?: string } },
+  ): Promise<unknown>;
+  get(key: string): Promise<R2ObjectLike | null>;
+  delete(key: string): Promise<void>;
+}
+
 export interface FgdllRuntimeEnv {
   DB: D1DatabaseLike;
+  BUCKET: R2BucketLike;
   FGDLL_ADMIN_EMAILS?: string;
   FGDLL_LEADER_EMAILS?: string;
   FGDLL_NOTIFICATION_EMAIL?: string;

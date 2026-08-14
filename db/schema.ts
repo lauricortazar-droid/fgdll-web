@@ -96,3 +96,79 @@ export const auditLog = sqliteTable("audit_log", {
   detailsJson: text("details_json").notNull().default("{}"),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const contentSettings = sqliteTable("content_settings", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull().default(""),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const testimonyTopics = sqliteTable("testimony_topics", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  category: text("category").notNull().default("General"),
+  intensity: text("intensity").notNull().default("Media"),
+  moment: text("moment").notNull().default("Mitad"),
+  objective: text("objective").notNull().default(""),
+  anchor: text("anchor").notNull().default(""),
+  payloadJson: text("payload_json").notNull().default("{}"),
+  fileKey: text("file_key"),
+  fileName: text("file_name").notNull().default(""),
+  fileType: text("file_type").notNull().default(""),
+  fileSize: integer("file_size").notNull().default(0),
+  status: text("status").notNull().default("published"),
+  origin: text("origin").notNull().default("upload"),
+  createdBy: text("created_by").notNull().default("system"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+}, (table) => [
+  index("testimony_topics_status_idx").on(table.status, table.category),
+]);
+
+export const leaderMaterials = sqliteTable("leader_materials", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  category: text("category").notNull().default("otros"),
+  description: text("description").notNull().default(""),
+  versionLabel: text("version_label").notNull().default(""),
+  fileKey: text("file_key"),
+  staticUrl: text("static_url"),
+  previewUrl: text("preview_url"),
+  fileName: text("file_name").notNull().default(""),
+  fileType: text("file_type").notNull().default(""),
+  fileSize: integer("file_size").notNull().default(0),
+  status: text("status").notNull().default("published"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdBy: text("created_by").notNull().default("system"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+}, (table) => [
+  index("leader_materials_status_idx").on(table.status, table.category, table.sortOrder),
+]);
+
+export const announcements = sqliteTable("announcements", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  summary: text("summary").notNull().default(""),
+  body: text("body").notNull(),
+  priority: text("priority").notNull().default("info"),
+  audience: text("audience").notNull().default("all"),
+  status: text("status").notNull().default("draft"),
+  revision: integer("revision").notNull().default(1),
+  createdBy: text("created_by").notNull(),
+  publishedAt: text("published_at"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+}, (table) => [
+  index("announcements_status_idx").on(table.status, table.publishedAt),
+]);
+
+export const announcementReads = sqliteTable("announcement_reads", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  announcementId: text("announcement_id").notNull().references(() => announcements.id),
+  userEmail: text("user_email").notNull(),
+  revision: integer("revision").notNull().default(1),
+  readAt: text("read_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+}, (table) => [
+  uniqueIndex("announcement_reads_user_idx").on(table.announcementId, table.userEmail),
+]);

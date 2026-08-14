@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { chatGPTSignOutPath, requireChatGPTUser } from "./chatgpt-auth";
+import { NotificationCenter } from "./notification-center";
 
 export async function ProtectedAccess({
   children,
@@ -15,6 +16,7 @@ export async function ProtectedAccess({
       <div className="private-access-bar">
         <div className="shell private-access-inner">
           <span className="private-access-status"><b aria-hidden="true">●</b> Zona privada FGDLL</span>
+          <NotificationCenter />
           <span className="private-access-user">
             <span>Sesión de <strong>{user.displayName}</strong></span>
             <Link href={chatGPTSignOutPath("/")}>Cerrar sesión</Link>

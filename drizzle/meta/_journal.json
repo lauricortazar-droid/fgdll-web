@@ -15,6 +15,13 @@
       "when": 1786744307357,
       "tag": "0001_elite_fixer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1786746979363,
+      "tag": "0002_graceful_omega_flight",
+      "breakpoints": true
     }
   ]
 }

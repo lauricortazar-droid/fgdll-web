@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import rawData from "../testimonios-data.json";
 import { SubFooter, SubHeader } from "../section-shell";
 
@@ -14,9 +14,10 @@ type Tema = {
   guiaTestimonio?: { detectar?: string[]; admitir?: string[]; corregir?: string[] };
   advertenciaEtica?: string; advertenciaLider?: string; noUsarPara?: string[];
   fuenteAA?: Source[]; fuenteFGDLL?: Source[];
+  fileUrl?: string | null; fileName?: string; status?: string;
 };
 
-const temas = rawData as Tema[];
+const fallbackTemas = rawData as unknown as Tema[];
 
 function normalize(value: string) {
   return value.toLocaleLowerCase("es").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -31,6 +32,7 @@ function formatTopic(topic: Tema) {
 }
 
 export default function TestimoniosPage() {
+  const [temas, setTemas] = useState<Tema[]>(fallbackTemas);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Todas");
   const [intensity, setIntensity] = useState("Todas");
@@ -38,12 +40,21 @@ export default function TestimoniosPage() {
   const [selected, setSelected] = useState<Tema | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const categories = useMemo(() => ["Todas", ...Array.from(new Set(temas.map((t) => t.categoria).filter(Boolean) as string[])).sort((a, b) => a.localeCompare(b, "es"))], []);
-  const intensities = useMemo(() => ["Todas", ...Array.from(new Set(temas.map((t) => t.intensidad).filter(Boolean) as string[]))], []);
+  useEffect(() => {
+    let active = true;
+    fetch("/api/content/testimonies", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((data) => { if (active && Array.isArray(data.topics)) setTemas(data.topics); })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, []);
+
+  const categories = useMemo(() => ["Todas", ...Array.from(new Set(temas.map((t) => t.categoria).filter(Boolean) as string[])).sort((a, b) => a.localeCompare(b, "es"))], [temas]);
+  const intensities = useMemo(() => ["Todas", ...Array.from(new Set(temas.map((t) => t.intensidad).filter(Boolean) as string[]))], [temas]);
   const filtered = useMemo(() => temas.filter((t) => {
     const text = normalize([t.titulo, t.tituloCorto, t.categoria, t.objetivo, t.fraseAncla, ...(t.palabrasClave ?? []), ...(t.etiquetas ?? []), ...(t.pasos ?? [])].filter(Boolean).join(" "));
     return (category === "Todas" || t.categoria === category) && (intensity === "Todas" || t.intensidad === intensity) && text.includes(normalize(query.trim()));
-  }), [query, category, intensity]);
+  }), [temas, query, category, intensity]);
 
   function resetLimit() { setLimit(24); }
   function openTopic(topic: Tema) { setSelected(topic); setCopied(false); }
@@ -75,7 +86,7 @@ export default function TestimoniosPage() {
       <section><span className="sheet-label">Guía de los tres tiempos</span><div className="question-grid"><QuestionBlock n="01" title="Detectar" subtitle="Lo que necesito mirar" items={selected.guiaTestimonio?.detectar} /><QuestionBlock n="02" title="Admitir" subtitle="Mi parte y mi verdad" items={selected.guiaTestimonio?.admitir} /><QuestionBlock n="03" title="Corregir" subtitle="Lo que practico hoy" items={selected.guiaTestimonio?.corregir} /></div></section>
       {(selected.advertenciaEtica || selected.advertenciaLider || selected.noUsarPara?.length) && <section className="ethics-note"><span className="sheet-label">Manejo responsable para el líder</span>{selected.advertenciaEtica && <p><strong>Advertencia ética:</strong> {selected.advertenciaEtica}</p>}{selected.advertenciaLider && <p><strong>Nota para el líder:</strong> {selected.advertenciaLider}</p>}{selected.noUsarPara?.length ? <p><strong>No usar para:</strong> {selected.noUsarPara.join(" · ")}</p> : null}</section>}
       <section><span className="sheet-label">Fuentes de estudio</span><div className="source-list">{[...(selected.fuenteAA ?? []), ...(selected.fuenteFGDLL ?? [])].map((s, i) => <p key={i}><strong>{s.obra}</strong>{s.referencia || s.seccion ? ` · ${s.referencia ?? s.seccion}` : ""}{s.uso ? ` — ${s.uso}` : ""}</p>)}{selected.fuenteLibre && <p>{selected.fuenteLibre}</p>}{!(selected.fuenteAA?.length || selected.fuenteFGDLL?.length || selected.fuenteLibre) && <p>Revisar la literatura y los materiales institucionales relacionados antes de preparar el testimonio.</p>}</div></section>
-      <div className="sheet-actions"><button className="button button-gold" onClick={copyTopic}>{copied ? "Ficha copiada ✓" : "Copiar ficha"}</button><a className="button button-outline" href={`https://wa.me/?text=${encodeURIComponent(formatTopic(selected))}`} target="_blank" rel="noreferrer">Compartir por WhatsApp</a><button className="button button-outline" onClick={() => window.print()}>Imprimir</button></div>
+      <div className="sheet-actions">{selected.fileUrl && <a className="button button-gold" href={selected.fileUrl} target="_blank" rel="noreferrer">Abrir archivo{selected.fileName ? ` · ${selected.fileName}` : ""}</a>}<button className="button button-gold" onClick={copyTopic}>{copied ? "Ficha copiada ✓" : "Copiar ficha"}</button><a className="button button-outline" href={`https://wa.me/?text=${encodeURIComponent(formatTopic(selected))}`} target="_blank" rel="noreferrer">Compartir por WhatsApp</a><button className="button button-outline" onClick={() => window.print()}>Imprimir</button></div>
     </div></div></div>}
   </main><SubFooter /></>;
 }

@@ -95,8 +95,17 @@ export function isPortalRole(value: string): value is PortalRole {
 
 export async function ensureDirectorySeeded() {
   const database = d1();
+  const seedMarker = await database.prepare(
+    "SELECT value FROM content_settings WHERE key = 'directory_catalog_v1'"
+  ).first<{ value: string }>();
+  if (seedMarker) return;
   const result = await database.prepare("SELECT COUNT(*) AS total FROM directory_groups").first<{ total: number }>();
-  if (Number(result?.total ?? 0) > 0) return;
+  if (Number(result?.total ?? 0) > 0) {
+    await database.prepare(
+      "INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('directory_catalog_v1', 'seeded', CURRENT_TIMESTAMP)"
+    ).run();
+    return;
+  }
 
   const statements = directoryData.grupos.map((group) => database.prepare(
     `INSERT OR IGNORE INTO directory_groups
@@ -110,6 +119,9 @@ export async function ensureDirectorySeeded() {
   for (let index = 0; index < statements.length; index += 40) {
     await database.batch(statements.slice(index, index + 40));
   }
+  await database.prepare(
+    "INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('directory_catalog_v1', 'seeded', CURRENT_TIMESTAMP)"
+  ).run();
 }
 
 function mapGroup(row: Record<string, unknown>): DirectoryGroup {
@@ -427,7 +439,7 @@ export async function listPortalUsers(profile: PortalProfile) {
      LEFT JOIN directory_groups dg ON dg.id = pu.group_id
      ORDER BY pu.active DESC, pu.name COLLATE NOCASE, pu.email COLLATE NOCASE`
   ).all<Record<string, unknown>>();
-  const databaseUsers = (result.results ?? []).map((row) => ({
+  const databaseUsers: Record<string, unknown>[] = (result.results ?? []).map((row) => ({
     ...row,
     system_managed: isAdminEmail(String(row.email ?? "")) ? 1 : 0,
   }));
@@ -514,6 +526,47 @@ export async function savePortalUser(profile: PortalProfile, input: PortalUserIn
     name, phone, role, zone, groupId, active, notes,
   });
   return { email, role, zone, groupId, active };
+}
+
+export async function deleteDirectoryGroup(profile: PortalProfile, input: { id: number; confirmation: string }) {
+  requireAdministrator(profile);
+  const group = await getDirectoryGroup(input.id);
+  if (!group) throw new PortalError("El grupo ya no existe.", 404);
+  if (safeText(input.confirmation, 200) !== group.name) {
+    throw new PortalError("Escribe el nombre exacto del grupo para confirmar el borrado.");
+  }
+  const linkedUsers = await d1().prepare(
+    "SELECT COUNT(*) AS total FROM portal_users WHERE group_id = ?"
+  ).bind(group.id).first<{ total: number }>();
+  const linkedRequests = await d1().prepare(
+    "SELECT COUNT(*) AS total FROM access_requests WHERE group_id = ?"
+  ).bind(group.id).first<{ total: number }>();
+  const linkedChanges = await d1().prepare(
+    "SELECT COUNT(*) AS total FROM directory_change_requests WHERE group_id = ?"
+  ).bind(group.id).first<{ total: number }>();
+  const details = {
+    group,
+    affectedUsers: Number(linkedUsers?.total ?? 0),
+    preservedAccessRequests: Number(linkedRequests?.total ?? 0),
+    removedChangeRequests: Number(linkedChanges?.total ?? 0),
+  };
+  await d1().batch([
+    d1().prepare("DELETE FROM directory_change_requests WHERE group_id = ?").bind(group.id),
+    d1().prepare("UPDATE access_requests SET group_id = NULL, updated_at = CURRENT_TIMESTAMP WHERE group_id = ?").bind(group.id),
+    d1().prepare(
+      `UPDATE portal_users SET group_id = NULL,
+       active = CASE WHEN role IN ('leader', 'osg') THEN 0 ELSE active END,
+       notes = CASE WHEN role IN ('leader', 'osg')
+         THEN TRIM(notes || ?)
+         ELSE notes END,
+       updated_at = CURRENT_TIMESTAMP WHERE group_id = ?`
+    ).bind(` · Acceso desactivado al borrar el grupo ${group.name}`, group.id),
+    d1().prepare("DELETE FROM directory_groups WHERE id = ?").bind(group.id),
+    d1().prepare(
+      "INSERT INTO audit_log (actor_email, action, target_type, target_id, details_json) VALUES (?, 'directory_group_deleted', 'directory_group', ?, ?)"
+    ).bind(profile.email, String(group.id), JSON.stringify(details)),
+  ]);
+  return { id: group.id, name: group.name, deleted: true, ...details };
 }
 
 async function applyGroupUpdate(group: DirectoryGroup, proposal: Partial<Record<EditableGroupField, string>>, actorEmail: string) {

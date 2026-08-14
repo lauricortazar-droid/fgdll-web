@@ -32,3 +32,10 @@ export async function readJson(request: Request) {
     throw new PortalError("La información enviada no tiene un formato válido.");
   }
 }
+
+export function requireSameOrigin(request: Request) {
+  const origin = request.headers.get("origin");
+  if (origin && origin !== new URL(request.url).origin) {
+    throw new PortalError("La operación debe realizarse desde el Portal FGDLL.", 403);
+  }
+}
