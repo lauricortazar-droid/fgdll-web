@@ -1,426 +1,395 @@
 [
   {
-    "id": "65gjgpb3c5gj8bb1coo6cb9k70s66b9p68s68b9lccrj8or56csm6e9i6k",
-    "title": "EL ALFARERO_EXT",
-    "start": "2026-08-09T22:00:00-06:00",
-    "end": "2026-08-13T12:00:00-06:00",
-    "location": null,
-    "url": "https://www.google.com/calendar/event?eid=NjVnamdwYjNjNWdqOGJiMWNvbzZjYjlrNzBzNjZiOXA2OHM2OGI5bGNjcmo4b3I1NmNzbTZlOWk2ayBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
-  },
-  {
     "id": "6os3ecj66dh34b9j74s6cb9k6ksjibb2ckr3cbb4c8qj0o9m71i3ce1k6s",
-    "title": "ALFA Y OMEGA _ EXT",
     "start": "2026-08-10T00:00:00",
     "end": "2026-08-16T00:00:00",
-    "location": null,
+    "title": "ALFA Y OMEGA _ EXT",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=Nm9zM2VjajY2ZGgzNGI5ajc0czZjYjlrNmtzamliYjJja3IzY2JiNGM4cWowbzltNzFpM2NlMWs2cyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "7a6asvd1fm9eem35722h9qg1rf",
-    "title": "Jaguar Experiencia",
     "start": "2026-08-14T00:00:00",
     "end": "2026-08-17T00:00:00",
+    "title": "Jaguar Experiencia",
     "location": "La Amada Hacienda, C. 22, San José Tzal, 97317 Molas, Yuc., México",
     "url": "https://www.google.com/calendar/event?eid=N2E2YXN2ZDFmbTllZW0zNTcyMmg5cWcxcmYgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
-    "id": "c5ijgo9k6di68bb1chh3ib9kc4o36b9o6di38b9l60s30p9mc8q32dpg6s",
-    "title": "METAMORFOSIS_EXT",
-    "start": "2026-08-17T18:30:00-06:00",
-    "end": "2026-08-21T20:30:00-06:00",
-    "location": null,
-    "url": "https://www.google.com/calendar/event?eid=YzVpamdvOWs2ZGk2OGJiMWNoaDNpYjlrYzRvMzZiOW82ZGkzOGI5bDYwczMwcDltYzhxMzJkcGc2cyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
-  },
-  {
     "id": "cgq30cpo6pj3ab9l68omab9kc5h3cbb2cgpj2b9j6dj32c1g74sjgoph68",
-    "title": "CAZADORES DE SUEÑOS_EXT",
-    "start": "2026-08-17T21:30:00-06:00",
-    "end": "2026-08-21T23:30:00-06:00",
-    "location": null,
+    "start": "2026-08-17T00:00:00",
+    "end": "2026-08-22T00:00:00",
+    "title": "CAZADORES DE SUEÑOS_ Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=Y2dxMzBjcG82cGozYWI5bDY4b21hYjlrYzVoM2NiYjJjZ3BqMmI5ajZkajMyYzFnNzRzamdvcGg2OCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
+    "id": "c5ijgo9k6di68bb1chh3ib9kc4o36b9o6di38b9l60s30p9mc8q32dpg6s",
+    "start": "2026-08-17T00:00:00",
+    "end": "2026-08-22T00:00:00",
+    "title": "METAMORFOSIS Aniversario Semana Externa",
+    "location": "",
+    "url": "https://www.google.com/calendar/event?eid=YzVpamdvOWs2ZGk2OGJiMWNoaDNpYjlrYzRvMzZiOW82ZGkzOGI5bDYwczMwcDltYzhxMzJkcGc2cyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
+  },
+  {
     "id": "61gmcpj56dgmab9jcgq3gb9k64om8b9pcdij0b9kc4qm4pb66ksjceb16g",
-    "title": "HOMÚN_EXT",
     "start": "2026-08-17T22:00:00-06:00",
     "end": "2026-08-21T00:00:00-06:00",
-    "location": null,
+    "title": "HOMÚN_EXT",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NjFnbWNwajU2ZGdtYWI5amNncTNnYjlrNjRvbThiOXBjZGlqMGI5a2M0cW00cGI2NmtzamNlYjE2ZyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "6ph3ecpn60rjebb3c8qjab9kcphm6bb26spm2b9m6gojic3160sjgc9k64",
-    "title": "TERCERA PROMESA_EXT",
     "start": "2026-08-17T22:00:00-06:00",
     "end": "2026-08-21T00:00:00-06:00",
-    "location": null,
+    "title": "TERCERA PROMESA_EXT",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NnBoM2VjcG42MHJqZWJiM2M4cWphYjlrY3BobTZiYjI2c3BtMmI5bTZnb2ppYzMxNjBzamdjOWs2NCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "c5hj8d9p6orm6bb374s34b9k60qjebb2cop3ibb469i34p31cdj32opp68",
-    "title": "ANIVERSARIO LUCIERNAGAS KANASIN",
     "start": "2026-08-22T08:30:00-06:00",
     "end": "2026-08-22T10:30:00-06:00",
-    "location": null,
+    "title": "ANIVERSARIO LUCIERNAGAS KANASIN",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=YzVoajhkOXA2b3JtNmJiMzc0czM0YjlrNjBxamViYjJjb3AzaWJiNDY5aTM0cDMxY2RqMzJvcHA2OCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "im1psd653bvas9n9lauf24q4os",
-    "title": "Conociéndote con el Eneagrama - Zona Delfín",
     "start": "2026-08-22T20:00:00-06:00",
     "end": "2026-08-22T23:00:00-06:00",
-    "location": null,
+    "title": "Conociéndote con el Eneagrama - Zona Delfín",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=aW0xcHNkNjUzYnZhczluOWxhdWYyNHE0b3MgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "h9e7cf1krs82vfqjt4s76hbd7s",
-    "title": "Descubriéndome CD Carmen",
     "start": "2026-08-22T20:00:00-06:00",
     "end": "2026-08-22T22:00:00-06:00",
-    "location": null,
+    "title": "Descubriéndome CD Carmen",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=aDllN2NmMWtyczgydmZxanQ0czc2aGJkN3MgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "8u19devhtino4ov2ikjk778424",
-    "title": "Descubriéndome- Zona Delfín",
     "start": "2026-08-23T20:00:00-06:00",
     "end": "2026-08-23T23:00:00-06:00",
-    "location": null,
+    "title": "Descubriéndome- Zona Delfín",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=OHUxOWRldmh0aW5vNG92Mmlrams3Nzg0MjQgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "6gqjicr560o30b9l70o3ib9k74qm6bb2clijgbb468om6d1gcgrm8p1kcg",
-    "title": "Aniversario Angeles de un Ala",
-    "start": "2026-08-24T10:30:00-06:00",
-    "end": "2026-08-28T12:30:00-06:00",
-    "location": null,
+    "start": "2026-08-24T00:00:00",
+    "end": "2026-08-29T00:00:00",
+    "title": "ÁNGELES DE UN ALA - Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NmdxamljcjU2MG8zMGI5bDcwbzNpYjlrNzRxbTZiYjJjbGlqZ2JiNDY4b202ZDFnY2dybThwMWtjZyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "p77svt7a175imqgh8vadjghkds",
-    "title": "Sesión Estudio - Doceava Tradición -M. Lau",
     "start": "2026-08-26T21:00:00-06:00",
     "end": "2026-08-26T23:00:00-06:00",
-    "location": null,
+    "title": "Sesión Estudio - Doceava Tradición -M. Lau",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=cDc3c3Z0N2ExNzVpbXFnaDh2YWRqZ2hrZHMgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "7fpsjpkjese11n8riv26fi7ffj",
-    "title": "Tiburón Experiencia",
     "start": "2026-08-28T00:00:00",
     "end": "2026-08-31T00:00:00",
+    "title": "Tiburón Experiencia",
     "location": "La Amada Hacienda PlayaCar, QW3V+7C, 77743 Playa del Carmen, Q.R., México",
     "url": "https://www.google.com/calendar/event?eid=N2Zwc2pwa2plc2UxMW44cml2MjZmaTdmZmogZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "c5i66e9m6sp3gbb2cor3gb9kcosmcbb1ckrj6b9i6or3cd9pc4oj0e316o",
-    "title": "CONCÉDEME LA SERENIDAD_EXT",
-    "start": "2026-08-31T18:30:00-06:00",
-    "end": "2026-09-04T20:30:00-06:00",
-    "location": null,
+    "start": "2026-08-31T00:00:00",
+    "end": "2026-09-05T00:00:00",
+    "title": "CONCÉDEME LA SERENIDAD_ Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=YzVpNjZlOW02c3AzZ2JiMmNvcjNnYjlrY29zbWNiYjFja3JqNmI5aTZvcjNjZDlwYzRvajBlMzE2byBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "60p68pj2climabb5c4ojab9kcgo3ibb26hi6cbb1chi64o9lcpim4phocc",
-    "title": "RENACER FUER.ESP. _EXT",
-    "start": "2026-08-31T20:00:00-06:00",
-    "end": "2026-09-04T10:00:00-06:00",
-    "location": null,
+    "start": "2026-08-31T00:00:00",
+    "end": "2026-09-05T00:00:00",
+    "title": "RENACER FUER.ESP. _ Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NjBwNjhwajJjbGltYWJiNWM0b2phYjlrY2dvM2liYjI2aGk2Y2JiMWNoaTY0bzlsY3BpbTRwaG9jYyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
-    "id": "69hjge1p6phjib9o6hh3eb9k6orjeb9p65im2b9ncopm8c1p69h38p1o6c",
-    "title": "IXIL_EXT",
-    "start": "2026-08-31T22:00:00-06:00",
-    "end": "2026-09-04T12:00:00-06:00",
-    "location": null,
-    "url": "https://www.google.com/calendar/event?eid=NjloamdlMXA2cGhqaWI5bzZoaDNlYjlrNm9yamViOXA2NWltMmI5bmNvcG04YzFwNjloMzhwMW82YyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
-  },
-  {
     "id": "chhj0p9g61gj8bb26sqjeb9k74q3eb9p74ojgbb271hmad9icgr6aopg68",
-    "title": "PISTÉ_EXT",
     "start": "2026-09-07T00:00:00",
     "end": "2026-09-12T00:00:00",
-    "location": null,
+    "title": "PISTÉ_ Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=Y2hoajBwOWc2MWdqOGJiMjZzcWplYjlrNzRxM2ViOXA3NG9qZ2JiMjcxaG1hZDlpY2dyNmFvcGc2OCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "75gj0cb175gjeb9j6hh30b9k65gm2bb2cor3abb674s3ed1iccpmce9pco",
-    "title": "RENACER_EXT",
     "start": "2026-09-07T00:00:00",
     "end": "2026-09-12T00:00:00",
-    "location": null,
+    "title": "RENACER_ Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NzVnajBjYjE3NWdqZWI5ajZoaDMwYjlrNjVnbTJiYjJjb3IzYWJiNjc0czNlZDFpY2NwbWNlOXBjbyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "6tj3cpj66sq38bb165ij2b9k75ij6bb1ckq3cbb56ksmacb26lj62oj460",
-    "title": "Aniv Jovenes Ticul",
-    "start": "2026-09-09T09:30:00-06:00",
-    "end": "2026-09-12T11:30:00-06:00",
-    "location": null,
+    "start": "2026-09-09T00:00:00",
+    "end": "2026-09-13T00:00:00",
+    "title": "JÓVENES TICUL -  Aniversario ",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NnRqM2NwajY2c3EzOGJiMTY1aWoyYjlrNzVpajZiYjFja3EzY2JiNTZrc21hY2IyNmxqNjJvajQ2MCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "5j5n4lgfkqfi7mvfst4ra1m2ku",
-    "title": "Jaguar Experiencia",
     "start": "2026-09-11T00:00:00",
     "end": "2026-09-14T00:00:00",
+    "title": "Jaguar Experiencia",
     "location": "La Amada Hacienda, C. 22, San José Tzal, 97317 Molas, Yuc., México",
     "url": "https://www.google.com/calendar/event?eid=NWo1bjRsZ2ZrcWZpN212ZnN0NHJhMW0ya3UgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
-    "id": "6hj3ccpk64rm4b9i6ti3cb9kcop3cb9pc4q64b9p61hj0phm6oo68cj668",
-    "title": "Aniversario Fe Esperanza y Fortaleza",
-    "start": "2026-09-14T09:30:00-06:00",
-    "end": "2026-09-18T11:30:00-06:00",
-    "location": null,
-    "url": "https://www.google.com/calendar/event?eid=NmhqM2NjcGs2NHJtNGI5aTZ0aTNjYjlrY29wM2NiOXBjNHE2NGI5cDYxaGowcGhtNm9vNjhjajY2OCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
-  },
-  {
-    "id": "6sojge1m6hi62b9j70r30b9k6oomab9o69h30bb3ccom8cpgc5i68p366g",
-    "title": "Aniversario Dosis de amor",
-    "start": "2026-09-14T10:30:00-06:00",
-    "end": "2026-09-19T12:30:00-06:00",
-    "location": null,
-    "url": "https://www.google.com/calendar/event?eid=NnNvamdlMW02aGk2MmI5ajcwcjMwYjlrNm9vbWFiOW82OWgzMGJiM2Njb204Y3BnYzVpNjhwMzY2ZyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
-  },
-  {
     "id": "6pi3gdho6th3cbb5c5im8b9k74o30b9pclijeb9o6gp32oj36dhjipb56s",
-    "title": "CANCÚN_EXT",
-    "start": "2026-09-14T11:00:00-06:00",
-    "end": "2026-09-18T13:00:00-06:00",
-    "location": null,
+    "start": "2026-09-14T00:00:00",
+    "end": "2026-09-19T00:00:00",
+    "title": "CANCÚN -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NnBpM2dkaG82dGgzY2JiNWM1aW04YjlrNzRvMzBiOXBjbGlqZWI5bzZncDMyb2ozNmRoamlwYjU2cyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
+    "id": "6sojge1m6hi62b9j70r30b9k6oomab9o69h30bb3ccom8cpgc5i68p366g",
+    "start": "2026-09-14T00:00:00",
+    "end": "2026-09-20T00:00:00",
+    "title": "DOSIS DE AMOR -  Aniversario Semana Externa",
+    "location": "",
+    "url": "https://www.google.com/calendar/event?eid=NnNvamdlMW02aGk2MmI5ajcwcjMwYjlrNm9vbWFiOW82OWgzMGJiM2Njb204Y3BnYzVpNjhwMzY2ZyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
+  },
+  {
+    "id": "6hj3ccpk64rm4b9i6ti3cb9kcop3cb9pc4q64b9p61hj0phm6oo68cj668",
+    "start": "2026-09-14T00:00:00",
+    "end": "2026-09-19T00:00:00",
+    "title": "Fe Esperanza y Fortaleza -  Aniversario Semana Externa",
+    "location": "",
+    "url": "https://www.google.com/calendar/event?eid=NmhqM2NjcGs2NHJtNGI5aTZ0aTNjYjlrY29wM2NiOXBjNHE2NGI5cDYxaGowcGhtNm9vNjhjajY2OCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
+  },
+  {
     "id": "6opjccpl74ojcbb274pmcb9k61ij4bb2cdh68bb174qjacr4c5h68pb1cc",
-    "title": "ALTABRISA_EXT",
-    "start": "2026-09-21T21:30:00-06:00",
-    "end": "2026-09-25T23:30:00-06:00",
-    "location": null,
+    "start": "2026-09-21T00:00:00",
+    "end": "2026-09-26T00:00:00",
+    "title": "ALTABRISA -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=Nm9wamNjcGw3NG9qY2JiMjc0cG1jYjlrNjFpajRiYjJjZGg2OGJiMTc0cWphY3I0YzVoNjhwYjFjYyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
-    "id": "70qj2p9gc5h3eb9oc4s32b9k6dhmabb16ssj6bb170o36dhi6pi62ohg6k",
-    "title": "FE, ESP, FORT_EXT",
-    "start": "2026-09-21T22:00:00-06:00",
-    "end": "2026-09-25T12:00:00-06:00",
-    "location": null,
-    "url": "https://www.google.com/calendar/event?eid=NzBxajJwOWdjNWgzZWI5b2M0czMyYjlrNmRobWFiYjE2c3NqNmJiMTcwbzM2ZGhpNnBpNjJvaGc2ayBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
-  },
-  {
     "id": "70r38or16ko3eb9jckojcb9k6ph64bb268om8bb470sj6eb66sojcd9g74",
-    "title": "HUHÍ _EXT",
-    "start": "2026-09-21T22:00:00-06:00",
-    "end": "2026-09-25T12:00:00-06:00",
-    "location": null,
+    "start": "2026-09-21T00:00:00",
+    "end": "2026-09-26T00:00:00",
+    "title": "HUHÍ -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NzByMzhvcjE2a28zZWI5amNrb2pjYjlrNnBoNjRiYjI2OG9tOGJiNDcwc2o2ZWI2NnNvamNkOWc3NCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "48vhl3ou400dinj8vff12pml4p",
-    "title": "Tiburón Experiencia",
     "start": "2026-09-25T00:00:00",
     "end": "2026-09-28T00:00:00",
+    "title": "Tiburón Experiencia",
     "location": "La Amada Hacienda PlayaCar, QW3V+7C, 77743 Playa del Carmen, Q.R., México",
     "url": "https://www.google.com/calendar/event?eid=NDh2aGwzb3U0MDBkaW5qOHZmZjEycG1sNHAgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "c4sjichi6li64b9gccr66b9kc4p64b9o6gs6ab9k6sq36dr3c5hm2e9hc4",
-    "title": "SEMBRANDO AMOR_EXT",
-    "start": "2026-09-28T18:30:00-06:00",
-    "end": "2026-10-02T20:30:00-06:00",
-    "location": null,
+    "start": "2026-09-28T00:00:00",
+    "end": "2026-10-03T00:00:00",
+    "title": "SEMBRANDO AMOR -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=YzRzamljaGk2bGk2NGI5Z2NjcjY2YjlrYzRwNjRiOW82Z3M2YWI5azZzcTM2ZHIzYzVobTJlOWhjNCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "61j30c1o6kpm4b9jc9j38b9k68pjgb9p6kpj8bb1cdhm6cr4c9j6cpho74",
-    "title": "TIZIMÍN_EXT",
-    "start": "2026-09-28T18:30:00-06:00",
-    "end": "2026-10-02T20:30:00-06:00",
-    "location": null,
+    "start": "2026-09-28T00:00:00",
+    "end": "2026-10-03T00:00:00",
+    "title": "TIZIMÍN -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NjFqMzBjMW82a3BtNGI5amM5ajM4YjlrNjhwamdiOXA2a3BqOGJiMWNkaG02Y3I0YzlqNmNwaG83NCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "241mbsbsmel98a9cl5c3j36okf",
-    "title": "XVIII ANIVERSARIO UNIDAD",
     "start": "2026-10-16T00:00:00",
     "end": "2026-10-19T00:00:00",
-    "location": null,
+    "title": "XVIII ANIVERSARIO UNIDAD",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=MjQxbWJzYnNtZWw5OGE5Y2w1YzNqMzZva2YgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "69imac9lc8om6b9m64pjib9kcco6cbb1chhm8b9n74r34pj3cco3ee1k6k",
-    "title": "VALLADOLID_EXT",
     "start": "2026-11-02T18:30:00-06:00",
     "end": "2026-11-06T20:30:00-06:00",
-    "location": null,
+    "title": "VALLADOLID -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NjlpbWFjOWxjOG9tNmI5bTY0cGppYjlrY2NvNmNiYjFjaGhtOGI5bjc0cjM0cGozY2NvM2VlMWs2ayBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "4lmpgb1h2si0ngq5se4ch2amoa",
-    "title": "Jaguar Experiencia",
     "start": "2026-11-06T00:00:00",
     "end": "2026-11-09T00:00:00",
+    "title": "Jaguar Experiencia",
     "location": "La Amada Hacienda, C. 22, San José Tzal, 97317 Molas, Yuc., México",
     "url": "https://www.google.com/calendar/event?eid=NGxtcGdiMWgyc2kwbmdxNXNlNGNoMmFtb2EgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "c9j36d9ocgrmab9nc4r66b9k6pij2b9oc9hj2b9k64qmcdr16oo66ob5c4",
-    "title": "Aniversario Lenguaje del Corazón",
-    "start": "2026-11-09T08:30:00-06:00",
-    "end": "2026-11-13T10:30:00-06:00",
-    "location": null,
+    "start": "2026-11-09T00:00:00",
+    "end": "2026-11-14T00:00:00",
+    "title": "Lenguaje del Corazón -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=YzlqMzZkOW9jZ3JtYWI5bmM0cjY2YjlrNnBpajJiOW9jOWhqMmI5azY0cW1jZHIxNm9vNjZvYjVjNCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "clh38pb364r34b9g6hhj8b9k6op38bb1ckq30bb5ckp3gc1gclh3ad9p64",
-    "title": "PORLARIS_EXT",
-    "start": "2026-11-09T11:00:00-06:00",
-    "end": "2026-11-13T13:00:00-06:00",
-    "location": null,
+    "start": "2026-11-09T00:00:00",
+    "end": "2026-11-14T00:00:00",
+    "title": "PORLARIS -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=Y2xoMzhwYjM2NHIzNGI5ZzZoaGo4YjlrNm9wMzhiYjFja3EzMGJiNWNrcDNnYzFnY2xoM2FkOXA2NCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "ckqm6ophc4p6abb1c4r38b9kchh3eb9p74r64b9ncop3gd9kckp36eb4c8",
-    "title": "Valor para cambiar externa",
-    "start": "2026-11-09T22:00:00-06:00",
-    "end": "2026-11-13T00:00:00-06:00",
-    "location": null,
+    "start": "2026-11-09T00:00:00",
+    "end": "2026-11-13T00:00:00",
+    "title": "Valor para cambiar  -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=Y2txbTZvcGhjNHA2YWJiMWM0cjM4YjlrY2hoM2ViOXA3NHI2NGI5bmNvcDNnZDlrY2twMzZlYjRjOCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
-    "id": "65j62phk6thm8bb5chij6b9kccpmcb9pcpgj4b9l75hj0o9h60q32dpgcg",
-    "title": "TALLER DEL MAESTRO _EXT",
-    "start": "2026-11-16T00:00:00",
-    "end": "2026-11-21T00:00:00",
-    "location": null,
-    "url": "https://www.google.com/calendar/event?eid=NjVqNjJwaGs2dGhtOGJiNWNoaWo2YjlrY2NwbWNiOXBjcGdqNGI5bDc1aGowbzloNjBxMzJkcGdjZyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
-  },
-  {
     "id": "cgp3idhj6so68bb460r3cb9kcko6abb16dijcbb3chgm2p9kcgrjcc1l6c",
-    "title": "ANIVERSARIO ITZINCAB",
-    "start": "2026-11-16T09:30:00-06:00",
-    "end": "2026-11-21T11:30:00-06:00",
-    "location": null,
+    "start": "2026-11-16T00:00:00",
+    "end": "2026-11-22T00:00:00",
+    "title": "ITZINCAB -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=Y2dwM2lkaGo2c282OGJiNDYwcjNjYjlrY2tvNmFiYjE2ZGlqY2JiM2NoZ20ycDlrY2dyamNjMWw2YyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
+    "id": "65j62phk6thm8bb5chij6b9kccpmcb9pcpgj4b9l75hj0o9h60q32dpgcg",
+    "start": "2026-11-16T00:00:00",
+    "end": "2026-11-21T00:00:00",
+    "title": "TALLER DEL MAESTRO  -  Aniversario Semana Externa",
+    "location": "",
+    "url": "https://www.google.com/calendar/event?eid=NjVqNjJwaGs2dGhtOGJiNWNoaWo2YjlrY2NwbWNiOXBjcGdqNGI5bDc1aGowbzloNjBxMzJkcGdjZyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
+  },
+  {
     "id": "c5h3gd9pcoqj8b9jcor3cb9kc5j68b9o60qjibb170s3cp1kc4sjip316o",
-    "title": "FE QUE OBRA_EXT",
     "start": "2026-11-16T21:30:00-06:00",
     "end": "2026-11-20T23:30:00-06:00",
-    "location": null,
+    "title": "FE QUE OBRA_EXT",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=YzVoM2dkOXBjb3FqOGI5amNvcjNjYjlrYzVqNjhiOW82MHFqaWJiMTcwczNjcDFrYzRzamlwMzE2byBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "6tpe8qcjait9tsmekp1kbj2cl3",
-    "title": "Tiburón Experiencia",
     "start": "2026-11-20T00:00:00",
     "end": "2026-11-23T00:00:00",
+    "title": "Tiburón Experiencia",
     "location": "La Amada Hacienda PlayaCar, QW3V+7C, 77743 Playa del Carmen, Q.R., México",
     "url": "https://www.google.com/calendar/event?eid=NnRwZThxY2phaXQ5dHNtZWtwMWtiajJjbDMgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "61i64dj274pmcbb6chhm2b9k6somcb9o60q62bb36oo66d1l64o3cd1i64",
-    "title": "HOLCÁ_EXT",
     "start": "2026-11-23T00:00:00",
     "end": "2026-11-28T00:00:00",
-    "location": null,
+    "title": "HOLCÁ -  Aniversario Semana Externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NjFpNjRkajI3NHBtY2JiNmNoaG0yYjlrNnNvbWNiOW82MHE2MmJiMzZvbzY2ZDFsNjRvM2NkMWk2NCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "70r3id3375j3ab9hcgoj4b9k6osmabb174o3cb9h68q66db371i66o9n70",
-    "title": "ÁLVARO OBREGÓN_EXT",
     "start": "2026-11-23T18:30:00-06:00",
     "end": "2026-11-27T20:30:00-06:00",
-    "location": null,
+    "title": "ÁLVARO OBREGÓN_EXT",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NzByM2lkMzM3NWozYWI5aGNnb2o0YjlrNm9zbWFiYjE3NG8zY2I5aDY4cTY2ZGIzNzFpNjZvOW43MCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "6so3edb675hj0bb170rm8b9kc4r32b9o70sm2b9hclj30p1jcdj32oj2c8",
-    "title": "KANASÍN_EXT",
     "start": "2026-11-23T22:00:00-06:00",
     "end": "2026-11-27T12:00:00-06:00",
-    "location": null,
+    "title": "KANASÍN_EXT",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NnNvM2VkYjY3NWhqMGJiMTcwcm04YjlrYzRyMzJiOW83MHNtMmI5aGNsajMwcDFqY2RqMzJvajJjOCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "61i3adr36kpm2bb6c4o32b9k65i32b9o75i3ib9k60pj2or360q68p3460",
-    "title": "Tulum externa",
     "start": "2026-11-30T18:30:00-06:00",
     "end": "2026-12-04T20:30:00-06:00",
-    "location": null,
+    "title": "Tulum externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NjFpM2FkcjM2a3BtMmJiNmM0bzMyYjlrNjVpMzJiOW83NWkzaWI5azYwcGoyb3IzNjBxNjhwMzQ2MCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "1fn5sihpo1shu1arnfd35j0m3q",
-    "title": "Jaguar Experiencia",
     "start": "2026-12-04T00:00:00",
     "end": "2026-12-07T00:00:00",
+    "title": "Jaguar Experiencia",
     "location": "La Amada Hacienda, C. 22, San José Tzal, 97317 Molas, Yuc., México",
     "url": "https://www.google.com/calendar/event?eid=MWZuNXNpaHBvMXNodTFhcm5mZDM1ajBtM3EgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "c9im4opn61j6cbb16cpj4b9k70qjgbb16lijcb9h60o66pho64q34d1ocg",
-    "title": "La buena voluntad externa",
     "start": "2026-12-07T18:30:00-06:00",
     "end": "2026-12-11T20:30:00-06:00",
-    "location": null,
+    "title": "La buena voluntad externa",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=YzlpbTRvcG42MWo2Y2JiMTZjcGo0YjlrNzBxamdiYjE2bGlqY2I5aDYwbzY2cGhvNjRxMzRkMW9jZyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "60qmaopk71hjcbb56lhm4b9kcgs3gbb1cdh68b9oc8q3ce326ph64p1j64",
-    "title": "Piedra de agua",
     "start": "2026-12-07T22:00:00-06:00",
     "end": "2026-12-11T12:00:00-06:00",
-    "location": null,
+    "title": "Piedra de agua",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NjBxbWFvcGs3MWhqY2JiNTZsaG00YjlrY2dzM2diYjFjZGg2OGI5b2M4cTNjZTMyNnBoNjRwMWo2NCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "c9hjgp1pc9hmcbb2c8qjeb9kc5hm6bb1c8p34b9p69gmcc9oc8rm2d1occ",
-    "title": "Esencia del alma",
     "start": "2026-12-14T18:30:00-06:00",
     "end": "2026-12-18T20:30:00-06:00",
-    "location": null,
+    "title": "Esencia del alma",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=YzloamdwMXBjOWhtY2JiMmM4cWplYjlrYzVobTZiYjFjOHAzNGI5cDY5Z21jYzlvYzhybTJkMW9jYyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "6hij0pj671j36b9hcoom8b9k68sj6bb2c4qj4b9o64o66ob26cr66ob1co",
-    "title": "Creo en ti",
     "start": "2026-12-14T21:30:00-06:00",
     "end": "2026-12-18T23:30:00-06:00",
-    "location": null,
+    "title": "Creo en ti",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NmhpajBwajY3MWozNmI5aGNvb204YjlrNjhzajZiYjJjNHFqNGI5bzY0bzY2b2IyNmNyNjZvYjFjbyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "6di3gohi68q3ib9kc4qjab9k6crjib9pc5imabb56dgj8phoc9hjgob568",
-    "title": "Homun",
     "start": "2026-12-14T22:00:00-06:00",
     "end": "2026-12-18T12:00:00-06:00",
-    "location": null,
+    "title": "Homun",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=NmRpM2dvaGk2OHEzaWI5a2M0cWphYjlrNmNyamliOXBjNWltYWJiNTZkZ2o4cGhvYzloamdvYjU2OCBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
     "id": "1h9ppbabla84pj099oghsee269",
-    "title": "Tiburón Experiencia",
     "start": "2026-12-18T00:00:00",
     "end": "2026-12-21T00:00:00",
+    "title": "Tiburón Experiencia",
     "location": "La Amada Hacienda PlayaCar, QW3V+7C, 77743 Playa del Carmen, Q.R., México",
     "url": "https://www.google.com/calendar/event?eid=MWg5cHBiYWJsYTg0cGowOTlvZ2hzZWUyNjkgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "0fu6aoneurhhtl6fgmj8kr9js7",
-    "title": "SERVIDORES EXPERIENCIA",
     "start": "2026-12-26T00:00:00",
     "end": "2026-12-28T00:00:00",
-    "location": null,
+    "title": "SERVIDORES EXPERIENCIA",
+    "location": "",
     "url": "https://www.google.com/calendar/event?eid=MGZ1NmFvbmV1cmhodGw2ZmdtajhrcjlqczcgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
-  },
-  {
-    "id": "6tj34cpncdi68bb268o3gb9kcop36bb260pj2bb4c8sj0d1n6ks34phk6o_20270207",
-    "title": "Cumpleaños de Ruby Alejandra Santiago Zavala",
-    "start": "2027-02-07T00:00:00",
-    "end": "2027-02-08T00:00:00",
-    "location": null,
-    "url": "https://www.google.com/calendar/event?eid=NnRqMzRjcG5jZGk2OGJiMjY4bzNnYjlrY29wMzZiYjI2MHBqMmJiNGM4c2owZDFuNmtzMzRwaGs2b18yMDI3MDIwNyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   }
 ]
+

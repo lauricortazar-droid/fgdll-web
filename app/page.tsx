@@ -46,7 +46,7 @@ function shortMonth(value: string) {
 }
 
 function eventDate(event: CalendarEvent) {
-  const allDay = !event.start.includes("T");
+  const allDay = !/(Z|[+-]\d{2}:\d{2})$/.test(event.start);
   const start = event.start.slice(0, 10);
   const end = allDay ? previousDay(event.end) : event.end.slice(0, 10);
   const startDay = Number(start.slice(8, 10));
@@ -57,7 +57,7 @@ function eventDate(event: CalendarEvent) {
 }
 
 function eventTime(event: CalendarEvent) {
-  if (!event.start.includes("T")) return "Todo el día";
+  if (!/(Z|[+-]\d{2}:\d{2})$/.test(event.start)) return "Todo el día";
   const startTime = event.start.slice(11, 16);
   const endTime = event.end.slice(11, 16);
   if (event.start.slice(0, 10) === event.end.slice(0, 10)) return `${startTime}–${endTime} h`;
@@ -96,7 +96,7 @@ function CalendarAgenda() {
             ))}
           </div>
         </div>
-        <p className="calendar-source">Fuente única: AGENDA FGDLL · Sincronizado el 11 de agosto de 2026.</p>
+        <p className="calendar-source">Fuente única: AGENDA FGDLL · Sincronizado el 14 de agosto de 2026.</p>
       </div>
     </section>
   );
