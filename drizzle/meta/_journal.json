@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1786738394824,
+      "tag": "0000_yummy_beast",
+      "breakpoints": true
+    }
+  ]
 }

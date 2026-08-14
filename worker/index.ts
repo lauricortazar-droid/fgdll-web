@@ -6,6 +6,7 @@ interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
   FGDLL_LEADER_EMAILS?: string;
+  FGDLL_ADMIN_EMAILS?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -16,19 +17,37 @@ interface Env {
 }
 
 const AUTHENTICATED_EMAIL_HEADER = "oai-authenticated-user-email";
-const PROTECTED_PREFIXES = ["/portal", "/universidad", "/testimonios", "/materiales"];
+const SIGN_IN_ONLY_PREFIXES = ["/solicitar-acceso"];
+const ACTIVE_ACCESS_PREFIXES = ["/portal", "/universidad", "/testimonios", "/materiales", "/directorio/gestion"];
 
-function isProtectedPath(pathname: string) {
-  return PROTECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+function matchesPrefix(pathname: string, prefixes: string[]) {
+  return prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
-function allowedEmails(env: Env) {
+function configuredEmails(value: string | undefined) {
   return new Set(
-    (env.FGDLL_LEADER_EMAILS ?? "")
+    (value ?? "")
       .split(",")
       .map((email) => email.trim().toLocaleLowerCase())
       .filter(Boolean),
   );
+}
+
+async function hasActiveAccess(env: Env, email: string) {
+  const administrators = configuredEmails(
+    env.FGDLL_ADMIN_EMAILS ?? "admin@fgdll.org,jaguarcortazar@gmail.com,laurcortazar@gmail.com",
+  );
+  if (administrators.has(email) || configuredEmails(env.FGDLL_LEADER_EMAILS).has(email)) return true;
+
+  try {
+    const profile = await env.DB.prepare(
+      "SELECT active FROM portal_users WHERE email = ? LIMIT 1",
+    ).bind(email).first<{ active: number }>();
+    return Number(profile?.active ?? 0) === 1;
+  } catch (error) {
+    console.error("Could not verify portal access", error);
+    return false;
+  }
 }
 
 function accessDeniedResponse(email: string) {
@@ -38,8 +57,8 @@ function accessDeniedResponse(email: string) {
 
   return new Response(`<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acceso pendiente · FGDLL</title>
-<style>body{margin:0;background:#031f46;color:#fff;font-family:system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px}.card{max-width:560px;background:#fff;color:#10243f;border-radius:24px;padding:36px;box-shadow:0 24px 80px #00142f}.mark{color:#b77b00;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}h1{font-size:clamp(30px,7vw,48px);line-height:1.05;margin:14px 0}p{line-height:1.65;color:#536276}.email{background:#f1f4f8;border-radius:12px;padding:13px 16px;font-weight:700;overflow-wrap:anywhere}a{display:inline-block;margin-top:18px;color:#fff;background:#d49a16;padding:13px 18px;border-radius:999px;text-decoration:none;font-weight:800}.secondary{background:transparent;color:#17385f;margin-left:10px}</style></head>
-<body><main class="card"><span class="mark">Zona privada FGDLL</span><h1>Tu acceso todavía no está autorizado.</h1><p>La sesión se inició correctamente, pero este correo aún no aparece en la lista de líderes autorizados:</p><p class="email">${safeEmail}</p><p>Solicita al Consejo Directivo que active tu acceso.</p><a href="/">Volver al inicio</a><a class="secondary" href="/signout-with-chatgpt?return_to=%2F">Usar otra cuenta</a></main></body></html>`, {
+<style>body{margin:0;background:#031f46;color:#fff;font-family:system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px}.card{max-width:600px;background:#fff;color:#10243f;border-radius:24px;padding:36px;box-shadow:0 24px 80px #00142f}.mark{color:#b77b00;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}h1{font-size:clamp(30px,7vw,48px);line-height:1.05;margin:14px 0}p{line-height:1.65;color:#536276}.email{background:#f1f4f8;border-radius:12px;padding:13px 16px;font-weight:700;overflow-wrap:anywhere}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}a{display:inline-block;color:#061e41;background:#dca00f;padding:13px 18px;border-radius:999px;text-decoration:none;font-weight:800}.secondary{background:#eef2f7;color:#17385f}</style></head>
+<body><main class="card"><span class="mark">Zona privada FGDLL</span><h1>Tu acceso todavía no está autorizado.</h1><p>La sesión se inició correctamente, pero este correo aún no tiene un perfil activo:</p><p class="email">${safeEmail}</p><p>Envía una solicitud para que el Consejo Directivo o la administración revise tu función y alcance.</p><div class="actions"><a href="/solicitar-acceso">Solicitar acceso</a><a class="secondary" href="/">Volver al inicio</a><a class="secondary" href="/signout-with-chatgpt?return_to=%2F">Usar otra cuenta</a></div></main></body></html>`, {
     status: 403,
     headers: { "content-type": "text/html; charset=utf-8", "cache-control": "private, no-store" },
   });
@@ -60,13 +79,16 @@ const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
-    if (isProtectedPath(url.pathname)) {
+    const needsSignIn = matchesPrefix(url.pathname, SIGN_IN_ONLY_PREFIXES) || matchesPrefix(url.pathname, ACTIVE_ACCESS_PREFIXES);
+    if (needsSignIn) {
       const email = request.headers.get(AUTHENTICATED_EMAIL_HEADER)?.trim().toLocaleLowerCase();
       if (!email) {
         const returnTo = `${url.pathname}${url.search}`;
         return Response.redirect(new URL(`/signin-with-chatgpt?return_to=${encodeURIComponent(returnTo)}`, url), 302);
       }
-      if (!allowedEmails(env).has(email)) return accessDeniedResponse(email);
+      if (matchesPrefix(url.pathname, ACTIVE_ACCESS_PREFIXES) && !(await hasActiveAccess(env, email))) {
+        return accessDeniedResponse(email);
+      }
     }
 
     if (url.pathname === "/_vinext/image") {

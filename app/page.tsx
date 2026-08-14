@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import calendarData from "./calendar-data.json";
 import data from "./directory-data.json";
 
@@ -12,6 +12,28 @@ const zoneMeta: Record<string, { icon: string; line: string }> = {
   "Colibrí": { icon: "C", line: "Transformación" },
   "Águila": { icon: "A", line: "Visión elevada" },
 };
+
+type PublicGroup = {
+  id: number;
+  zone: string;
+  name: string;
+  city: string;
+  leaderName: string;
+  whatsapp: string;
+  facebook: string;
+  address: string;
+};
+
+const initialGroups: PublicGroup[] = data.grupos.map((group, index) => ({
+  id: index + 1,
+  zone: group.zona,
+  name: group.nombre,
+  city: group.ciudad,
+  leaderName: group.lider,
+  whatsapp: group.whatsapp,
+  facebook: group.facebook ?? "",
+  address: group.direccion,
+}));
 
 type CalendarEvent = {
   id: string;
@@ -132,19 +154,19 @@ function Header() {
   );
 }
 
-function Directory() {
+function Directory({ groups }: { groups: PublicGroup[] }) {
   const [query, setQuery] = useState("");
   const [zone, setZone] = useState("Todas");
   const [limit, setLimit] = useState(9);
   const zones = ["Todas", ...Object.keys(zoneMeta)];
   const filtered = useMemo(() => {
     const term = query.trim().toLocaleLowerCase("es");
-    return data.grupos.filter((g) => {
-      const inZone = zone === "Todas" || g.zona === zone;
-      const haystack = `${g.nombre} ${g.ciudad} ${g.lider} ${g.direccion} ${g.zona}`.toLocaleLowerCase("es");
+    return groups.filter((g) => {
+      const inZone = zone === "Todas" || g.zone === zone;
+      const haystack = `${g.name} ${g.city} ${g.leaderName} ${g.address} ${g.zone}`.toLocaleLowerCase("es");
       return inZone && (!term || haystack.includes(term));
     });
-  }, [query, zone]);
+  }, [groups, query, zone]);
 
   function choose(next: string) {
     setZone(next);
@@ -166,14 +188,14 @@ function Directory() {
         </div>
         <div className="result-line"><strong>{filtered.length}</strong> grupos encontrados</div>
         <div className="directory-grid">
-          {filtered.slice(0, limit).map((g, i) => (
-            <article className="group-card" key={`${g.nombre}-${g.ciudad}-${i}`}>
-              <div className="group-top"><span className="zone-dot">{zoneMeta[g.zona]?.icon ?? g.zona.charAt(0)}</span><span>{g.zona}</span></div>
-              <h3>{g.nombre}</h3>
-              <p className="location">{g.ciudad}</p>
-              <dl><div><dt>Responsable</dt><dd>{g.lider}</dd></div>{g.direccion && <div><dt>Dirección</dt><dd>{g.direccion}</dd></div>}</dl>
+          {filtered.slice(0, limit).map((g) => (
+            <article className="group-card" key={g.id}>
+              <div className="group-top"><span className="zone-dot">{zoneMeta[g.zone]?.icon ?? g.zone.charAt(0)}</span><span>{g.zone}</span></div>
+              <h3>{g.name}</h3>
+              <p className="location">{g.city}</p>
+              <dl><div><dt>Responsable</dt><dd>{g.leaderName}</dd></div>{g.address && <div><dt>Dirección</dt><dd>{g.address}</dd></div>}</dl>
               <div className="card-actions">
-                <a href={`https://wa.me/52${g.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">WhatsApp</a>
+                {g.whatsapp && <a href={`https://wa.me/${g.whatsapp.replace(/\D/g, "").length === 10 ? "52" : ""}${g.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">WhatsApp</a>}
                 {g.facebook && <a href={g.facebook} target="_blank" rel="noreferrer">Facebook</a>}
               </div>
             </article>
@@ -191,7 +213,16 @@ function Footer() {
 }
 
 export default function Home() {
-  const counts = data.grupos.reduce<Record<string, number>>((acc, g) => { acc[g.zona] = (acc[g.zona] ?? 0) + 1; return acc; }, {});
+  const [directoryGroups, setDirectoryGroups] = useState(initialGroups);
+  useEffect(() => {
+    let active = true;
+    fetch("/api/directory")
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((result) => { if (active && Array.isArray(result.groups) && result.groups.length) setDirectoryGroups(result.groups); })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, []);
+  const counts = directoryGroups.reduce<Record<string, number>>((acc, group) => { acc[group.zone] = (acc[group.zone] ?? 0) + 1; return acc; }, {});
   return (
     <>
       <Header />
@@ -204,7 +235,7 @@ export default function Home() {
               <h1>Una red unida.<br /><em>Un servicio con rumbo.</em></h1>
               <p>Información, formación y herramientas para fortalecer el liderazgo de quienes sirven en la Fraternidad Guerreros de la Luz.</p>
               <div className="hero-actions"><Link className="button button-gold" href="/portal">🔒 Entrar al portal <span>→</span></Link><a className="button button-ghost" href="#directorio">Buscar mi grupo</a></div>
-              <div className="trust-line"><span><b>79</b> grupos registrados</span><span><b>5</b> zonas nacionales</span><span><b>28</b> centros Teocalli</span></div>
+              <div className="trust-line"><span><b>{directoryGroups.length}</b> grupos registrados</span><span><b>5</b> zonas nacionales</span><span><b>28</b> centros Teocalli</span></div>
             </div>
             <div className="hero-console" aria-label="Resumen del portal">
               <div className="console-header"><span><i /><i /><i /></span><small>PORTAL FGDLL / 2026</small></div>
@@ -248,7 +279,7 @@ export default function Home() {
           </div>
         </section>
 
-        <Directory />
+        <Directory groups={directoryGroups} />
 
         <section className="closing"><div className="shell"><span className="eyebrow light">Seguimos caminando</span><h2>La tecnología no sustituye<br />el corazón del servicio.</h2><p>Lo organiza para que cada líder pueda dedicar más tiempo a lo que verdaderamente importa: acompañar, formar y servir.</p><Link className="button button-gold" href="/portal">Abrir Portal de Líderes →</Link></div></section>
       </main>
