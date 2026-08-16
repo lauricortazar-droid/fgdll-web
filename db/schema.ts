@@ -190,3 +190,23 @@ export const monthlyExperiences = sqliteTable("monthly_experiences", {
 }, (table) => [
   index("monthly_experiences_month_idx").on(table.month, table.status, table.zone),
 ]);
+
+export const groupRegistrationRequests = sqliteTable("group_registration_requests", {
+  id: text("id").primaryKey(),
+  requesterEmail: text("requester_email").notNull(),
+  requesterName: text("requester_name").notNull().default(""),
+  requesterRole: text("requester_role").notNull(),
+  zone: text("zone").notNull(),
+  proposedJson: text("proposed_json").notNull(),
+  requesterNote: text("requester_note").notNull().default(""),
+  status: text("status").notNull().default("pending"),
+  reviewerEmail: text("reviewer_email"),
+  reviewNote: text("review_note").notNull().default(""),
+  createdGroupId: integer("created_group_id").references(() => directoryGroups.id),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  reviewedAt: text("reviewed_at"),
+}, (table) => [
+  index("group_registration_status_idx").on(table.status, table.zone, table.createdAt),
+  index("group_registration_requester_idx").on(table.requesterEmail, table.createdAt),
+]);

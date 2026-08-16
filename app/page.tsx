@@ -217,14 +217,11 @@ function Header() {
           <span /><span /><span />
         </button>
         <nav className={open ? "main-nav open" : "main-nav"} aria-label="Navegación principal">
-          <Link href="/portal" onClick={() => setOpen(false)}>Portal privado</Link>
-          <Link href="/universidad" onClick={() => setOpen(false)}>Formación privada</Link>
-          <Link href="/testimonios">Testimonios privados</Link>
-          <a href="#calendario" onClick={() => setOpen(false)}>Agenda</a>
-          <a href="#experiencias-del-mes" onClick={() => setOpen(false)}>Experiencias</a>
-          <a href="#directorio" onClick={() => setOpen(false)}>Directorio</a>
-          <Link href="/centros">Centros Teocalli</Link>
-          <Link href="/etica">Ética</Link>
+          <a href="#experiencias-del-mes" onClick={() => setOpen(false)}>Información pública</a>
+          <Link href="/portal" onClick={() => setOpen(false)}>Liderazgo</Link>
+          <Link href="/etica" onClick={() => setOpen(false)}>Ética y educación</Link>
+          <Link href="/centros" onClick={() => setOpen(false)}>Centros</Link>
+          <Link href="/administracion" onClick={() => setOpen(false)}>Administración</Link>
         </nav>
       </div>
     </header>
@@ -286,7 +283,7 @@ function Directory({ groups }: { groups: PublicGroup[] }) {
 }
 
 function Footer() {
-  return <footer className="footer"><div className="shell footer-grid"><div className="footer-brand"><Logo /><div><strong>Fraternidad Guerreros de la Luz</strong><span>Unidad · Servicio · Responsabilidad</span></div></div><div className="footer-links"><Link href="/portal">Portal</Link><Link href="/universidad">Universidad</Link><Link href="/testimonios">Testimonios</Link><Link href="/centros">Centros Teocalli</Link><Link href="/etica">Ética</Link></div><p>© 2026 FGDLL<br />Información institucional para orientar el servicio.</p></div></footer>;
+  return <footer className="footer"><div className="shell footer-grid"><div className="footer-brand"><Logo /><div><strong>Fraternidad Guerreros de la Luz A.C.</strong><span>Unidad · Servicio · Responsabilidad</span></div></div><div className="footer-links"><a href="#experiencias-del-mes">Público</a><Link href="/portal">Liderazgo</Link><Link href="/etica">Ética</Link><Link href="/centros">Centros</Link><Link href="/administracion">Administración</Link></div><p>© 2026 FGDLL<br />Ecosistema institucional.</p></div></footer>;
 }
 
 export default function Home() {
@@ -310,18 +307,18 @@ export default function Home() {
             <div className="hero-copy">
               <span className="eyebrow light">Portal institucional · FGDLL</span>
               <h1>Una red unida.<br /><em>Un servicio con rumbo.</em></h1>
-              <p>Información, formación y herramientas para fortalecer el liderazgo de quienes sirven en la Fraternidad Guerreros de la Luz.</p>
-              <div className="hero-actions"><Link className="button button-gold" href="/portal">🔒 Entrar al portal <span>→</span></Link><a className="button button-ghost" href="#directorio">Buscar mi grupo</a></div>
+              <p>Un ecosistema institucional para consultar información pública, fortalecer el liderazgo, conocer derechos, encontrar centros y administrar la red.</p>
+              <div className="hero-actions"><a className="button button-gold" href="#experiencias-del-mes">Ver información pública <span>↓</span></a><Link className="button button-ghost" href="/portal">Entrar a Liderazgo</Link></div>
               <div className="trust-line"><span><b>{directoryGroups.length}</b> grupos registrados</span><span><b>5</b> zonas nacionales</span><span><b>28</b> centros Teocalli</span></div>
             </div>
             <div className="hero-console" aria-label="Resumen del portal">
               <div className="console-header"><span><i /><i /><i /></span><small>PORTAL FGDLL / 2026</small></div>
-              <div className="console-welcome"><span>BUEN SERVICIO</span><h2>Todo lo importante,<br />en un mismo lugar.</h2></div>
+              <div className="console-welcome"><span>ECOSISTEMA FGDLL</span><h2>Cinco áreas claras.<br />Una misma misión.</h2></div>
               <div className="console-grid">
-                <Link href="/portal"><small>01 · PRIVADO</small><strong>Operación</strong><span>Protocolos y formatos →</span></Link>
-                <Link href="/universidad"><small>02 · PRIVADO</small><strong>Formación</strong><span>Diplomados y módulos →</span></Link>
-                <Link href="/testimonios"><small>03 · PRIVADO</small><strong>Testimonios</strong><span>Temas y guías →</span></Link>
-                <Link href="/etica"><small>04</small><strong>Integridad</strong><span>Orientación y reporte →</span></Link>
+                <a href="#experiencias-del-mes"><small>01 · PÚBLICO</small><strong>Información</strong><span>Agenda y directorio →</span></a>
+                <Link href="/portal"><small>02 · PRIVADO</small><strong>Liderazgo</strong><span>Avisos y materiales →</span></Link>
+                <Link href="/etica"><small>03 · EDUCATIVO</small><strong>Ética</strong><span>Derechos y estructura →</span></Link>
+                <Link href="/administracion"><small>05 · POR PERFIL</small><strong>Administración</strong><span>Datos y propuestas →</span></Link>
               </div>
               <div className="console-status"><span className="pulse" /> Información actualizada para el ciclo 2026</div>
             </div>
@@ -332,21 +329,22 @@ export default function Home() {
 
         <section className="section services-section">
           <div className="shell service-grid">
-            <div className="service-intro"><span className="eyebrow light">Empieza aquí</span><h2>Elige lo que necesitas hacer.</h2><p>La información está ordenada por propósito para que encuentres el recurso correcto sin recorrer todo el sitio.</p><Link className="button button-gold" href="/portal">Abrir Portal de Líderes →</Link></div>
+            <div className="service-intro"><span className="eyebrow light">Estructura principal</span><h2>Entra por el propósito correcto.</h2><p>Cada área tiene una función definida y muestra únicamente las herramientas que corresponden a su público.</p><Link className="button button-gold" href="/portal">Abrir área de Liderazgo →</Link></div>
             <div className="service-cards">
-              <Link href="/portal"><span>01 · 🔒</span><div><h3>Portal de Líderes</h3><p>Responsabilidades, protocolos, formatos y reglamentos.</p></div><b>↗</b></Link>
-              <Link href="/universidad"><span>02 · 🔒</span><div><h3>Universidad FGDLL</h3><p>Diplomados, módulos, instrucciones y tareas.</p></div><b>↗</b></Link>
-              <Link href="/testimonios"><span>03 · 🔒</span><div><h3>Biblioteca de Testimonios</h3><p>157 temas para detectar, admitir y corregir.</p></div><b>↗</b></Link>
-              <a href="#directorio"><span>04</span><div><h3>Directorio Nacional</h3><p>Busca grupos por zona, ciudad o responsable.</p></div><b>↓</b></a>
-              <Link href="/centros"><span>05</span><div><h3>Centros Teocalli</h3><p>Red de rehabilitación y acompañamiento.</p></div><b>↗</b></Link>
-              <Link href="/etica"><span>06</span><div><h3>Ética e Integridad</h3><p>Orientación, cuidado y reporte responsable.</p></div><b>↗</b></Link>
+              <a href="#experiencias-del-mes"><span>01 · PÚBLICO</span><div><h3>Información pública</h3><p>Experiencias, agenda general, zonas y directorio nacional.</p></div><b>↓</b></a>
+              <Link href="/portal"><span>02 · 🔒</span><div><h3>Liderazgo</h3><p>Avisos, documentos, testimonios y Universidad FGDLL.</p></div><b>↗</b></Link>
+              <Link href="/etica"><span>03</span><div><h3>Ética y educación</h3><p>Derechos, responsabilidades, organigrama y la Asociación Civil.</p></div><b>↗</b></Link>
+              <Link href="/centros"><span>04</span><div><h3>Centros y tratamiento</h3><p>Información del tratamiento residencial y directorio Teocalli.</p></div><b>↗</b></Link>
+              <Link href="/administracion"><span>05 · 🔒</span><div><h3>Administración</h3><p>Actualización de datos, propuestas y registro de nuevos grupos.</p></div><b>↗</b></Link>
             </div>
           </div>
         </section>
 
+        <MonthlyExperiences />
+
         <CalendarAgenda />
 
-        <MonthlyExperiences />
+        <Directory groups={directoryGroups} />
 
         <section className="section zones-section" id="red">
           <div className="shell">
@@ -357,8 +355,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        <Directory groups={directoryGroups} />
 
         <section className="closing"><div className="shell"><span className="eyebrow light">Seguimos caminando</span><h2>La tecnología no sustituye<br />el corazón del servicio.</h2><p>Lo organiza para que cada líder pueda dedicar más tiempo a lo que verdaderamente importa: acompañar, formar y servir.</p><Link className="button button-gold" href="/portal">Abrir Portal de Líderes →</Link></div></section>
       </main>

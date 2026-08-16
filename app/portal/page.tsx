@@ -13,12 +13,12 @@ type Announcement = {
 };
 
 const tools = [
-  { n: "01", title: "Gestión del directorio", text: "Actualiza los datos de tu grupo o revisa solicitudes según tu función.", tag: "Panel", href: "/directorio/gestion" },
+  { n: "01", title: "Noticias y avisos", text: "Comunicados importantes para preparar y coordinar el servicio.", tag: "Actualidad", href: "#avisos" },
   { n: "02", title: "Materiales para líderes", text: "Responsivas, formatos y documentos listos para consultar o imprimir.", tag: "Operación", href: "#materiales" },
-  { n: "03", title: "Universidad FGDLL", text: "Diplomados y materiales separados por generación.", tag: "Formación", href: "/universidad" },
-  { n: "04", title: "Biblioteca de Testimonios", text: "Temas con fuentes y preguntas para ordenar la experiencia.", tag: "Recursos", href: "/testimonios" },
-  { n: "05", title: "Red nacional", text: "Directorio, zonas, responsables y coordinación.", tag: "Comunidad", href: "/#directorio" },
-  { n: "06", title: "Ética e Integridad", text: "Orientación, límites y canal de reporte responsable.", tag: "Cuidado", href: "/etica" },
+  { n: "03", title: "Biblioteca de Testimonios", text: "Temas con fuentes y preguntas para ordenar la experiencia.", tag: "Recursos", href: "/testimonios" },
+  { n: "04", title: "Universidad FGDLL", text: "Diplomados, módulos, instrucciones y materiales por generación.", tag: "Formación", href: "/universidad" },
+  { n: "05", title: "Ética y educación", text: "Derechos, responsabilidades, límites y estructura institucional.", tag: "Cuidado", href: "/etica" },
+  { n: "06", title: "Administración", text: "Actualiza datos o registra un grupo según las facultades de tu perfil.", tag: "Gestión", href: "/administracion" },
 ];
 
 const initialMaterials: Material[] = [
@@ -73,10 +73,10 @@ export default function PortalPage() {
     }));
   }, [materials]);
 
-  return <><SubHeader label="Portal interno" /><main className="subpage">
-    <section className="subhero portal-subhero"><div className="shell subhero-grid"><div><span className="eyebrow light">Tablero de liderazgo</span><h1>Servir con orden.<br /><em>Actuar con claridad.</em></h1><p>Una ruta institucional para consultar lo esencial, preparar el servicio y encontrar el recurso correcto sin perderse entre mensajes.</p>{isAdmin && <Link className="button button-gold" href="/administracion/contenidos">Administrar contenidos →</Link>}</div><div className="quick-panel"><span>ACCESO RÁPIDO</span><Link href="/directorio/gestion"><b>Gestionar directorio</b><i>→</i></Link><a href="#materiales"><b>Materiales para líderes</b><i>↓</i></a><Link href="/universidad"><b>Universidad FGDLL</b><i>→</i></Link><Link href="/#calendario"><b>Calendario 2026</b><i>→</i></Link><Link href="/etica"><b>Ética e Integridad</b><i>→</i></Link></div></div></section>
+  return <><SubHeader label="Liderazgo" /><main className="subpage">
+    <section className="subhero portal-subhero"><div className="shell subhero-grid"><div><span className="eyebrow light">Área privada de liderazgo</span><h1>Servir con orden.<br /><em>Actuar con claridad.</em></h1><p>Avisos, documentos, testimonios y formación reunidos en un solo espacio para quienes tienen una responsabilidad de servicio.</p>{isAdmin && <Link className="button button-gold" href="/administracion/contenidos">Administrar contenidos →</Link>}</div><div className="quick-panel"><span>ACCESO RÁPIDO</span><a href="#avisos"><b>Noticias y avisos</b><i>↓</i></a><a href="#materiales"><b>Documentos descargables</b><i>↓</i></a><Link href="/testimonios"><b>Biblioteca de Testimonios</b><i>→</i></Link><Link href="/universidad"><b>Universidad FGDLL</b><i>→</i></Link><Link href="/administracion"><b>Administración según mi perfil</b><i>→</i></Link></div></div></section>
 
-    {announcements.length > 0 && <section className="portal-announcements"><div className="shell"><div className="portal-announcement-head"><div><span className="eyebrow">Noticias y avisos</span><h2>Información que acompaña tu servicio.</h2></div><p>Los comunicados urgentes e importantes también aparecen en la campana superior hasta que los marques como leídos.</p></div><div className="portal-announcement-grid">{announcements.slice(0, 3).map((item) => <article key={item.id} className={`priority-${item.priority}`}><div><span>{item.priority === "urgent" ? "URGENTE" : item.priority === "important" ? "IMPORTANTE" : "AVISO"}</span><small>{friendlyDate(item.publishedAt)}</small></div><h3>{item.title}</h3><p>{item.summary || item.body}</p>{(item.summary || item.body.length > 180) && <details><summary>Leer aviso completo</summary><p>{item.body}</p></details>}</article>)}</div></div></section>}
+    {announcements.length > 0 && <section className="portal-announcements" id="avisos"><div className="shell"><div className="portal-announcement-head"><div><span className="eyebrow">Noticias y avisos</span><h2>Información que acompaña tu servicio.</h2></div><p>Los comunicados urgentes e importantes también aparecen en la campana superior hasta que los marques como leídos.</p></div><div className="portal-announcement-grid">{announcements.slice(0, 3).map((item) => <article key={item.id} className={`priority-${item.priority}`}><div><span>{item.priority === "urgent" ? "URGENTE" : item.priority === "important" ? "IMPORTANTE" : "AVISO"}</span><small>{friendlyDate(item.publishedAt)}</small></div><h3>{item.title}</h3><p>{item.summary || item.body}</p>{(item.summary || item.body.length > 180) && <details><summary>Leer aviso completo</summary><p>{item.body}</p></details>}</article>)}</div></div></section>}
 
     <section className="section portal-tools"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow">Ruta de servicio</span><h2>Lo que cada líder necesita.</h2></div><p>El portal está organizado por intención de uso: saber qué hacer, encontrar cómo hacerlo y dar seguimiento con responsabilidad.</p></div><div className="tool-catalog">{tools.map((tool) => <article key={tool.n}><span>{tool.n}</span><small>{tool.tag}</small><h3>{tool.title}</h3><p>{tool.text}</p><Link href={tool.href}>Abrir sección →</Link></article>)}</div></div></section>
 
