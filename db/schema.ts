@@ -172,3 +172,21 @@ export const announcementReads = sqliteTable("announcement_reads", {
 }, (table) => [
   uniqueIndex("announcement_reads_user_idx").on(table.announcementId, table.userEmail),
 ]);
+
+export const monthlyExperiences = sqliteTable("monthly_experiences", {
+  id: text("id").primaryKey(),
+  month: text("month").notNull(),
+  zone: text("zone").notNull(),
+  title: text("title").notNull(),
+  startDate: text("start_date").notNull(),
+  endDate: text("end_date").notNull(),
+  location: text("location").notNull().default(""),
+  writingsJson: text("writings_json").notNull().default("[]"),
+  notes: text("notes").notNull().default(""),
+  status: text("status").notNull().default("published"),
+  createdBy: text("created_by").notNull().default("system"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+}, (table) => [
+  index("monthly_experiences_month_idx").on(table.month, table.status, table.zone),
+]);

@@ -22,6 +22,13 @@
       "when": 1786746979363,
       "tag": "0002_graceful_omega_flight",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1786855937201,
+      "tag": "0003_needy_stature",
+      "breakpoints": true
     }
   ]
 }

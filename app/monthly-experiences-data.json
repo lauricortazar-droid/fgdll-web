@@ -1,0 +1,26 @@
+[
+  {
+    "id": "EXP-2026-08-JAGUAR",
+    "month": "2026-08",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-08-14",
+    "endDate": "2026-08-16",
+    "location": "La Amada Hacienda, San José Tzal, Yucatán",
+    "writings": ["Amor", "Perdón", "Llegamos a Creer"],
+    "notes": "Programa sujeto a indicaciones de coordinación.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-08-TIBURON",
+    "month": "2026-08",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-08-28",
+    "endDate": "2026-08-30",
+    "location": "La Amada Hacienda PlayaCar, Playa del Carmen, Quintana Roo",
+    "writings": ["Amor", "Perdón", "Llegamos a Creer"],
+    "notes": "Programa sujeto a indicaciones de coordinación.",
+    "status": "published"
+  }
+]

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import calendarData from "./calendar-data.json";
 import data from "./directory-data.json";
+import monthlyExperienceData from "./monthly-experiences-data.json";
 
 const zoneMeta: Record<string, { icon: string; line: string }> = {
   Jaguar: { icon: "J", line: "Fuerza y servicio" },
@@ -45,6 +46,22 @@ type CalendarEvent = {
 };
 
 const agendaEvents = calendarData as CalendarEvent[];
+
+type MonthlyExperience = {
+  id: string;
+  month: string;
+  zone: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  writings: string[];
+  notes: string;
+  status: string;
+};
+
+const initialMonthlyExperiences = monthlyExperienceData as MonthlyExperience[];
+const zoneNames = Object.keys(zoneMeta);
 
 function dateFromYmd(value: string) {
   const [year, month, day] = value.slice(0, 10).split("-").map(Number);
@@ -124,6 +141,65 @@ function CalendarAgenda() {
   );
 }
 
+function experienceDate(item: MonthlyExperience) {
+  const startDay = Number(item.startDate.slice(8, 10));
+  const endDay = Number(item.endDate.slice(8, 10));
+  if (item.startDate === item.endDate) return `${startDay} de ${shortMonth(item.startDate)}`;
+  if (item.startDate.slice(0, 7) === item.endDate.slice(0, 7)) return `${startDay}–${endDay} de ${shortMonth(item.startDate)}`;
+  return `${startDay} de ${shortMonth(item.startDate)} – ${endDay} de ${shortMonth(item.endDate)}`;
+}
+
+function MonthlyExperiences() {
+  const [items, setItems] = useState(initialMonthlyExperiences);
+  const months = useMemo(() => Array.from(new Set(items.map((item) => item.month))).sort(), [items]);
+  const [activeMonth, setActiveMonth] = useState(months[0] ?? new Date().toISOString().slice(0, 7));
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/monthly-experiences", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((result) => {
+        if (!active || !Array.isArray(result.experiences) || !result.experiences.length) return;
+        setItems(result.experiences);
+        const nextMonths = Array.from(new Set((result.experiences as MonthlyExperience[]).map((item) => item.month))).sort();
+        setActiveMonth((current) => nextMonths.includes(current) ? current : nextMonths[0]);
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, []);
+
+  const monthItems = items.filter((item) => item.month === activeMonth);
+  return (
+    <section className="section monthly-experiences" id="experiencias-del-mes">
+      <div className="shell">
+        <div className="section-heading split-heading monthly-experience-heading">
+          <div><span className="eyebrow light">Experiencias del mes</span><h2>Cada zona, su fecha y sus escrituras.</h2></div>
+          <p>Consulta la experiencia programada para cada zona y las salas de escritura disponibles. Los cambios publicados por administración aparecen aquí automáticamente.</p>
+        </div>
+        <div className="experience-month-tabs" role="tablist" aria-label="Meses de experiencias">
+          {months.map((month) => <button key={month} type="button" role="tab" aria-selected={activeMonth === month} className={activeMonth === month ? "active" : ""} onClick={() => setActiveMonth(month)}>{monthLabel(month)}</button>)}
+        </div>
+        <div className="experience-zone-grid" role="tabpanel">
+          {zoneNames.map((zone, zoneIndex) => {
+            const zoneItems = monthItems.filter((item) => item.zone === zone);
+            return <article className={`experience-zone-card experience-zone-${zoneIndex + 1}`} key={zone}>
+              <header><span>{zoneMeta[zone].icon}</span><div><small>ZONA</small><h3>{zone}</h3></div></header>
+              {zoneItems.length ? zoneItems.map((item) => <div className="experience-entry" key={item.id}>
+                <div className="experience-date"><span>FECHA</span><strong>{experienceDate(item)}</strong></div>
+                <h4>{item.title}</h4>
+                {item.location && <p className="experience-location"><span aria-hidden="true">⌖</span>{item.location}</p>}
+                <div className="writing-block"><span>ESCRITURAS DISPONIBLES</span><div>{item.writings.length ? item.writings.map((writing) => <b key={writing}>{writing}</b>) : <em>Por confirmar</em>}</div></div>
+                {item.notes && <p className="experience-note">{item.notes}</p>}
+              </div>) : <div className="experience-empty"><span>—</span><strong>Sin experiencia publicada</strong><p>Administración actualizará aquí la fecha y las escrituras cuando queden confirmadas.</p></div>}
+            </article>;
+          })}
+        </div>
+        <div className="experience-legend"><span><i /> Información publicada por administración</span><a href="#calendario">Ver también la agenda general ↑</a></div>
+      </div>
+    </section>
+  );
+}
+
 function Logo() {
   return <span className="brand-shield" aria-hidden="true"><img src="/logo-gdll.png" alt="" /></span>;
 }
@@ -145,6 +221,7 @@ function Header() {
           <Link href="/universidad" onClick={() => setOpen(false)}>Formación privada</Link>
           <Link href="/testimonios">Testimonios privados</Link>
           <a href="#calendario" onClick={() => setOpen(false)}>Agenda</a>
+          <a href="#experiencias-del-mes" onClick={() => setOpen(false)}>Experiencias</a>
           <a href="#directorio" onClick={() => setOpen(false)}>Directorio</a>
           <Link href="/centros">Centros Teocalli</Link>
           <Link href="/etica">Ética</Link>
@@ -268,6 +345,8 @@ export default function Home() {
         </section>
 
         <CalendarAgenda />
+
+        <MonthlyExperiences />
 
         <section className="section zones-section" id="red">
           <div className="shell">
