@@ -23,8 +23,8 @@ const initialMaterials = [
     category: "protocolos",
     description: "Guía para abrir, conducir y cerrar la sesión. Incluye bienvenida, enunciado, tribuna, séptima tradición, despedida y anexos de apoyo.",
     versionLabel: "PDF · 3 páginas · A4",
-    staticUrl: "/materiales/protocolo-sesion-diaria.pdf",
-    previewUrl: "/materiales/protocolo-sesion-diaria.png",
+    staticUrl: "/api/private-materials?id=protocolo-sesion-diaria",
+    previewUrl: "/api/private-materials?id=protocolo-sesion-diaria-preview",
     fileName: "protocolo-sesion-diaria.pdf",
     fileType: "application/pdf",
     sortOrder: 10,
@@ -35,8 +35,8 @@ const initialMaterials = [
     category: "protocolos",
     description: "Orden operativo para sesiones de aniversario: duración, participantes, tiempos de tribuna, séptima tradición, reconocimientos y cierre.",
     versionLabel: "PDF · 3 páginas · A4",
-    staticUrl: "/materiales/protocolo-aniversarios.pdf",
-    previewUrl: "/materiales/protocolo-aniversarios.png",
+    staticUrl: "/api/private-materials?id=protocolo-aniversarios",
+    previewUrl: "/api/private-materials?id=protocolo-aniversarios-preview",
     fileName: "protocolo-aniversarios.pdf",
     fileType: "application/pdf",
     sortOrder: 20,
@@ -47,8 +47,8 @@ const initialMaterials = [
     category: "responsivas",
     description: "Versión completa de consentimiento informado para la Experiencia de Hacienda. Incluye datos de salud, confidencialidad, derechos, riesgos y firmas.",
     versionLabel: "PDF · 2 páginas · Carta",
-    staticUrl: "/materiales/hoja-responsiva-fgdll-2026-completa.pdf",
-    previewUrl: "/materiales/responsiva-completa-2026.png",
+    staticUrl: "/api/private-materials?id=responsiva-completa-2026",
+    previewUrl: "/api/private-materials?id=responsiva-completa-2026-preview",
     fileName: "hoja-responsiva-fgdll-2026-completa.pdf",
     fileType: "application/pdf",
     sortOrder: 30,
@@ -59,8 +59,8 @@ const initialMaterials = [
     category: "responsivas",
     description: "Formato resumido para impresión rápida. Conserva las cláusulas esenciales, datos del participante, consentimiento y firmas.",
     versionLabel: "PDF · 2 páginas · Carta",
-    staticUrl: "/materiales/hoja-responsiva-fgdll-2026-compacta.pdf",
-    previewUrl: "/materiales/responsiva-compacta-2026.png",
+    staticUrl: "/api/private-materials?id=responsiva-compacta-2026",
+    previewUrl: "/api/private-materials?id=responsiva-compacta-2026-preview",
     fileName: "hoja-responsiva-fgdll-2026-compacta.pdf",
     fileType: "application/pdf",
     sortOrder: 40,
@@ -122,7 +122,7 @@ async function runInChunks(statements: D1StatementLike[], size = 30) {
 
 export async function ensureContentSeeded() {
   const settings = await db().prepare(
-    "SELECT key FROM content_settings WHERE key IN ('testimony_catalog_v1', 'leader_materials_v1')"
+    "SELECT key FROM content_settings WHERE key IN ('testimony_catalog_v1', 'leader_materials_v1', 'private_material_routes_v2')"
   ).all<{ key: string }>();
   const keys = new Set((settings.results ?? []).map((row) => row.key));
 
@@ -162,6 +162,17 @@ export async function ensureContentSeeded() {
     await runInChunks(statements);
     await db().prepare(
       "INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('leader_materials_v1', 'seeded', CURRENT_TIMESTAMP)"
+    ).run();
+  }
+
+  if (!keys.has("private_material_routes_v2")) {
+    const protectedRoutes = new Map(initialMaterials.map((material) => [material.id, material]));
+    const statements = Array.from(protectedRoutes.entries()).map(([id, material]) => db().prepare(
+      "UPDATE leader_materials SET static_url = ?, preview_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
+    ).bind(material.staticUrl, material.previewUrl, id));
+    await runInChunks(statements);
+    await db().prepare(
+      "INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('private_material_routes_v2', 'seeded', CURRENT_TIMESTAMP)"
     ).run();
   }
 }

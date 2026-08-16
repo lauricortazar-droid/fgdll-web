@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     if (kindValue !== "testimony" && kindValue !== "material") throw new PortalError("Tipo de archivo no válido.");
     if (!id) throw new PortalError("No se indicó el archivo solicitado.");
     const file = await getContentFile(profile, kindValue, id);
-    if ("staticUrl" in file) return Response.redirect(new URL(String(file.staticUrl), request.url), 302);
+    if ("staticUrl" in file) return Response.redirect(new URL(String(file.staticUrl), request.url), 307);
     const headers = new Headers({
       "content-type": file.contentType,
       "content-length": String(file.size),

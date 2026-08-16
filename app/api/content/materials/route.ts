@@ -1,10 +1,9 @@
-import { getPortalProfile, PortalError } from "../../../lib/directory-store";
 import {
   deleteLeaderMaterial,
   listLeaderMaterials,
   saveLeaderMaterial,
 } from "../../../lib/content-store";
-import { apiError, readJson, requireApiProfile, requireApiUser, requireSameOrigin } from "../../../lib/portal-api";
+import { apiError, readJson, requireApiProfile, requireSameOrigin } from "../../../lib/portal-api";
 
 export const dynamic = "force-dynamic";
 
@@ -40,11 +39,9 @@ function formInput(form: FormData) {
 
 export async function GET(request: Request) {
   try {
-    const user = await requireApiUser();
-    const profile = await getPortalProfile(user.email, user.displayName);
+    const { profile } = await requireApiProfile();
     const adminView = new URL(request.url).searchParams.get("admin") === "1";
-    if (adminView && !profile) throw new PortalError("Tu perfil no tiene permisos administrativos.", 403);
-    const rows = await listLeaderMaterials(profile ?? undefined, adminView);
+    const rows = await listLeaderMaterials(profile, adminView);
     return Response.json({ materials: rows.map(serialize) }, { headers: { "cache-control": "private, no-store" } });
   } catch (error) {
     return apiError(error);

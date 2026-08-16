@@ -218,10 +218,10 @@ function Header() {
         </button>
         <nav className={open ? "main-nav open" : "main-nav"} aria-label="Navegación principal">
           <a href="#experiencias-del-mes" onClick={() => setOpen(false)}>Información pública</a>
-          <Link href="/portal" onClick={() => setOpen(false)}>Liderazgo</Link>
-          <Link href="/etica" onClick={() => setOpen(false)}>Ética y educación</Link>
+          <Link href="/portal" onClick={() => setOpen(false)}>🔒 Liderazgo</Link>
+          <Link href="/etica" onClick={() => setOpen(false)}>🔒 Ética y educación</Link>
           <Link href="/centros" onClick={() => setOpen(false)}>Centros</Link>
-          <Link href="/administracion" onClick={() => setOpen(false)}>Administración</Link>
+          <Link href="/administracion" onClick={() => setOpen(false)}>🔒 Administración</Link>
         </nav>
       </div>
     </header>
@@ -317,7 +317,7 @@ export default function Home() {
               <div className="console-grid">
                 <a href="#experiencias-del-mes"><small>01 · PÚBLICO</small><strong>Información</strong><span>Agenda y directorio →</span></a>
                 <Link href="/portal"><small>02 · PRIVADO</small><strong>Liderazgo</strong><span>Avisos y materiales →</span></Link>
-                <Link href="/etica"><small>03 · EDUCATIVO</small><strong>Ética</strong><span>Derechos y estructura →</span></Link>
+                <Link href="/etica"><small>03 · PRIVADO</small><strong>Ética</strong><span>Derechos y estructura →</span></Link>
                 <Link href="/administracion"><small>05 · POR PERFIL</small><strong>Administración</strong><span>Datos y propuestas →</span></Link>
               </div>
               <div className="console-status"><span className="pulse" /> Información actualizada para el ciclo 2026</div>
@@ -333,7 +333,7 @@ export default function Home() {
             <div className="service-cards">
               <a href="#experiencias-del-mes"><span>01 · PÚBLICO</span><div><h3>Información pública</h3><p>Experiencias, agenda general, zonas y directorio nacional.</p></div><b>↓</b></a>
               <Link href="/portal"><span>02 · 🔒</span><div><h3>Liderazgo</h3><p>Avisos, documentos, testimonios y Universidad FGDLL.</p></div><b>↗</b></Link>
-              <Link href="/etica"><span>03</span><div><h3>Ética y educación</h3><p>Derechos, responsabilidades, organigrama y la Asociación Civil.</p></div><b>↗</b></Link>
+              <Link href="/etica"><span>03 · 🔒</span><div><h3>Ética y educación</h3><p>Derechos, responsabilidades, organigrama y la Asociación Civil.</p></div><b>↗</b></Link>
               <Link href="/centros"><span>04</span><div><h3>Centros y tratamiento</h3><p>Información del tratamiento residencial y directorio Teocalli.</p></div><b>↗</b></Link>
               <Link href="/administracion"><span>05 · 🔒</span><div><h3>Administración</h3><p>Actualización de datos, propuestas y registro de nuevos grupos.</p></div><b>↗</b></Link>
             </div>
