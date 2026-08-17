@@ -1,13 +1,5 @@
 [
   {
-    "id": "7a6asvd1fm9eem35722h9qg1rf",
-    "start": "2026-08-14T00:00:00",
-    "end": "2026-08-17T00:00:00",
-    "title": "Jaguar Experiencia",
-    "location": "La Amada Hacienda, C. 22, San José Tzal, 97317 Molas, Yuc., México",
-    "url": "https://www.google.com/calendar/event?eid=N2E2YXN2ZDFmbTllZW0zNTcyMmg5cWcxcmYgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
-  },
-  {
     "id": "cgq30cpo6pj3ab9l68omab9kc5h3cbb2cgpj2b9j6dj32c1g74sjgoph68",
     "start": "2026-08-17T00:00:00",
     "end": "2026-08-22T00:00:00",
@@ -80,6 +72,14 @@
     "url": "https://www.google.com/calendar/event?eid=NmdxamljcjU2MG8zMGI5bDcwbzNpYjlrNzRxbTZiYjJjbGlqZ2JiNDY4b202ZDFnY2dybThwMWtjZyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
   },
   {
+    "id": "3kj3qu7chvis3jfp480vjhpbe4",
+    "start": "2026-08-24T21:00:00-06:00",
+    "end": "2026-08-24T23:00:00-06:00",
+    "title": "Compartimiento Ixil",
+    "location": "",
+    "url": "https://www.google.com/calendar/event?eid=M2tqM3F1N2NodmlzM2pmcDQ4MHZqaHBiZTQgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
+  },
+  {
     "id": "p77svt7a175imqgh8vadjghkds",
     "start": "2026-08-26T21:00:00-06:00",
     "end": "2026-08-26T23:00:00-06:00",
@@ -110,6 +110,14 @@
     "title": "RENACER FUER.ESP. _ Aniversario Semana Externa",
     "location": "",
     "url": "https://www.google.com/calendar/event?eid=NjBwNjhwajJjbGltYWJiNWM0b2phYjlrY2dvM2liYjI2aGk2Y2JiMWNoaTY0bzlsY3BpbTRwaG9jYyBnZGxsLmFnZW5kYUBt&ctz=America/Merida"
+  },
+  {
+    "id": "42avodbn2j5g6uckhqj8060bjk",
+    "start": "2026-08-31T00:00:00-06:00",
+    "end": "2026-09-05T00:00:00-06:00",
+    "title": "IXIL_ Aniversario Semana Externa",
+    "location": "",
+    "url": "https://www.google.com/calendar/event?eid=NDJhdm9kYm4yajVnNnVja2hxajgwNjBiamsgZ2RsbC5hZ2VuZGFAbQ&ctz=America/Merida"
   },
   {
     "id": "chhj0p9g61gj8bb26sqjeb9k74q3eb9p74ojgbb271hmad9icgr6aopg68",
