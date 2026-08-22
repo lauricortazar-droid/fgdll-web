@@ -135,7 +135,7 @@ function CalendarAgenda() {
             ))}
           </div>
         </div>
-        <p className="calendar-source">Fuente única: AGENDA FGDLL · Sincronizado el 21 de agosto de 2026.</p>
+        <p className="calendar-source">Fuente única: AGENDA FGDLL · Sincronizado el 22 de agosto de 2026.</p>
       </div>
     </section>
   );
