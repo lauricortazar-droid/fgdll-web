@@ -40,6 +40,7 @@ export type DirectoryGroup = {
   address: string;
   mapsUrl: string;
   schedules: string;
+  sessionTypes: string;
   status: string;
   version: number;
   verifiedAt: string | null;
@@ -49,7 +50,7 @@ export type DirectoryGroup = {
 
 export const EDITABLE_GROUP_FIELDS = [
   "zone", "name", "city", "leaderName", "subleaderName", "whatsapp", "email",
-  "facebook", "address", "mapsUrl", "schedules", "status",
+  "facebook", "address", "mapsUrl", "schedules", "sessionTypes", "status",
 ] as const;
 export type EditableGroupField = (typeof EDITABLE_GROUP_FIELDS)[number];
 
@@ -109,12 +110,12 @@ export async function ensureDirectorySeeded() {
 
   const statements = directoryData.grupos.map((group) => database.prepare(
     `INSERT OR IGNORE INTO directory_groups
-      (zone, name, city, leader_name, whatsapp, facebook, address, updated_by)
-     VALUES (?, ?, ?, ?, ?, ?, ?, 'initial-import')`
+      (zone, name, city, leader_name, whatsapp, facebook, address, session_types, updated_by)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'initial-import')`
   ).bind(
     group.zona.trim(), group.nombre.trim(), group.ciudad?.trim() ?? "",
     group.lider?.trim() ?? "", group.whatsapp?.trim() ?? "",
-    group.facebook?.trim() ?? "", group.direccion?.trim() ?? "",
+    group.facebook?.trim() ?? "", group.direccion?.trim() ?? "", group.tiposSesiones?.trim() ?? "",
   ));
   for (let index = 0; index < statements.length; index += 40) {
     await database.batch(statements.slice(index, index + 40));
@@ -131,7 +132,8 @@ function mapGroup(row: Record<string, unknown>): DirectoryGroup {
     subleaderName: String(row.subleader_name ?? ""), whatsapp: String(row.whatsapp ?? ""),
     email: String(row.email ?? ""), facebook: String(row.facebook ?? ""),
     address: String(row.address ?? ""), mapsUrl: String(row.maps_url ?? ""),
-    schedules: String(row.schedules ?? ""), status: String(row.status ?? "active"),
+    schedules: String(row.schedules ?? ""), sessionTypes: String(row.session_types ?? ""),
+    status: String(row.status ?? "active"),
     version: Number(row.version ?? 1), verifiedAt: row.verified_at ? String(row.verified_at) : null,
     updatedAt: String(row.updated_at ?? ""), updatedBy: String(row.updated_by ?? "system"),
   };
@@ -575,7 +577,7 @@ async function applyGroupUpdate(group: DirectoryGroup, proposal: Partial<Record<
   const columnMap: Record<EditableGroupField, string> = {
     zone: "zone", name: "name", city: "city", leaderName: "leader_name", subleaderName: "subleader_name",
     whatsapp: "whatsapp", email: "email", facebook: "facebook", address: "address", mapsUrl: "maps_url",
-    schedules: "schedules", status: "status",
+    schedules: "schedules", sessionTypes: "session_types", status: "status",
   };
   const assignments = changed.map((field) => `${columnMap[field]} = ?`);
   const values = changed.map((field) => proposal[field] ?? "");

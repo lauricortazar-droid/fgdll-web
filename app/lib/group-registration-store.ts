@@ -110,9 +110,9 @@ export async function reviewGroupRegistration(profile: PortalProfile, id: string
     .bind(proposal.zone, proposal.name, proposal.city).first<{ id: number }>();
   if (duplicate) throw new PortalError("El grupo ya existe en el directorio. Revisa antes de aprobar.", 409);
   await db().prepare(`INSERT INTO directory_groups
-    (zone, name, city, leader_name, subleader_name, whatsapp, email, facebook, address, maps_url, schedules, status, verified_at, updated_by)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', CURRENT_TIMESTAMP, ?)`
-  ).bind(proposal.zone, proposal.name, proposal.city, proposal.leaderName, proposal.subleaderName ?? "", proposal.whatsapp, proposal.email ?? "", proposal.facebook ?? "", proposal.address, proposal.mapsUrl ?? "", proposal.schedules, profile.email).run();
+    (zone, name, city, leader_name, subleader_name, whatsapp, email, facebook, address, maps_url, schedules, session_types, status, verified_at, updated_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', CURRENT_TIMESTAMP, ?)`
+  ).bind(proposal.zone, proposal.name, proposal.city, proposal.leaderName, proposal.subleaderName ?? "", proposal.whatsapp, proposal.email ?? "", proposal.facebook ?? "", proposal.address, proposal.mapsUrl ?? "", proposal.schedules, proposal.sessionTypes ?? "", profile.email).run();
   const group = await db().prepare("SELECT id FROM directory_groups WHERE zone = ? AND name = ? COLLATE NOCASE AND city = ? COLLATE NOCASE LIMIT 1")
     .bind(proposal.zone, proposal.name, proposal.city).first<{ id: number }>();
   if (!group) throw new PortalError("El grupo fue validado, pero no se pudo recuperar su registro.", 500);

@@ -23,6 +23,9 @@ type PublicGroup = {
   whatsapp: string;
   facebook: string;
   address: string;
+  mapsUrl: string;
+  schedules: string;
+  sessionTypes: string;
 };
 
 const initialGroups: PublicGroup[] = data.grupos.map((group, index) => ({
@@ -34,6 +37,9 @@ const initialGroups: PublicGroup[] = data.grupos.map((group, index) => ({
   whatsapp: group.whatsapp,
   facebook: group.facebook ?? "",
   address: group.direccion,
+  mapsUrl: group.googleMaps ?? "",
+  schedules: group.horarios ?? "",
+  sessionTypes: group.tiposSesiones ?? "",
 }));
 
 type CalendarEvent = {
@@ -267,10 +273,11 @@ function Directory({ groups }: { groups: PublicGroup[] }) {
               <div className="group-top"><span className="zone-dot">{zoneMeta[g.zone]?.icon ?? g.zone.charAt(0)}</span><span>{g.zone}</span></div>
               <h3>{g.name}</h3>
               <p className="location">{g.city}</p>
-              <dl><div><dt>Responsable</dt><dd>{g.leaderName}</dd></div>{g.address && <div><dt>Dirección</dt><dd>{g.address}</dd></div>}</dl>
+              <dl><div><dt>Contacto</dt><dd>{g.leaderName}</dd></div>{g.address && <div><dt>Dirección</dt><dd>{g.address}</dd></div>}{g.schedules && <div><dt>Días y horarios</dt><dd>{g.schedules}</dd></div>}{g.sessionTypes && <div><dt>Sesiones</dt><dd>{g.sessionTypes}</dd></div>}</dl>
               <div className="card-actions">
                 {g.whatsapp && <a href={`https://wa.me/${g.whatsapp.replace(/\D/g, "").length === 10 ? "52" : ""}${g.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">WhatsApp</a>}
                 {g.facebook && <a href={g.facebook} target="_blank" rel="noreferrer">Facebook</a>}
+                {g.mapsUrl && <a href={g.mapsUrl} target="_blank" rel="noreferrer">Mapa</a>}
               </div>
             </article>
           ))}

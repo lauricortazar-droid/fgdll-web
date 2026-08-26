@@ -14,6 +14,7 @@ export const directoryGroups = sqliteTable("directory_groups", {
   address: text("address").notNull().default(""),
   mapsUrl: text("maps_url").notNull().default(""),
   schedules: text("schedules").notNull().default(""),
+  sessionTypes: text("session_types").notNull().default(""),
   status: text("status").notNull().default("active"),
   version: integer("version").notNull().default(1),
   verifiedAt: text("verified_at"),
