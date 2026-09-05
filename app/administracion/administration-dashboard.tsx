@@ -41,6 +41,18 @@ export function AdministrationDashboard() {
       {isAdmin && <Link href="/administracion/contenidos"><span>05</span><small>CONTENIDOS</small><h3>Noticias, materiales y testimonios</h3><p>Publica, edita, archiva o elimina contenido institucional.</p><b>Administrar contenido →</b></Link>}
       {isAdmin && <Link href="/administracion/experiencias"><span>06</span><small>PROGRAMACIÓN</small><h3>Experiencias del mes</h3><p>Actualiza fechas, sedes y escrituras disponibles por zona.</p><b>Gestionar experiencias →</b></Link>}
     </div></div></section>
+    {isAdmin && <section className="section operations-center"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow light">FGDLL — Sistema Institucional</span><h2>El centro de operaciones, organizado por responsabilidad.</h2></div><p>Esta vista reúne la estructura que después puede mantenerse desde ChatGPT Work sin mezclarla con la experiencia pública.</p></div><div className="operations-grid">
+      <article><span>01</span><h3>Dirección y Consejo</h3><p>Gobernanza, decisiones, organigrama y políticas.</p></article>
+      <Link href="/directorio/gestion"><span>02</span><h3>Directorio Nacional</h3><p>Grupos, zonas, verificaciones y cambios.</p></Link>
+      <Link href="/portal"><span>03</span><h3>Liderazgo</h3><p>Manuales, avisos, Universidad y recursos.</p></Link>
+      <Link href="/#agenda"><span>04</span><h3>Agenda Nacional</h3><p>Experiencias, aniversarios y actividades.</p></Link>
+      <Link href="/centros"><span>05</span><h3>Centros</h3><p>Directorio y atención residencial.</p></Link>
+      <Link href="/etica"><span>06</span><h3>Ética y Educación</h3><p>Derechos, protocolos y formación ética.</p></Link>
+      <Link href="/administracion/contenidos"><span>07</span><h3>Comunicación</h3><p>Comunicados, campañas y materiales.</p></Link>
+      <Link href="/administracion"><span>08</span><h3>Administración</h3><p>Altas, bajas, correcciones y seguimiento.</p></Link>
+      <Link href="/"><span>09</span><h3>Portal FGDLL</h3><p>Contenido público y publicación institucional.</p></Link>
+      <article><span>10</span><h3>Archivo Institucional</h3><p>Versiones anteriores e historia documental.</p></article>
+    </div></div></section>}
     <section className="administration-rules"><div className="shell"><div><span>CAMBIO DIRECTO</span><h3>Datos operativos</h3><p>Contactos, dirección, mapa, horarios y redes pueden actualizarse según el alcance del perfil.</p></div><div><span>REQUIERE APROBACIÓN</span><h3>Datos sensibles</h3><p>Nombre del grupo, zona, líder y estado institucional conservan revisión antes de publicarse.</p></div><div><span>SIEMPRE REGISTRADO</span><h3>Auditoría</h3><p>Cada alta, modificación y resolución deja un folio para consultar el historial.</p></div></div></section>
   </main><SubFooter /></>;
 }

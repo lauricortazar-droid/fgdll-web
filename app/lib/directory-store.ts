@@ -671,6 +671,8 @@ export async function dashboardStats(profile: PortalProfile) {
   const access = profile.role === "admin" || profile.role === "council" ? await listAccessRequests(profile) : [];
   return {
     groups: groups.length,
+    verified: groups.filter((group) => Boolean(group.verifiedAt)).length,
+    unverified: groups.filter((group) => !group.verifiedAt).length,
     pendingChanges: changes.filter((item: Record<string, unknown>) => item.status === "pending").length,
     pendingAccess: access.filter((item: Record<string, unknown>) =>
       ["pending", "in_review", "changes_requested"].includes(String(item.status)),

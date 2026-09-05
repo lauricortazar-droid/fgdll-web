@@ -13,12 +13,16 @@ type Announcement = {
 };
 
 const tools = [
-  { n: "01", title: "Noticias y avisos", text: "Comunicados importantes para preparar y coordinar el servicio.", tag: "Actualidad", href: "#avisos" },
-  { n: "02", title: "Materiales para líderes", text: "Responsivas, formatos y documentos listos para consultar o imprimir.", tag: "Operación", href: "#materiales" },
-  { n: "03", title: "Biblioteca de Testimonios", text: "Temas con fuentes y preguntas para ordenar la experiencia.", tag: "Recursos", href: "/testimonios" },
-  { n: "04", title: "Universidad FGDLL", text: "Diplomados, módulos, instrucciones y materiales por generación.", tag: "Formación", href: "/universidad" },
-  { n: "05", title: "Ética y educación", text: "Derechos, responsabilidades, límites y estructura institucional.", tag: "Cuidado", href: "/etica" },
-  { n: "06", title: "Administración", text: "Actualiza datos o registra un grupo según las facultades de tu perfil.", tag: "Gestión", href: "/administracion" },
+  { n: "01", title: "Avisos", text: "Comunicados importantes para preparar y coordinar el servicio.", tag: "Actualidad", href: "#avisos" },
+  { n: "02", title: "Mi Grupo", text: "Consulta la ficha, verificación y solicitudes de cambio de tu grupo.", tag: "Directorio", href: "/directorio/gestion" },
+  { n: "03", title: "Agenda", text: "Actividades nacionales y experiencias publicadas desde una fuente única.", tag: "Calendario", href: "/#agenda" },
+  { n: "04", title: "Documentos y manuales", text: "Versiones vigentes de responsivas, protocolos y materiales.", tag: "Operación", href: "#materiales" },
+  { n: "05", title: "Universidad FGDLL", text: "Diplomados, módulos, instrucciones y materiales por generación.", tag: "Formación", href: "/universidad" },
+  { n: "06", title: "Experiencias", text: "Fechas, sedes y escrituras disponibles en cada zona.", tag: "Servicio", href: "/#experiencias" },
+  { n: "07", title: "Biblioteca de Testimonios", text: "Temas con fuentes y preguntas para ordenar la experiencia.", tag: "Recursos", href: "/testimonios" },
+  { n: "08", title: "Ética", text: "Derechos, responsabilidades, límites y estructura institucional.", tag: "Cuidado", href: "/etica" },
+  { n: "09", title: "Solicitudes", text: "Altas, correcciones y seguimiento según las facultades del perfil.", tag: "Gestión", href: "/administracion" },
+  { n: "10", title: "Formación y servicio", text: "Recursos para fortalecer liderazgo, apadrinamiento y comunidad.", tag: "Crecimiento", href: "/universidad" },
 ];
 
 const initialMaterials: Material[] = [
@@ -74,7 +78,7 @@ export default function PortalPage() {
   }, [materials]);
 
   return <><SubHeader label="Liderazgo" /><main className="subpage">
-    <section className="subhero portal-subhero"><div className="shell subhero-grid"><div><span className="eyebrow light">Área privada de liderazgo</span><h1>Servir con orden.<br /><em>Actuar con claridad.</em></h1><p>Avisos, documentos, testimonios y formación reunidos en un solo espacio para quienes tienen una responsabilidad de servicio.</p>{isAdmin && <Link className="button button-gold" href="/administracion/contenidos">Administrar contenidos →</Link>}</div><div className="quick-panel"><span>ACCESO RÁPIDO</span><a href="#avisos"><b>Noticias y avisos</b><i>↓</i></a><a href="#materiales"><b>Documentos descargables</b><i>↓</i></a><Link href="/testimonios"><b>Biblioteca de Testimonios</b><i>→</i></Link><Link href="/universidad"><b>Universidad FGDLL</b><i>→</i></Link><Link href="/administracion"><b>Administración según mi perfil</b><i>→</i></Link></div></div></section>
+    <section className="subhero portal-subhero"><div className="shell subhero-grid"><div><span className="eyebrow light">Portal del Guerrero</span><h1>Servir con orden.<br /><em>Actuar con claridad.</em></h1><p>Avisos, grupo, agenda, documentos, formación y solicitudes reunidos para quienes tienen una responsabilidad de servicio.</p>{isAdmin && <Link className="button button-gold" href="/administracion/contenidos">Administrar contenidos →</Link>}</div><div className="quick-panel"><span>ACCESO RÁPIDO</span><Link href="/directorio/gestion"><b>Mi Grupo</b><i>→</i></Link><a href="#avisos"><b>Noticias y avisos</b><i>↓</i></a><a href="#materiales"><b>Documentos y manuales</b><i>↓</i></a><Link href="/universidad"><b>Universidad FGDLL</b><i>→</i></Link><Link href="/administracion"><b>Solicitudes y administración</b><i>→</i></Link></div></div></section>
 
     {announcements.length > 0 && <section className="portal-announcements" id="avisos"><div className="shell"><div className="portal-announcement-head"><div><span className="eyebrow">Noticias y avisos</span><h2>Información que acompaña tu servicio.</h2></div><p>Los comunicados urgentes e importantes también aparecen en la campana superior hasta que los marques como leídos.</p></div><div className="portal-announcement-grid">{announcements.slice(0, 3).map((item) => <article key={item.id} className={`priority-${item.priority}`}><div><span>{item.priority === "urgent" ? "URGENTE" : item.priority === "important" ? "IMPORTANTE" : "AVISO"}</span><small>{friendlyDate(item.publishedAt)}</small></div><h3>{item.title}</h3><p>{item.summary || item.body}</p>{(item.summary || item.body.length > 180) && <details><summary>Leer aviso completo</summary><p>{item.body}</p></details>}</article>)}</div></div></section>}
 

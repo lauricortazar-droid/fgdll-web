@@ -5,9 +5,8 @@ import "./globals.css";
 const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Portal FGDLL",
-  description: "Portal institucional de la Fraternidad Guerreros de la Luz: liderazgo, formación, red nacional y servicio.",
-  other: { "codex-preview": "development" },
+  title: "FGDLL | Que nadie sufra solo",
+  description: "Encuentra grupos, centros, actividades y orientación de la Fraternidad Guerreros de la Luz.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
