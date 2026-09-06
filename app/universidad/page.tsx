@@ -1,17 +1,29 @@
-import Link from "next/link";
-import { SubFooter, SubHeader } from "../section-shell";
+import type { Metadata } from "next";
 
-const programs = [
-  { code: "DPL1", year: "2022", title: "Diplomado en Liderazgo I", text: "Instrucciones de trabajo, lista de verificación, 10 videos y envío de tareas.", active: true, href: "/universidad/dpl1-2022" },
-  { code: "DPL1", year: "2025", title: "Diplomado en Liderazgo I", text: "Programa registrado. Materiales oficiales pendientes de incorporación.", active: false },
-  { code: "DPL1", year: "2026", title: "Liderazgo Efectivo I", text: "Ruta formativa con seis módulos y cuadernillos de trabajo.", active: true, featured: true },
-  { code: "DPL2", year: "2025", title: "Diplomado en Liderazgo II", text: "Segundo nivel registrado. Materiales oficiales pendientes.", active: false },
-];
+export const metadata: Metadata = {
+  title: "Universidad FGDLL",
+  description: "Inscripciones, actividades, solicitudes y reconocimientos de Universidad FGDLL.",
+  alternates: { canonical: "https://fgdll.org/universidad" },
+};
 
 export default function UniversidadPage() {
-  return <><SubHeader label="Universidad FGDLL" /><main className="subpage university-page">
-    <section className="subhero university-hero"><div className="shell"><span className="eyebrow light">Formación institucional</span><h1>Conocimiento que se convierte<br /><em>en servicio.</em></h1><p>Una universidad organizada por generación y nivel para formar líderes más conscientes, responsables y preparados.</p><div className="university-metrics"><div><strong>04</strong><span>programas</span></div><div><strong>02</strong><span>rutas activas</span></div><div><strong>06</strong><span>módulos 2026</span></div></div></div></section>
-    <section className="section"><div className="shell"><div className="section-heading"><span className="eyebrow">Programas formativos</span><h2>Elige tu generación.</h2><p>Cada diplomado conserva su identidad, materiales y avance. Los módulos no se mezclan entre generaciones.</p></div><div className="program-grid">{programs.map((p) => <article className={p.featured ? "program featured" : "program"} key={`${p.code}-${p.year}`}><div className="program-code"><span>{p.code}</span><strong>{p.year}</strong></div><div className={p.active ? "program-status active" : "program-status"}>{p.active ? "Activo" : "Pendiente de carga"}</div><h3>{p.title}</h3><p>{p.text}</p>{p.active && p.href ? <Link className="program-link" href={p.href}>Consultar programa <b>→</b></Link> : p.active ? <button>Consultar programa <b>→</b></button> : <span className="pending-note">Se habilitará al incorporar el material fuente</span>}</article>)}</div></div></section>
-    <section className="section route-section"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow">Ruta de aprendizaje</span><h2>Estudiar. Comprender. Aplicar.</h2></div><p>La formación cobra sentido cuando lo aprendido transforma la manera de acompañar y servir.</p></div><div className="learning-route"><article><span>01</span><h3>Elige tu programa</h3><p>Ingresa a la generación que te corresponde.</p></article><article><span>02</span><h3>Avanza por módulo</h3><p>Revisa el contenido en el orden establecido.</p></article><article><span>03</span><h3>Realiza tu trabajo</h3><p>Resume lo comprendido con tus propias palabras.</p></article><article><span>04</span><h3>Llévalo al servicio</h3><p>Convierte el conocimiento en acciones coherentes.</p></article></div><div className="back-panel"><div><span>PORTAL DE LÍDERES</span><h3>La formación es una parte del camino.</h3></div><Link className="button button-gold" href="/portal">Volver al portal →</Link></div></div></section>
-  </main><SubFooter /></>;
+  return (
+    <main style={{ minHeight: "100dvh", background: "#071f45" }}>
+      <iframe
+        src="https://universidad.fgdll.org"
+        title="Universidad FGDLL"
+        allow="clipboard-read; clipboard-write"
+        referrerPolicy="strict-origin-when-cross-origin"
+        style={{ display: "block", width: "100%", height: "100dvh", border: 0, background: "#ffffff" }}
+      />
+      <noscript>
+        <p style={{ margin: 0, padding: "2rem", color: "white", fontFamily: "sans-serif" }}>
+          Para entrar a Universidad FGDLL, abre{" "}
+          <a href="https://universidad.fgdll.org" style={{ color: "#e4b52c" }}>
+            el sistema universitario
+          </a>.
+        </p>
+      </noscript>
+    </main>
+  );
 }
