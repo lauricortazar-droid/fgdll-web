@@ -24,6 +24,32 @@ export const directoryGroups = sqliteTable("directory_groups", {
   uniqueIndex("directory_groups_zone_name_city_idx").on(table.zone, table.name, table.city),
 ]);
 
+export const rehabilitationCenters = sqliteTable("rehabilitation_centers", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  network: text("network").notNull().default("Red Teocalli"),
+  state: text("state").notNull().default(""),
+  city: text("city").notNull().default(""),
+  address: text("address").notNull().default(""),
+  responsibleName: text("responsible_name").notNull().default(""),
+  phone: text("phone").notNull().default(""),
+  whatsapp: text("whatsapp").notNull().default(""),
+  email: text("email").notNull().default(""),
+  website: text("website").notNull().default(""),
+  mapsUrl: text("maps_url").notNull().default(""),
+  description: text("description").notNull().default(""),
+  services: text("services").notNull().default(""),
+  status: text("status").notNull().default("published"),
+  version: integer("version").notNull().default(1),
+  verifiedAt: text("verified_at"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedBy: text("updated_by").notNull().default("system"),
+}, (table) => [
+  uniqueIndex("rehabilitation_centers_name_city_idx").on(table.name, table.city),
+  index("rehabilitation_centers_public_idx").on(table.status, table.state, table.city),
+]);
+
 export const portalUsers = sqliteTable("portal_users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   email: text("email").notNull().unique(),
@@ -32,6 +58,7 @@ export const portalUsers = sqliteTable("portal_users", {
   role: text("role").notNull(),
   zone: text("zone"),
   groupId: integer("group_id").references(() => directoryGroups.id),
+  centerId: integer("center_id").references(() => rehabilitationCenters.id),
   active: integer("active", { mode: "boolean" }).notNull().default(true),
   notes: text("notes").notNull().default(""),
   source: text("source").notNull().default("manual"),
@@ -39,6 +66,43 @@ export const portalUsers = sqliteTable("portal_users", {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const centerRequests = sqliteTable("center_requests", {
+  id: text("id").primaryKey(),
+  requestType: text("request_type").notNull(),
+  centerId: integer("center_id").references(() => rehabilitationCenters.id),
+  centerVersion: integer("center_version"),
+  requesterEmail: text("requester_email").notNull(),
+  requesterName: text("requester_name").notNull(),
+  requesterPhone: text("requester_phone").notNull().default(""),
+  proposedJson: text("proposed_json").notNull(),
+  originalJson: text("original_json").notNull().default("{}"),
+  requesterNote: text("requester_note").notNull().default(""),
+  status: text("status").notNull().default("pending"),
+  reviewerEmail: text("reviewer_email"),
+  reviewNote: text("review_note").notNull().default(""),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  reviewedAt: text("reviewed_at"),
+}, (table) => [
+  index("center_requests_status_idx").on(table.status, table.createdAt),
+  index("center_requests_requester_idx").on(table.requesterEmail, table.createdAt),
+  index("center_requests_center_idx").on(table.centerId, table.createdAt),
+]);
+
+export const centerDirectors = sqliteTable("center_directors", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  centerId: integer("center_id").notNull().references(() => rehabilitationCenters.id),
+  email: text("email").notNull(),
+  name: text("name").notNull().default(""),
+  phone: text("phone").notNull().default(""),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  approvedBy: text("approved_by").notNull(),
+  approvedAt: text("approved_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+}, (table) => [
+  uniqueIndex("center_directors_center_email_idx").on(table.centerId, table.email),
+  index("center_directors_email_idx").on(table.email, table.active),
+]);
 
 export const accessRequests = sqliteTable("access_requests", {
   id: text("id").primaryKey(),

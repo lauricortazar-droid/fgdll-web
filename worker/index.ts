@@ -15,7 +15,7 @@ interface Env extends FgdllRuntimeEnv {
 }
 
 const AUTHENTICATED_EMAIL_HEADER = "oai-authenticated-user-email";
-const SIGN_IN_ONLY_PREFIXES = ["/solicitar-acceso"];
+const SIGN_IN_ONLY_PREFIXES = ["/solicitar-acceso", "/centros/acceso"];
 const ACTIVE_ACCESS_PREFIXES = ["/portal", "/universidad", "/testimonios", "/materiales", "/directorio/gestion", "/administracion"];
 
 function matchesPrefix(pathname: string, prefixes: string[]) {
@@ -33,7 +33,7 @@ function configuredEmails(value: string | undefined) {
 
 async function hasActiveAccess(env: Env, email: string) {
   const administrators = configuredEmails(
-    env.FGDLL_ADMIN_EMAILS ?? "admin@fgdll.org,jaguarcortazar@gmail.com,laurcortazar@gmail.com",
+    env.FGDLL_ADMIN_EMAILS ?? "admin@fgdll.org,jaguarcortazar@gmail.com,laurcortazar@gmail.com,yoltyp@gmail.com",
   );
   if (administrators.has(email) || configuredEmails(env.FGDLL_LEADER_EMAILS).has(email)) return true;
 

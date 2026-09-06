@@ -4,7 +4,7 @@ import directoryData from "../directory-data.json";
 import { getRuntimeEnv } from "./runtime-env";
 
 export const ADMIN_CONTACT_EMAIL = "admin@fgdll.org";
-export const PORTAL_ROLES = ["leader", "osg", "delegate", "council", "admin"] as const;
+export const PORTAL_ROLES = ["leader", "osg", "delegate", "director", "council", "admin"] as const;
 export type PortalRole = (typeof PORTAL_ROLES)[number];
 
 export type PortalProfile = {
@@ -13,6 +13,7 @@ export type PortalProfile = {
   role: PortalRole;
   zone: string | null;
   groupId: number | null;
+  centerId: number | null;
   active: boolean;
 };
 
@@ -23,6 +24,7 @@ export type PortalUserInput = {
   role?: string;
   zone?: string;
   groupId?: number | null;
+  centerId?: number | null;
   notes?: string;
   active?: boolean;
 };
@@ -60,6 +62,7 @@ const ROLE_LABELS: Record<PortalRole, string> = {
   leader: "Líder",
   osg: "OSG",
   delegate: "Delegado",
+  director: "Director de centro",
   council: "Consejo Directivo",
   admin: "Administrador",
 };
@@ -76,7 +79,7 @@ function d1() {
 
 function adminEmails() {
   const configured = getRuntimeEnv().FGDLL_ADMIN_EMAILS ??
-    "admin@fgdll.org,jaguarcortazar@gmail.com,laurcortazar@gmail.com";
+    "admin@fgdll.org,jaguarcortazar@gmail.com,laurcortazar@gmail.com,yoltyp@gmail.com";
   return new Set(configured.split(",").map((email) => email.trim().toLowerCase()).filter(Boolean));
 }
 
@@ -157,15 +160,16 @@ export async function getDirectoryGroup(id: number) {
 export async function getPortalProfile(email: string, displayName = ""): Promise<PortalProfile | null> {
   const normalized = email.trim().toLowerCase();
   if (isAdminEmail(normalized)) {
-    return { email: normalized, name: displayName || normalized, role: "admin", zone: null, groupId: null, active: true };
+    return { email: normalized, name: displayName || normalized, role: "admin", zone: null, groupId: null, centerId: null, active: true };
   }
   const row = await d1().prepare(
-    "SELECT email, name, role, zone, group_id, active FROM portal_users WHERE email = ?"
+    "SELECT email, name, role, zone, group_id, center_id, active FROM portal_users WHERE email = ?"
   ).bind(normalized).first<Record<string, unknown>>();
   if (!row || !Number(row.active) || !isPortalRole(String(row.role))) return null;
   return {
     email: String(row.email), name: String(row.name || displayName || row.email), role: String(row.role) as PortalRole,
-    zone: row.zone ? String(row.zone) : null, groupId: row.group_id == null ? null : Number(row.group_id), active: true,
+    zone: row.zone ? String(row.zone) : null, groupId: row.group_id == null ? null : Number(row.group_id),
+    centerId: row.center_id == null ? null : Number(row.center_id), active: true,
   };
 }
 
@@ -262,7 +266,7 @@ export async function createAccessRequest(input: {
   groupId?: number | null; groupName?: string; reason?: string;
 }) {
   await ensureDirectorySeeded();
-  if (!isPortalRole(input.requestedRole) || input.requestedRole === "admin") throw new PortalError("Selecciona un tipo de acceso válido.");
+  if (!isPortalRole(input.requestedRole) || ["admin", "director"].includes(input.requestedRole)) throw new PortalError("Selecciona un tipo de acceso válido.");
   const email = normalizeEmail(input.email);
   const existing = await d1().prepare(
     "SELECT id FROM access_requests WHERE requester_email = ? AND status IN ('pending','in_review','changes_requested') LIMIT 1"
@@ -330,7 +334,7 @@ export async function resubmitAccessRequest(input: {
 }) {
   await ensureDirectorySeeded();
   const email = normalizeEmail(input.requesterEmail);
-  if (!isPortalRole(input.requestedRole) || input.requestedRole === "admin") {
+  if (!isPortalRole(input.requestedRole) || ["admin", "director"].includes(input.requestedRole)) {
     throw new PortalError("Selecciona un tipo de acceso válido.");
   }
   const existing = await d1().prepare(
@@ -456,6 +460,7 @@ export async function listPortalUsers(profile: PortalProfile) {
       role: "admin",
       zone: null,
       group_id: null,
+      center_id: null,
       group_name: "",
       active: 1,
       notes: "Cuenta administrativa configurada",
@@ -482,6 +487,7 @@ export async function savePortalUser(profile: PortalProfile, input: PortalUserIn
   }
   const role = requestedRole as PortalRole | "pending";
   const groupId = input.groupId && Number.isInteger(Number(input.groupId)) ? Number(input.groupId) : null;
+  const centerId = input.centerId && Number.isInteger(Number(input.centerId)) ? Number(input.centerId) : null;
   const group = groupId ? await getDirectoryGroup(groupId) : null;
   if (groupId && !group) throw new PortalError("El grupo seleccionado no existe.");
   const zone = group?.zone || safeText(input.zone, 60) || null;
@@ -499,12 +505,12 @@ export async function savePortalUser(profile: PortalProfile, input: PortalUserIn
   const notes = safeText(input.notes, 1200);
   await d1().prepare(
     `INSERT INTO portal_users
-      (email, name, phone, role, zone, group_id, active, notes, source, created_by)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'manual', ?)
+      (email, name, phone, role, zone, group_id, center_id, active, notes, source, created_by)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'manual', ?)
      ON CONFLICT(email) DO UPDATE SET name = excluded.name, phone = excluded.phone,
-     role = excluded.role, zone = excluded.zone, group_id = excluded.group_id,
+     role = excluded.role, zone = excluded.zone, group_id = excluded.group_id, center_id = excluded.center_id,
      active = excluded.active, notes = excluded.notes, updated_at = CURRENT_TIMESTAMP`
-  ).bind(email, name, phone, role, zone, groupId, active ? 1 : 0, notes, profile.email).run();
+  ).bind(email, name, phone, role, zone, groupId, centerId, active ? 1 : 0, notes, profile.email).run();
   if (active) {
     const openRequest = await d1().prepare(
       "SELECT * FROM access_requests WHERE requester_email = ? AND status IN ('pending', 'in_review', 'changes_requested') ORDER BY created_at DESC LIMIT 1"
@@ -525,9 +531,9 @@ export async function savePortalUser(profile: PortalProfile, input: PortalUserIn
     }
   }
   await audit(profile.email, "portal_user_saved", "portal_user", email, {
-    name, phone, role, zone, groupId, active, notes,
+    name, phone, role, zone, groupId, centerId, active, notes,
   });
-  return { email, role, zone, groupId, active };
+  return { email, role, zone, groupId, centerId, active };
 }
 
 export async function deleteDirectoryGroup(profile: PortalProfile, input: { id: number; confirmation: string }) {

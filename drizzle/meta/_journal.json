@@ -43,6 +43,20 @@
       "when": 1787775494336,
       "tag": "0005_ambitious_wendell_rand",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1788679678979,
+      "tag": "0006_fuzzy_turbo",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1788680538195,
+      "tag": "0007_aberrant_mimic",
+      "breakpoints": true
     }
   ]
 }

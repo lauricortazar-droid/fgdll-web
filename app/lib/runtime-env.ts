@@ -2,7 +2,7 @@ export interface D1StatementLike {
   bind(...values: unknown[]): D1StatementLike;
   first<T = Record<string, unknown>>(): Promise<T | null>;
   all<T = Record<string, unknown>>(): Promise<{ results?: T[] }>;
-  run(): Promise<{ meta: { changes?: number } }>;
+  run(): Promise<{ meta: { changes?: number; last_row_id?: number } }>;
 }
 
 export interface D1DatabaseLike {
@@ -32,6 +32,8 @@ export interface FgdllRuntimeEnv {
   FGDLL_ADMIN_EMAILS?: string;
   FGDLL_LEADER_EMAILS?: string;
   FGDLL_NOTIFICATION_EMAIL?: string;
+  RESEND_API_KEY?: string;
+  FGDLL_EMAIL_FROM?: string;
 }
 
 const runtimeGlobal = globalThis as typeof globalThis & {

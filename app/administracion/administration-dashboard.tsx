@@ -4,12 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SubFooter, SubHeader } from "../section-shell";
 
-type Profile = { email: string; name: string; role: "leader" | "osg" | "delegate" | "council" | "admin"; roleLabel: string; zone: string | null; groupId: number | null };
+type Profile = { email: string; name: string; role: "leader" | "osg" | "delegate" | "director" | "council" | "admin"; roleLabel: string; zone: string | null; groupId: number | null; centerId: number | null };
 
 const roleScope = {
   leader: { title: "Líder", text: "Puede registrar su grupo, consultar el expediente y enviar correcciones o propuestas de actualización." },
   osg: { title: "OSG", text: "Puede apoyar la actualización del grupo asignado y enviar propuestas que requieran revisión." },
   delegate: { title: "Delegado", text: "Puede administrar los grupos de su zona y revisar propuestas dentro de su alcance territorial." },
+  director: { title: "Director de centro", text: "Puede mantener la ficha de su centro y enviar cambios para aprobación administrativa." },
   council: { title: "Consejo Directivo", text: "Puede revisar cambios sensibles, solicitudes de acceso y registros nuevos de toda la red." },
   admin: { title: "Administración", text: "Puede gestionar directorio, usuarios, contenidos, experiencias y registros institucionales." },
 };
@@ -40,6 +41,7 @@ export function AdministrationDashboard() {
       {canReviewAccess && <Link href="/directorio/gestion"><span>04</span><small>ACCESOS</small><h3>Solicitudes y usuarios</h3><p>Consulta expedientes de acceso, correcciones y resoluciones del portal.</p><b>Abrir expedientes →</b></Link>}
       {isAdmin && <Link href="/administracion/contenidos"><span>05</span><small>CONTENIDOS</small><h3>Noticias, materiales y testimonios</h3><p>Publica, edita, archiva o elimina contenido institucional.</p><b>Administrar contenido →</b></Link>}
       {isAdmin && <Link href="/administracion/experiencias"><span>06</span><small>PROGRAMACIÓN</small><h3>Experiencias del mes</h3><p>Actualiza fechas, sedes y escrituras disponibles por zona.</p><b>Gestionar experiencias →</b></Link>}
+      {isAdmin && <Link href="/administracion/centros"><span>07</span><small>CENTROS</small><h3>Aprobar centros y modificaciones</h3><p>Revisa altas y cambios antes de publicarlos en el directorio.</p><b>Abrir solicitudes →</b></Link>}
     </div></div></section>
     {isAdmin && <section className="section operations-center"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow light">FGDLL — Sistema Institucional</span><h2>El centro de operaciones, organizado por responsabilidad.</h2></div><p>Esta vista reúne la estructura que después puede mantenerse desde ChatGPT Work sin mezclarla con la experiencia pública.</p></div><div className="operations-grid">
       <article><span>01</span><h3>Dirección y Consejo</h3><p>Gobernanza, decisiones, organigrama y políticas.</p></article>

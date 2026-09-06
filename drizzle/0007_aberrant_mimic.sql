@@ -1,0 +1,1 @@
+ALTER TABLE `rehabilitation_centers` ADD `responsible_name` text DEFAULT '' NOT NULL;
