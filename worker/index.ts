@@ -17,6 +17,7 @@ interface Env extends FgdllRuntimeEnv {
 const AUTHENTICATED_EMAIL_HEADER = "oai-authenticated-user-email";
 const SIGN_IN_ONLY_PREFIXES = ["/solicitar-acceso", "/centros/acceso"];
 const ACTIVE_ACCESS_PREFIXES = ["/portal", "/testimonios", "/materiales", "/directorio/gestion", "/administracion"];
+const ADMIN_ONLY_PREFIXES = ["/oraculo"];
 
 function matchesPrefix(pathname: string, prefixes: string[]) {
   return prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
@@ -44,6 +45,23 @@ async function hasActiveAccess(env: Env, email: string) {
     return Number(profile?.active ?? 0) === 1;
   } catch (error) {
     console.error("Could not verify portal access", error);
+    return false;
+  }
+}
+
+async function hasAdminAccess(env: Env, email: string) {
+  const administrators = configuredEmails(
+    env.FGDLL_ADMIN_EMAILS ?? "admin@fgdll.org,jaguarcortazar@gmail.com,laurcortazar@gmail.com,yoltyp@gmail.com",
+  );
+  if (administrators.has(email)) return true;
+
+  try {
+    const profile = await env.DB.prepare(
+      "SELECT active, role FROM portal_users WHERE email = ? LIMIT 1",
+    ).bind(email).first<{ active: number; role: string }>();
+    return Number(profile?.active ?? 0) === 1 && profile?.role === "admin";
+  } catch (error) {
+    console.error("Could not verify administrator access", error);
     return false;
   }
 }
@@ -78,14 +96,18 @@ const worker = {
     installRuntimeEnv(env);
     const url = new URL(request.url);
 
-    const needsSignIn = matchesPrefix(url.pathname, SIGN_IN_ONLY_PREFIXES) || matchesPrefix(url.pathname, ACTIVE_ACCESS_PREFIXES);
+    const needsAdmin = matchesPrefix(url.pathname, ADMIN_ONLY_PREFIXES);
+    const needsSignIn = matchesPrefix(url.pathname, SIGN_IN_ONLY_PREFIXES) || matchesPrefix(url.pathname, ACTIVE_ACCESS_PREFIXES) || needsAdmin;
     if (needsSignIn) {
       const email = request.headers.get(AUTHENTICATED_EMAIL_HEADER)?.trim().toLocaleLowerCase();
       if (!email) {
         const returnTo = `${url.pathname}${url.search}`;
         return Response.redirect(new URL(`/signin-with-chatgpt?return_to=${encodeURIComponent(returnTo)}`, url), 302);
       }
-      if (matchesPrefix(url.pathname, ACTIVE_ACCESS_PREFIXES) && !(await hasActiveAccess(env, email))) {
+      if (needsAdmin && !(await hasAdminAccess(env, email))) {
+        return accessDeniedResponse(email);
+      }
+      if (!needsAdmin && matchesPrefix(url.pathname, ACTIVE_ACCESS_PREFIXES) && !(await hasActiveAccess(env, email))) {
         return accessDeniedResponse(email);
       }
     }

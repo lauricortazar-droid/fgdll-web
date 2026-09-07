@@ -1,26 +1,17 @@
 [
-  {
-    "id": "EXP-2026-08-JAGUAR",
-    "month": "2026-08",
-    "zone": "Jaguar",
-    "title": "Experiencia Zona Jaguar",
-    "startDate": "2026-08-14",
-    "endDate": "2026-08-16",
-    "location": "La Amada Hacienda, San José Tzal, Yucatán",
-    "writings": ["Amor", "Perdón", "Llegamos a Creer"],
-    "notes": "Programa sujeto a indicaciones de coordinación.",
-    "status": "published"
-  },
-  {
-    "id": "EXP-2026-08-TIBURON",
-    "month": "2026-08",
-    "zone": "Tiburón",
-    "title": "Experiencia Zona Tiburón",
-    "startDate": "2026-08-28",
-    "endDate": "2026-08-30",
-    "location": "La Amada Hacienda PlayaCar, Playa del Carmen, Quintana Roo",
-    "writings": ["Amor", "Perdón", "Llegamos a Creer"],
-    "notes": "Programa sujeto a indicaciones de coordinación.",
-    "status": "published"
-  }
+  {"id":"EXP-2026-01-02-JAGUAR","month":"2026-01","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-01-02","endDate":"2026-01-04","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Seguimiento de Jóvenes","Reincidentes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-01-30-JAGUAR","month":"2026-01","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-01-30","endDate":"2026-02-01","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Amor","Concédeme la Serenidad"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-02-27-JAGUAR","month":"2026-02","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-02-27","endDate":"2026-03-01","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Seguimiento de Diversidad","Heridas del Alma"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-03-27-JAGUAR","month":"2026-03","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-03-27","endDate":"2026-03-29","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Llegamos a Creer","Amor","Reincidentes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-04-24-JAGUAR","month":"2026-04","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-04-24","endDate":"2026-04-26","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Seguimiento de Jóvenes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-05-22-JAGUAR","month":"2026-05","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-05-22","endDate":"2026-05-24","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Amor","Concédeme la Serenidad"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-06-19-JAGUAR","month":"2026-06","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-06-19","endDate":"2026-06-21","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Heridas del Alma","Reincidentes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-07-17-JAGUAR","month":"2026-07","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-07-17","endDate":"2026-07-19","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Seguimiento de Diversidad"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes, Primera Adultos y Primera Diversidad.","status":"published"},
+  {"id":"EXP-2026-08-JAGUAR","month":"2026-08","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-08-14","endDate":"2026-08-16","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Amor"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-08-TIBURON","month":"2026-08","zone":"Tiburón","title":"Experiencia Zona Tiburón","startDate":"2026-08-28","endDate":"2026-08-30","location":"La Amada Hacienda PlayaCar, Playa del Carmen, Quintana Roo","writings":["Amor","Perdón","Llegamos a Creer"],"notes":"Programa sujeto a indicaciones de coordinación.","status":"published"},
+  {"id":"EXP-2026-09-11-JAGUAR","month":"2026-09","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-09-11","endDate":"2026-09-13","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Llegamos a Creer","Seguimiento de Jóvenes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-10-16-JAGUAR","month":"2026-10","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-10-16","endDate":"2026-10-18","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Profundización de Salas"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-11-06-JAGUAR","month":"2026-11","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-11-06","endDate":"2026-11-08","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Concédeme la Serenidad","Reincidentes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-12-04-JAGUAR","month":"2026-12","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-12-04","endDate":"2026-12-06","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Amor","Heridas del Alma"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
+  {"id":"EXP-2026-12-26-JAGUAR","month":"2026-12","zone":"Jaguar","title":"Experiencia de Servidores Internos — Zona Jaguar","startDate":"2026-12-26","endDate":"2026-12-27","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Llegamos a Creer","Pláticas con Dios","Hombres de Dios","Conferencia de Hombres de Dios","Valor para Cambiar"],"notes":"Unidad abierta: Servidores Internos.","status":"published"}
 ]
