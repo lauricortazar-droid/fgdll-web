@@ -701,6 +701,11 @@ export default function Home() {
                   ¿Es una emergencia?
                 </Link>
               </div>
+              <div className="hero-direct-contact" aria-label="Contacto directo con FGDLL">
+                <span>También puedes comunicarte directamente:</span>
+                <a href="https://wa.me/529995481194?text=Hola%2C%20necesito%20orientaci%C3%B3n%20de%20Guerreros%20de%20la%20Luz" target="_blank" rel="noopener noreferrer">WhatsApp · 999 548 1194</a>
+                <a href="tel:+529995481194">Llamar · 999 548 1194</a>
+              </div>
               <p className="hero-boundary">
                 FGDLL no es un centro residencial. Somos una fraternidad de
                 ayuda y orientación que trabaja en coordinación con distintos

@@ -313,6 +313,14 @@ export function OrientationClient({ faq }: { faq: string[][] }) {
                 administradores autorizados.
               </span>
             </div>
+            <div className="orientation-direct-contact">
+              <strong>¿Prefieres hablar ahora?</strong>
+              <p>Puedes dejar tus datos en el formulario o contactarnos directamente.</p>
+              <div>
+                <a href="https://wa.me/529995481194?text=Hola%2C%20necesito%20orientaci%C3%B3n%20de%20Guerreros%20de%20la%20Luz" target="_blank" rel="noopener noreferrer">WhatsApp · 999 548 1194</a>
+                <a href="tel:+529995481194">Llamar · 999 548 1194</a>
+              </div>
+            </div>
           </div>
           <form className="family-orientation-form" onSubmit={submit}>
             <input
