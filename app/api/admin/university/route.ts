@@ -1,5 +1,5 @@
 import { apiError, readJson, requireApiProfile, requireSameOrigin } from "../../../lib/portal-api";
-import { addUniversityUser, listUniversityAdmin, updateUniversityRecord } from "../../../lib/university-store";
+import { addUniversityUser, listUniversityAdmin, saveUniversityContent, updateUniversityRecord } from "../../../lib/university-store";
 
 export const dynamic = "force-dynamic";
 export async function GET() {
@@ -12,5 +12,9 @@ export async function POST(request: Request) {
 }
 export async function PATCH(request: Request) {
   try { requireSameOrigin(request); const { profile } = await requireApiProfile(); return Response.json(await updateUniversityRecord(profile, await readJson(request))); }
+  catch (error) { return apiError(error); }
+}
+export async function PUT(request: Request) {
+  try { requireSameOrigin(request); const { profile } = await requireApiProfile(); return Response.json(await saveUniversityContent(profile, await readJson(request))); }
   catch (error) { return apiError(error); }
 }

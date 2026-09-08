@@ -5,11 +5,29 @@ import { PortalError, type PortalProfile } from "./directory-store";
 
 const VERSIONS = new Set(["2022", "2025", "2026"]);
 const PARTICIPANT_TYPES = new Set(["participant", "center_director"]);
-const USER_STATUSES = new Set(["active", "paused", "completed", "archived"]);
+const USER_STATUSES = new Set(["pending", "active", "paused", "completed", "archived"]);
 const REQUEST_STATUSES = new Set(["received", "in_review", "approved", "changes_requested", "closed"]);
 const CERTIFICATE_STATUSES = new Set(["pending_validation", "in_review", "approved", "ready", "delivered", "closed"]);
 const PAYMENT_STATUSES = new Set(["total", "partial", "pending"]);
 const REQUEST_TYPES = new Set(["printing", "reprinting"]);
+const CONTENT_STATUSES = new Set(["draft", "published", "archived"]);
+const SETTING_KEYS = ["phone", "taskUrl", "recognitionCost", "spinHolder", "spinClabe", "spinDepositCode"] as const;
+
+const initialModules = [
+  ["El liderazgo comienza contigo", "https://www.youtube.com/watch?v=fo25kF4ubQc&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=6"],
+  ["Comunicación asertiva I", "https://www.youtube.com/watch?v=9IjvaLmG-a4&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=11"],
+  ["Comunicación asertiva II", "https://www.youtube.com/watch?v=I5CIVyMITZ8&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=12"],
+  ["Inteligencia emocional I", "https://www.youtube.com/watch?v=tSSD7kId0OU&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=2"],
+  ["Inteligencia emocional II", "https://www.youtube.com/watch?v=8vdm1dTqmWg&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=1"],
+  ["Inteligencia social I", "https://www.youtube.com/watch?v=t08dwWwa7uU&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=5"],
+  ["Inteligencia social II", "https://www.youtube.com/watch?v=QU1lI5sGMCk&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=4"],
+  ["Oratoria", "https://www.youtube.com/watch?v=xvdvhEl5vwg&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=7"],
+  ["Apadrinamiento I", "https://www.youtube.com/watch?v=CwU_YxPBJm8&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=10"],
+  ["Apadrinamiento II", "https://www.youtube.com/watch?v=qYpoHNnOpac&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=9"],
+  ["Coordinación", "https://www.youtube.com/watch?v=NBIVWtSx1S0&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=8"],
+  ["Historia y filosofía FGDLL", "https://youtu.be/Q8Bot_dV2mo"],
+  ["ADN FGDLL", "https://www.youtube.com/watch?v=vmZpoi3dbOk"],
+];
 
 function db() {
   const value = getRuntimeEnv().DB;
@@ -43,6 +61,37 @@ function version(value: unknown) {
   return result;
 }
 
+function safeUrl(value: unknown) {
+  const result = clean(value, 1000);
+  if (result.startsWith("/")) return result;
+  try { const url = new URL(result); if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error("protocol"); return result; }
+  catch { throw new PortalError("Escribe un enlace válido que comience con https://."); }
+}
+
+async function ensureUniversityContent() {
+  const marker = await db().prepare("SELECT value FROM content_settings WHERE key = 'university_content_v1'").first();
+  if (marker) return;
+  const statements = [
+    db().prepare(`INSERT OR IGNORE INTO university_programs
+      (id, title, generation, description, status, sort_order, created_by)
+      VALUES ('DPL1-2022', 'Diplomado en Liderazgo I', '2022', 'Formación básica para fortalecer el liderazgo, la comunicación, el apadrinamiento y la identidad FGDLL.', 'published', 10, 'initial-import')`),
+    ...initialModules.map(([title, videoUrl], index) => db().prepare(`INSERT OR IGNORE INTO university_modules
+      (id, program_id, title, video_url, status, sort_order, created_by)
+      VALUES (?, 'DPL1-2022', ?, ?, 'published', ?, 'initial-import')`)
+      .bind(`DPL1-2022-M${String(index + 1).padStart(2, "0")}`, title, videoUrl, (index + 1) * 10)),
+    db().prepare(`INSERT OR IGNORE INTO university_materials
+      (id, program_id, title, description, resource_url, resource_type, status, sort_order, created_by)
+      VALUES ('MAT-DPL1-2022-ACTIVIDAD', 'DPL1-2022', 'Guía de actividades DPL1 2022', 'Instrucciones, módulos y criterios para entregar las actividades.', '/universidad/dpl1-2022', 'guide', 'published', 10, 'initial-import')`),
+    db().prepare(`INSERT OR IGNORE INTO university_materials
+      (id, program_id, title, description, resource_url, resource_type, status, sort_order, created_by)
+      VALUES ('MAT-DPL1-2022-ENTREGA', 'DPL1-2022', 'Enviar actividades', 'Formulario para cargar las fotografías de las tareas.', 'https://forms.gle/2K6RpwpTjRU8Sm8s9', 'assignment', 'published', 20, 'initial-import')`),
+    ...Object.entries({ phone: "9999011852", taskUrl: "https://forms.gle/2K6RpwpTjRU8Sm8s9", recognitionCost: "$50 a $100", spinHolder: "LAURA CORTAZAR", spinClabe: "728969000008838228", spinDepositCode: "2242-1787-4421-1658" })
+      .map(([key, value]) => db().prepare("INSERT OR IGNORE INTO content_settings (key, value) VALUES (?, ?)").bind(`university.${key}`, value)),
+    db().prepare("INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('university_content_v1', 'seeded', CURRENT_TIMESTAMP)"),
+  ];
+  await db().batch(statements);
+}
+
 async function audit(actorEmail: string, action: string, targetId: string, details: unknown) {
   await db().prepare("INSERT INTO audit_log (actor_email, action, target_type, target_id, details_json) VALUES (?, ?, 'university', ?, ?)")
     .bind(actorEmail, action, targetId, JSON.stringify(details)).run();
@@ -55,14 +104,15 @@ export async function registerUniversityUser(input: Record<string, unknown>, act
   const organization = clean(input.organization, 180);
   const diplomaVersion = version(input.diplomaVersion);
   const participantType = PARTICIPANT_TYPES.has(String(input.participantType)) ? String(input.participantType) : "participant";
+  const initialStatus = source === "admin_manual" ? "active" : "pending";
   if (!fullName) throw new PortalError("Escribe el nombre completo.");
   if (source !== "admin_manual" && !organization) throw new PortalError("Escribe el grupo o centro.");
   const existing = await db().prepare("SELECT id, status FROM university_users WHERE email = ?").bind(userEmail).first<Record<string, unknown>>();
   if (existing) throw new PortalError("Este correo ya está registrado en Universidad FGDLL.", 409);
   const result = await db().prepare(`INSERT INTO university_users
     (email, full_name, mobile_phone, organization, participant_type, diploma_version, status, source, created_by)
-    VALUES (?, ?, ?, ?, ?, ?, 'active', ?, ?)`)
-    .bind(userEmail, fullName, mobilePhone, organization, participantType, diplomaVersion, source, actorEmail).run();
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .bind(userEmail, fullName, mobilePhone, organization, participantType, diplomaVersion, initialStatus, source, actorEmail).run();
   await audit(actorEmail, "university_user_created", userEmail, { source, diplomaVersion, participantType });
   return { ok: true, id: Number(result.meta.last_row_id), email: userEmail };
 }
@@ -104,14 +154,85 @@ export async function requestCertificate(input: Record<string, unknown>) {
   return { ok: true, id };
 }
 
+export async function listUniversityContent(adminView = false, profile?: PortalProfile) {
+  await ensureUniversityContent();
+  if (adminView) {
+    if (!profile) throw new PortalError("Inicia sesión para continuar.", 401);
+    requireAdmin(profile);
+  }
+  const where = adminView ? "" : "WHERE status = 'published'";
+  const [programs, modules, materials, settings] = await Promise.all([
+    db().prepare(`SELECT * FROM university_programs ${where} ORDER BY sort_order, created_at`).all<Record<string, unknown>>(),
+    db().prepare(`SELECT * FROM university_modules ${where} ORDER BY program_id, sort_order, created_at`).all<Record<string, unknown>>(),
+    db().prepare(`SELECT * FROM university_materials ${where} ORDER BY program_id, sort_order, created_at`).all<Record<string, unknown>>(),
+    db().prepare("SELECT key, value FROM content_settings WHERE key LIKE 'university.%'").all<Record<string, unknown>>(),
+  ]);
+  const values: Record<string, string> = {};
+  for (const row of settings.results ?? []) values[String(row.key).replace("university.", "")] = String(row.value ?? "");
+  return { programs: programs.results ?? [], modules: modules.results ?? [], materials: materials.results ?? [], settings: values };
+}
+
+export async function saveUniversityContent(profile: PortalProfile, input: Record<string, unknown>) {
+  requireAdmin(profile);
+  await ensureUniversityContent();
+  const kind = clean(input.kind, 30);
+  if (kind === "settings") {
+    const statements = SETTING_KEYS.map((key) => db().prepare(
+      "INSERT INTO content_settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP",
+    ).bind(`university.${key}`, clean(input[key], key === "taskUrl" ? 1000 : 240)));
+    await db().batch(statements);
+    await audit(profile.email, "university_settings_updated", "settings", { keys: SETTING_KEYS });
+    return { ok: true, kind };
+  }
+  const status = clean(input.status, 20) || "published";
+  if (!CONTENT_STATUSES.has(status)) throw new PortalError("Selecciona un estado válido.");
+  const sortOrder = Math.max(0, Math.min(9999, Number(input.sortOrder) || 0));
+  if (kind === "program") {
+    const id = clean(input.id, 80) || `UNI-PROG-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+    const title = clean(input.title, 180); const generation = clean(input.generation, 40); const description = clean(input.description, 2000);
+    if (!title) throw new PortalError("Escribe el título del diplomado.");
+    await db().prepare(`INSERT INTO university_programs (id, title, generation, description, status, sort_order, created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET title = excluded.title, generation = excluded.generation,
+      description = excluded.description, status = excluded.status, sort_order = excluded.sort_order, updated_at = CURRENT_TIMESTAMP`)
+      .bind(id, title, generation, description, status, sortOrder, profile.email).run();
+    await audit(profile.email, "university_program_saved", id, { title, generation, status });
+    return { ok: true, kind, id };
+  }
+  if (kind === "module") {
+    const id = clean(input.id, 100) || `UNI-MOD-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+    const programId = clean(input.programId, 80); const title = clean(input.title, 180); const videoUrl = safeUrl(input.videoUrl);
+    if (!programId || !title) throw new PortalError("Selecciona el diplomado y escribe el título del video.");
+    await db().prepare(`INSERT INTO university_modules (id, program_id, title, video_url, status, sort_order, created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET program_id = excluded.program_id, title = excluded.title,
+      video_url = excluded.video_url, status = excluded.status, sort_order = excluded.sort_order, updated_at = CURRENT_TIMESTAMP`)
+      .bind(id, programId, title, videoUrl, status, sortOrder, profile.email).run();
+    await audit(profile.email, "university_module_saved", id, { programId, title, status });
+    return { ok: true, kind, id };
+  }
+  if (kind === "material") {
+    const id = clean(input.id, 100) || `UNI-MAT-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+    const programId = clean(input.programId, 80) || null; const title = clean(input.title, 180); const description = clean(input.description, 2000); const resourceUrl = safeUrl(input.resourceUrl); const resourceType = clean(input.resourceType, 40) || "material";
+    if (!title) throw new PortalError("Escribe el título del material.");
+    await db().prepare(`INSERT INTO university_materials (id, program_id, title, description, resource_url, resource_type, status, sort_order, created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET program_id = excluded.program_id, title = excluded.title,
+      description = excluded.description, resource_url = excluded.resource_url, resource_type = excluded.resource_type,
+      status = excluded.status, sort_order = excluded.sort_order, updated_at = CURRENT_TIMESTAMP`)
+      .bind(id, programId, title, description, resourceUrl, resourceType, status, sortOrder, profile.email).run();
+    await audit(profile.email, "university_material_saved", id, { programId, title, status });
+    return { ok: true, kind, id };
+  }
+  throw new PortalError("Selecciona un tipo de contenido válido.");
+}
+
 export async function listUniversityAdmin(profile: PortalProfile) {
   requireAdmin(profile);
-  const [users, centerBatches, certificateRequests] = await Promise.all([
+  const [users, centerBatches, certificateRequests, content] = await Promise.all([
     db().prepare("SELECT * FROM university_users ORDER BY created_at DESC LIMIT 500").all<Record<string, unknown>>(),
     db().prepare("SELECT * FROM university_center_batches ORDER BY created_at DESC LIMIT 250").all<Record<string, unknown>>(),
     db().prepare("SELECT * FROM university_certificate_requests ORDER BY created_at DESC LIMIT 250").all<Record<string, unknown>>(),
+    listUniversityContent(true, profile),
   ]);
-  return { users: users.results ?? [], centerBatches: centerBatches.results ?? [], certificateRequests: certificateRequests.results ?? [] };
+  return { users: users.results ?? [], centerBatches: centerBatches.results ?? [], certificateRequests: certificateRequests.results ?? [], content };
 }
 
 export async function addUniversityUser(profile: PortalProfile, input: Record<string, unknown>) {

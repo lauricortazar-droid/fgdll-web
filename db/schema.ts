@@ -570,3 +570,53 @@ export const universityCertificateRequests = sqliteTable(
   },
   (table) => [index("university_certificate_requests_status_idx").on(table.status, table.createdAt)],
 );
+
+export const universityPrograms = sqliteTable(
+  "university_programs",
+  {
+    id: text("id").primaryKey(),
+    title: text("title").notNull(),
+    generation: text("generation").notNull().default(""),
+    description: text("description").notNull().default(""),
+    status: text("status").notNull().default("published"),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdBy: text("created_by").notNull().default("system"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [index("university_programs_status_order_idx").on(table.status, table.sortOrder)],
+);
+
+export const universityModules = sqliteTable(
+  "university_modules",
+  {
+    id: text("id").primaryKey(),
+    programId: text("program_id").notNull().references(() => universityPrograms.id),
+    title: text("title").notNull(),
+    videoUrl: text("video_url").notNull().default(""),
+    status: text("status").notNull().default("published"),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdBy: text("created_by").notNull().default("system"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [index("university_modules_program_order_idx").on(table.programId, table.status, table.sortOrder)],
+);
+
+export const universityMaterials = sqliteTable(
+  "university_materials",
+  {
+    id: text("id").primaryKey(),
+    programId: text("program_id").references(() => universityPrograms.id),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    resourceUrl: text("resource_url").notNull(),
+    resourceType: text("resource_type").notNull().default("material"),
+    status: text("status").notNull().default("published"),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdBy: text("created_by").notNull().default("system"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [index("university_materials_program_order_idx").on(table.programId, table.status, table.sortOrder)],
+);
