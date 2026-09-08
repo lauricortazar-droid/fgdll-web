@@ -1,17 +1,1058 @@
 [
-  {"id":"EXP-2026-01-02-JAGUAR","month":"2026-01","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-01-02","endDate":"2026-01-04","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Seguimiento de Jóvenes","Reincidentes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-01-30-JAGUAR","month":"2026-01","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-01-30","endDate":"2026-02-01","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Amor","Concédeme la Serenidad"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-02-27-JAGUAR","month":"2026-02","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-02-27","endDate":"2026-03-01","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Seguimiento de Diversidad","Heridas del Alma"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-03-27-JAGUAR","month":"2026-03","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-03-27","endDate":"2026-03-29","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Llegamos a Creer","Amor","Reincidentes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-04-24-JAGUAR","month":"2026-04","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-04-24","endDate":"2026-04-26","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Seguimiento de Jóvenes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-05-22-JAGUAR","month":"2026-05","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-05-22","endDate":"2026-05-24","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Amor","Concédeme la Serenidad"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-06-19-JAGUAR","month":"2026-06","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-06-19","endDate":"2026-06-21","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Heridas del Alma","Reincidentes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-07-17-JAGUAR","month":"2026-07","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-07-17","endDate":"2026-07-19","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Seguimiento de Diversidad"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes, Primera Adultos y Primera Diversidad.","status":"published"},
-  {"id":"EXP-2026-08-JAGUAR","month":"2026-08","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-08-14","endDate":"2026-08-16","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Amor"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-08-TIBURON","month":"2026-08","zone":"Tiburón","title":"Experiencia Zona Tiburón","startDate":"2026-08-28","endDate":"2026-08-30","location":"La Amada Hacienda PlayaCar, Playa del Carmen, Quintana Roo","writings":["Amor","Perdón","Llegamos a Creer"],"notes":"Programa sujeto a indicaciones de coordinación.","status":"published"},
-  {"id":"EXP-2026-09-11-JAGUAR","month":"2026-09","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-09-11","endDate":"2026-09-13","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Llegamos a Creer","Seguimiento de Jóvenes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-10-16-JAGUAR","month":"2026-10","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-10-16","endDate":"2026-10-18","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Profundización de Salas"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-11-06-JAGUAR","month":"2026-11","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-11-06","endDate":"2026-11-08","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Perdón","Concédeme la Serenidad","Reincidentes"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-12-04-JAGUAR","month":"2026-12","zone":"Jaguar","title":"Experiencia Zona Jaguar","startDate":"2026-12-04","endDate":"2026-12-06","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Amor","Heridas del Alma"],"notes":"Unidades abiertas: Primera Internos, Primera Jóvenes y Primera Adultos.","status":"published"},
-  {"id":"EXP-2026-12-26-JAGUAR","month":"2026-12","zone":"Jaguar","title":"Experiencia de Servidores Internos — Zona Jaguar","startDate":"2026-12-26","endDate":"2026-12-27","location":"Hacienda La Amada, Molas, Mérida, Yucatán","writings":["Llegamos a Creer","Pláticas con Dios","Hombres de Dios","Conferencia de Hombres de Dios","Valor para Cambiar"],"notes":"Unidad abierta: Servidores Internos.","status":"published"}
+  {
+    "id": "EXP-2026-01-02-JAGUAR",
+    "month": "2026-01",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-01-02",
+    "endDate": "2026-01-04",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Perdón",
+      "Seguimiento de Jóvenes",
+      "Reincidentes"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-01-16-AGUILA",
+    "month": "2026-01",
+    "zone": "Águila",
+    "title": "Experiencia Zona Águila",
+    "startDate": "2026-01-16",
+    "endDate": "2026-01-18",
+    "location": "",
+    "writings": [
+      "Primeras Familiar",
+      "Primera de Adictos",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-01-16-DELFIN",
+    "month": "2026-01",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-01-16",
+    "endDate": "2026-01-18",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-01-16-TIBURON",
+    "month": "2026-01",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-01-16",
+    "endDate": "2026-01-18",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "1a de Jóvenes",
+      "Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-01-30-COLIBRI",
+    "month": "2026-01",
+    "zone": "Colibrí",
+    "title": "Experiencia Zona Colibrí",
+    "startDate": "2026-01-30",
+    "endDate": "2026-02-01",
+    "location": "",
+    "writings": [
+      "Primera de Familia",
+      "Primera de Usuarios",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-01-30-JAGUAR",
+    "month": "2026-01",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-01-30",
+    "endDate": "2026-03-01",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Amor",
+      "Concédeme la Serenidad"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-02-13-TIBURON",
+    "month": "2026-02",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-02-13",
+    "endDate": "2026-02-15",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "1a de Jóvenes",
+      "Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-02-20-AGUILA",
+    "month": "2026-02",
+    "zone": "Águila",
+    "title": "Experiencia Zona Águila",
+    "startDate": "2026-02-20",
+    "endDate": "2026-02-22",
+    "location": "",
+    "writings": [
+      "Primeras Familiar",
+      "Primera de Adictos",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-02-20-DELFIN",
+    "month": "2026-02",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-02-20",
+    "endDate": "2026-02-22",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "Llegamos a Creer"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-02-27-COLIBRI",
+    "month": "2026-02",
+    "zone": "Colibrí",
+    "title": "Experiencia Zona Colibrí",
+    "startDate": "2026-02-27",
+    "endDate": "2026-03-01",
+    "location": "",
+    "writings": [
+      "Primera de Familia",
+      "Primera de Usuarios",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-02-27-JAGUAR",
+    "month": "2026-02",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-02-27",
+    "endDate": "2026-03-01",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Perdón",
+      "Seguimiento de Diversidad",
+      "Heridas del Alma"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-03-13-AGUILA",
+    "month": "2026-03",
+    "zone": "Águila",
+    "title": "Experiencia Zona Águila",
+    "startDate": "2026-03-13",
+    "endDate": "2026-03-15",
+    "location": "",
+    "writings": [
+      "Primeras Familiar",
+      "Primera de Adictos",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-03-13-TIBURON",
+    "month": "2026-03",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-03-13",
+    "endDate": "2026-03-15",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "Seguimiento de Jóvenes",
+      "Llegamos a Creer"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-03-20-DELFIN",
+    "month": "2026-03",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-03-20",
+    "endDate": "2026-03-22",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "Heridas del Alma"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-03-27-JAGUAR",
+    "month": "2026-03",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-03-27",
+    "endDate": "2026-03-29",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Llegamos a Creer",
+      "Amor",
+      "Reincidentes"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-04-03-COLIBRI",
+    "month": "2026-04",
+    "zone": "Colibrí",
+    "title": "Experiencia Zona Colibrí",
+    "startDate": "2026-04-03",
+    "endDate": "2026-04-05",
+    "location": "",
+    "writings": [
+      "Primera de Familia",
+      "Primera de Usuarios",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-04-10-DELFIN",
+    "month": "2026-04",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-04-10",
+    "endDate": "2026-04-12",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "Alateen",
+      "Jóvenes"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-04-10-TIBURON",
+    "month": "2026-04",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-04-10",
+    "endDate": "2026-04-12",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "1a de Jóvenes",
+      "Alateen"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-04-17-AGUILA",
+    "month": "2026-04",
+    "zone": "Águila",
+    "title": "Aniversario Zona Águila",
+    "startDate": "2026-04-17",
+    "endDate": "2026-04-19",
+    "location": "",
+    "writings": [],
+    "notes": "Actividad especial del calendario anual.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-04-24-JAGUAR",
+    "month": "2026-04",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-04-24",
+    "endDate": "2026-04-26",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Perdón",
+      "Seguimiento de Jóvenes"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-05-08-DELFIN",
+    "month": "2026-05",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-05-08",
+    "endDate": "2026-05-10",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-05-08-TIBURON",
+    "month": "2026-05",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-05-08",
+    "endDate": "2026-05-10",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "1a de Jóvenes",
+      "Concédeme la Serenidad"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-05-15-COLIBRI",
+    "month": "2026-05",
+    "zone": "Colibrí",
+    "title": "Aniversario Zona Colibrí",
+    "startDate": "2026-05-15",
+    "endDate": "2026-05-17",
+    "location": "",
+    "writings": [],
+    "notes": "Actividad especial del calendario anual.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-05-22-AGUILA",
+    "month": "2026-05",
+    "zone": "Águila",
+    "title": "Experiencia Zona Águila",
+    "startDate": "2026-05-22",
+    "endDate": "2026-05-24",
+    "location": "",
+    "writings": [
+      "Primeras Familiar",
+      "Primera de Adictos",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-05-22-JAGUAR",
+    "month": "2026-05",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-05-22",
+    "endDate": "2026-05-24",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Amor",
+      "Concédeme la Serenidad"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-06-05-DELFIN",
+    "month": "2026-06",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-06-05",
+    "endDate": "2026-06-07",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-06-12-COLIBRI",
+    "month": "2026-06",
+    "zone": "Colibrí",
+    "title": "Experiencia Zona Colibrí",
+    "startDate": "2026-06-12",
+    "endDate": "2026-06-14",
+    "location": "",
+    "writings": [
+      "Primera de Familia",
+      "Primera de Usuarios",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-06-19-AGUILA",
+    "month": "2026-06",
+    "zone": "Águila",
+    "title": "Experiencia Zona Águila",
+    "startDate": "2026-06-19",
+    "endDate": "2026-06-21",
+    "location": "",
+    "writings": [
+      "Primeras Familiar",
+      "Primera de Adictos",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-06-19-JAGUAR",
+    "month": "2026-06",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-06-19",
+    "endDate": "2026-06-21",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Perdón",
+      "Heridas del Alma",
+      "Reincidentes"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-06-19-TIBURON",
+    "month": "2026-06",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-06-19",
+    "endDate": "2026-06-21",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "1a de Jóvenes",
+      "Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-07-03-DELFIN",
+    "month": "2026-07",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-07-03",
+    "endDate": "2026-07-05",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-07-03-TIBURON",
+    "month": "2026-07",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-07-03",
+    "endDate": "2026-07-05",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "1a de Jóvenes",
+      "Llegamos a Creer"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-07-10-COLIBRI",
+    "month": "2026-07",
+    "zone": "Colibrí",
+    "title": "Experiencia Zona Colibrí",
+    "startDate": "2026-07-10",
+    "endDate": "2026-07-12",
+    "location": "",
+    "writings": [
+      "Primera de Familia",
+      "Primera de Usuarios",
+      "Llegamos a Creer"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-07-17-AGUILA",
+    "month": "2026-07",
+    "zone": "Águila",
+    "title": "Experiencia Zona Águila",
+    "startDate": "2026-07-17",
+    "endDate": "2026-07-19",
+    "location": "",
+    "writings": [
+      "Primeras Familiar",
+      "Primera de Adictos",
+      "Llegamos a Creer"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-07-17-JAGUAR",
+    "month": "2026-07",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-07-17",
+    "endDate": "2026-07-19",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Primera Diversidad",
+      "Seguimiento Diversidad"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-07-31-DELFIN",
+    "month": "2026-07",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-07-31",
+    "endDate": "2026-08-02",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "Llegamos a Creer"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-07-31-TIBURON",
+    "month": "2026-07",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-07-31",
+    "endDate": "2026-08-02",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "1a de Jóvenes",
+      "Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-08-07-COLIBRI",
+    "month": "2026-08",
+    "zone": "Colibrí",
+    "title": "Experiencia Zona Colibrí",
+    "startDate": "2026-08-07",
+    "endDate": "2026-08-09",
+    "location": "",
+    "writings": [
+      "Primera de Familia",
+      "Primera de Usuarios",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-08-14-AGUILA",
+    "month": "2026-08",
+    "zone": "Águila",
+    "title": "Experiencia Zona Águila",
+    "startDate": "2026-08-14",
+    "endDate": "2026-08-16",
+    "location": "",
+    "writings": [
+      "Primeras Familiar",
+      "Primera de Adictos",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-08-JAGUAR",
+    "month": "2026-08",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-08-14",
+    "endDate": "2026-08-16",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Perdón",
+      "Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-08-28-DELFIN",
+    "month": "2026-08",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-08-28",
+    "endDate": "2026-08-30",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-09-11-AGUILA",
+    "month": "2026-09",
+    "zone": "Águila",
+    "title": "Experiencia Zona Águila",
+    "startDate": "2026-09-11",
+    "endDate": "2026-09-13",
+    "location": "",
+    "writings": [
+      "Primeras Familiar",
+      "Primera de Adictos",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-09-11-COLIBRI",
+    "month": "2026-09",
+    "zone": "Colibrí",
+    "title": "Experiencia Zona Colibrí",
+    "startDate": "2026-09-11",
+    "endDate": "2026-09-13",
+    "location": "",
+    "writings": [
+      "Primera de Familia",
+      "Primera de Usuarios",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-09-11-JAGUAR",
+    "month": "2026-09",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-09-11",
+    "endDate": "2026-09-13",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Llegamos a Creer",
+      "Seguimiento de Jóvenes"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-09-25-DELFIN",
+    "month": "2026-09",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-09-25",
+    "endDate": "2026-09-27",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-09-25-TIBURON",
+    "month": "2026-09",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-09-25",
+    "endDate": "2026-09-27",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "1a de Jóvenes",
+      "Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-10-09-TIBURON",
+    "month": "2026-10",
+    "zone": "Tiburón",
+    "title": "Aniversario FGDLL",
+    "startDate": "2026-10-09",
+    "endDate": "2026-10-11",
+    "location": "",
+    "writings": [],
+    "notes": "Actividad especial del calendario anual.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-10-16-JAGUAR",
+    "month": "2026-10",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-10-16",
+    "endDate": "2026-10-18",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-10-23-COLIBRI",
+    "month": "2026-10",
+    "zone": "Colibrí",
+    "title": "Experiencia Zona Colibrí",
+    "startDate": "2026-10-23",
+    "endDate": "2026-10-25",
+    "location": "",
+    "writings": [
+      "Primera de Familia",
+      "Primera de Usuarios",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-10-23-DELFIN",
+    "month": "2026-10",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-10-23",
+    "endDate": "2026-10-25",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-11-06-JAGUAR",
+    "month": "2026-11",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-11-06",
+    "endDate": "2026-11-08",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Perdón",
+      "Concédeme la Serenidad",
+      "Reincidentes"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-11-20-AGUILA",
+    "month": "2026-11",
+    "zone": "Águila",
+    "title": "Experiencia Zona Águila",
+    "startDate": "2026-11-20",
+    "endDate": "2026-11-22",
+    "location": "",
+    "writings": [
+      "Primeras Familiar",
+      "Primera de Adictos",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-11-20-DELFIN",
+    "month": "2026-11",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-11-20",
+    "endDate": "2026-11-22",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "La Magia del Amor"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-11-20-TIBURON",
+    "month": "2026-11",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-11-20",
+    "endDate": "2026-11-22",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "1a de Jóvenes",
+      "Heridas del Alma"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-11-23-COLIBRI",
+    "month": "2026-11",
+    "zone": "Colibrí",
+    "title": "Experiencia Zona Colibrí",
+    "startDate": "2026-11-23",
+    "endDate": "2026-11-25",
+    "location": "",
+    "writings": [
+      "Primera de Familia",
+      "Primera de Usuarios",
+      "Llegamos a Creer"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-12-04-JAGUAR",
+    "month": "2026-12",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-12-04",
+    "endDate": "2026-12-06",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Primera Internos",
+      "Primera Jóvenes",
+      "Primera Adultos",
+      "Amor",
+      "Heridas del Alma"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-12-18-AGUILA",
+    "month": "2026-12",
+    "zone": "Águila",
+    "title": "Experiencia Zona Águila",
+    "startDate": "2026-12-18",
+    "endDate": "2026-12-20",
+    "location": "",
+    "writings": [
+      "Primeras Familiar",
+      "Primera de Adictos",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-12-18-COLIBRI",
+    "month": "2026-12",
+    "zone": "Colibrí",
+    "title": "Experiencia Zona Colibrí",
+    "startDate": "2026-12-18",
+    "endDate": "2026-12-20",
+    "location": "",
+    "writings": [
+      "Primera de Familia",
+      "Primera de Usuarios",
+      "Seguimiento de Jóvenes"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-12-18-DELFIN",
+    "month": "2026-12",
+    "zone": "Delfín",
+    "title": "Experiencia Zona Delfín",
+    "startDate": "2026-12-18",
+    "endDate": "2026-12-20",
+    "location": "La Amada, Cd. del Carmen",
+    "writings": [
+      "Sala de Primera",
+      "La Magia del Perdón"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-12-18-TIBURON",
+    "month": "2026-12",
+    "zone": "Tiburón",
+    "title": "Experiencia Zona Tiburón",
+    "startDate": "2026-12-18",
+    "endDate": "2026-12-20",
+    "location": "",
+    "writings": [
+      "1a de Adultos",
+      "1a de Jóvenes",
+      "Llegamos a Creer"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-12-26-JAGUAR",
+    "month": "2026-12",
+    "zone": "Jaguar",
+    "title": "Experiencia Zona Jaguar",
+    "startDate": "2026-12-26",
+    "endDate": "2026-12-27",
+    "location": "Hacienda \"La Amada\", Molas, Yucatán",
+    "writings": [
+      "Llegamos a Creer",
+      "Pláticas con Dios",
+      "Hombres de Dios",
+      "Conf. de Hombres de Dios",
+      "Servidores Internos",
+      "Valor para Cambiar"
+    ],
+    "notes": "Salas y escrituras confirmadas conforme al calendario 2026.",
+    "status": "published"
+  },
+  {
+    "id": "EXP-2026-12-26-TIBURON",
+    "month": "2026-12",
+    "zone": "Tiburón",
+    "title": "Experiencia Servidores",
+    "startDate": "2026-12-26",
+    "endDate": "2026-12-27",
+    "location": "",
+    "writings": [],
+    "notes": "Actividad especial del calendario anual.",
+    "status": "published"
+  },
+  {
+    "id": "UNI-2027-02-19-TIBURON",
+    "month": "2027-02",
+    "zone": "Tiburón",
+    "title": "Unidades 2027",
+    "startDate": "2027-02-19",
+    "endDate": "2027-02-21",
+    "location": "",
+    "writings": [],
+    "notes": "Nueva fecha confirmada para 2027.",
+    "status": "published"
+  },
+  {
+    "id": "UNI-2027-03-12-COLIBRI",
+    "month": "2027-03",
+    "zone": "Colibrí",
+    "title": "Unidades 2027",
+    "startDate": "2027-03-12",
+    "endDate": "2027-03-14",
+    "location": "",
+    "writings": [],
+    "notes": "Fecha intercambiada con Zona Delfín para facilitar la organización.",
+    "status": "published"
+  },
+  {
+    "id": "UNI-2027-04-23-DELFIN",
+    "month": "2027-04",
+    "zone": "Delfín",
+    "title": "Unidades 2027",
+    "startDate": "2027-04-23",
+    "endDate": "2027-04-25",
+    "location": "",
+    "writings": [],
+    "notes": "Fecha intercambiada con Zona Colibrí para facilitar la organización.",
+    "status": "published"
+  },
+  {
+    "id": "UNI-2027-05-21-AGUILA",
+    "month": "2027-05",
+    "zone": "Águila",
+    "title": "Unidades 2027",
+    "startDate": "2027-05-21",
+    "endDate": "2027-05-23",
+    "location": "",
+    "writings": [],
+    "notes": "Nueva fecha confirmada para 2027.",
+    "status": "published"
+  },
+  {
+    "id": "UNI-2027-10-15-JAGUAR",
+    "month": "2027-10",
+    "zone": "Jaguar",
+    "title": "Unidades 2027",
+    "startDate": "2027-10-15",
+    "endDate": "2027-10-17",
+    "location": "",
+    "writings": [],
+    "notes": "Aniversario general para todas las zonas.",
+    "status": "published"
+  }
 ]

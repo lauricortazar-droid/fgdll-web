@@ -19,6 +19,11 @@ type Announcement = {
   id: string; title: string; summary: string; body: string; priority: string;
   audience: string; status: string; publishedAt: string | null; updatedAt: string;
 };
+type InboxItem = {
+  id: string; kind: string; area: string; title: string; contactName: string; email: string;
+  phone: string; status: string; createdAt: string; href: string; priority: string;
+};
+type InboxData = { items: InboxItem[]; summary: { total: number; urgent: number; byArea: Record<string, number> } };
 type EditorKind = "topic" | "material" | "announcement";
 type DeleteTarget = { kind: EditorKind; id: string; title: string };
 
@@ -42,6 +47,12 @@ const statusLabels: Record<string, string> = { published: "Publicado", draft: "B
 const audienceLabels: Record<string, string> = {
   all: "Todos los usuarios", leader: "Líderes", osg: "OSG", delegate: "Delegados", council: "Consejo",
 };
+const requestStatusLabels: Record<string, string> = {
+  pending: "Pendiente", in_review: "En revisión", changes_requested: "Esperando corrección", new: "Nueva",
+  contacted: "Contactada", oriented: "Orientada", referred: "Canalizada", received: "Recibida",
+  screening: "Valoración", investigation: "Investigación", resolution: "Resolución", pending_validation: "Por validar",
+  approved: "Aprobada", ready: "Lista",
+};
 
 async function jsonResponse(response: Response) {
   const data = await response.json();
@@ -61,6 +72,7 @@ export default function ContentAdminPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [inbox, setInbox] = useState<InboxData>({ items: [], summary: { total: 0, urgent: 0, byArea: {} } });
   const [tab, setTab] = useState<"topics" | "materials" | "announcements">("topics");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -81,14 +93,16 @@ export default function ContentAdminPage() {
       const admin = me.profile?.role === "admin";
       setIsAdmin(admin);
       if (!admin) return;
-      const [topicData, materialData, announcementData] = await Promise.all([
+      const [topicData, materialData, announcementData, inboxData] = await Promise.all([
         fetch("/api/content/testimonies?admin=1", { cache: "no-store" }).then(jsonResponse),
         fetch("/api/content/materials?admin=1", { cache: "no-store" }).then(jsonResponse),
         fetch("/api/announcements?admin=1", { cache: "no-store" }).then(jsonResponse),
+        fetch("/api/admin/inbox", { cache: "no-store" }).then(jsonResponse),
       ]);
       setTopics(topicData.topics || []);
       setMaterials(materialData.materials || []);
       setAnnouncements(announcementData.announcements || []);
+      setInbox(inboxData || { items: [], summary: { total: 0, urgent: 0, byArea: {} } });
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "No fue posible cargar el centro de contenidos.");
     } finally {
@@ -98,6 +112,7 @@ export default function ContentAdminPage() {
 
   useEffect(() => {
     const task = window.setTimeout(() => { void load(); }, 0);
+    if (new URLSearchParams(window.location.search).get("tab") === "announcements") setTab("announcements");
     return () => window.clearTimeout(task);
   }, []);
 
@@ -113,6 +128,10 @@ export default function ContentAdminPage() {
     const term = search.trim().toLocaleLowerCase("es");
     return announcements.filter((item) => !term || `${item.title} ${item.summary} ${item.body}`.toLocaleLowerCase("es").includes(term));
   }, [announcements, search]);
+  const filteredInbox = useMemo(() => {
+    const term = search.trim().toLocaleLowerCase("es");
+    return inbox.items.filter((item) => !term || `${item.area} ${item.title} ${item.contactName} ${item.email} ${item.phone} ${item.id}`.toLocaleLowerCase("es").includes(term));
+  }, [inbox.items, search]);
 
   function openNew(kind: EditorKind) {
     setEditorKind(kind);
@@ -213,14 +232,14 @@ export default function ContentAdminPage() {
       <section className="content-admin-hero"><div className="shell"><div><span className="eyebrow light">CENTRO DE CONTENIDOS</span><h1>Publicar con orden.<br /><em>Conservar con responsabilidad.</em></h1><p>Administra temas, archivos y comunicados sin tocar el código del portal.</p></div><aside><Link href="/directorio/gestion">← Volver a gestión</Link><Link href="/administracion/experiencias">Gestionar experiencias del mes →</Link><strong>{topics.length + materials.length + announcements.length}</strong><span>registros administrables</span></aside></div></section>
       <section className="content-admin-work"><div className="shell">
         {(error || notice) && <div className={`panel-alert ${error ? "error" : "ok"}`}><span>{error ? "!" : "✓"}</span><p>{error || notice}</p><button onClick={() => { setError(""); setNotice(""); }} aria-label="Cerrar aviso">×</button></div>}
-        <div className="content-admin-tabs"><button className={tab === "topics" ? "active" : ""} onClick={() => { setTab("topics"); setSearch(""); }}>Testimonios <b>{topics.length}</b></button><button className={tab === "materials" ? "active" : ""} onClick={() => { setTab("materials"); setSearch(""); }}>Materiales <b>{materials.length}</b></button><button className={tab === "announcements" ? "active" : ""} onClick={() => { setTab("announcements"); setSearch(""); }}>Noticias y avisos <b>{announcements.length}</b></button></div>
+        <div className="content-admin-tabs"><button className={tab === "topics" ? "active" : ""} onClick={() => { setTab("topics"); setSearch(""); }}>Testimonios <b>{topics.length}</b></button><button className={tab === "materials" ? "active" : ""} onClick={() => { setTab("materials"); setSearch(""); }}>Materiales <b>{materials.length}</b></button><button className={tab === "announcements" ? "active" : ""} onClick={() => { setTab("announcements"); setSearch(""); }}>Avisos y solicitudes <b>{announcements.length + inbox.summary.total}</b></button></div>
         <div className="content-admin-toolbar"><label><span>⌕</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar en esta sección…" /></label><button className="button button-gold" onClick={() => openNew(tab === "topics" ? "topic" : tab === "materials" ? "material" : "announcement")}>+ {tab === "topics" ? "Subir tema" : tab === "materials" ? "Añadir material" : "Nuevo aviso"}</button></div>
 
         {tab === "topics" && <section className="content-library-panel"><div className="content-panel-heading"><div><span>BIBLIOTECA DE TESTIMONIOS</span><h2>Temas y archivos de apoyo</h2></div><p>Los 157 temas actuales ya pueden editarse. Los nuevos se incorporan mediante un archivo y una ficha breve.</p></div><div className="content-record-list">{filteredTopics.map((item) => <article key={item.id}><div className="record-icon">T</div><div className="record-main"><div><span>{item.categoria || "General"}</span><small className={`content-status ${item.status}`}>{statusLabels[item.status] || item.status}</small></div><h3>{item.titulo}</h3><p>{item.objetivo || "Sin descripción todavía."}</p><small>{item.fileName || (item.origin === "catalog" ? "Ficha del catálogo institucional" : "Archivo pendiente")} · {friendlyDate(item.updatedAt)}</small></div><div className="record-actions"><button onClick={() => editTopic(item)}>Editar</button><button className="danger" onClick={() => { setDeleteTarget({ kind: "topic", id: item.id, title: item.titulo }); setDeleteConfirmation(""); }}>Borrar</button></div></article>)}</div></section>}
 
         {tab === "materials" && <section className="content-library-panel"><div className="content-panel-heading"><div><span>MATERIALES PARA LÍDERES</span><h2>Biblioteca operativa</h2></div><p>Sube protocolos, responsivas, formatos, reglamentos y materiales de experiencias.</p></div><div className="content-record-list">{filteredMaterials.map((item) => <article key={item.id}><div className="record-icon">M</div><div className="record-main"><div><span>{categoryLabels[item.category] || item.category}</span><small className={`content-status ${item.status}`}>{statusLabels[item.status] || item.status}</small></div><h3>{item.title}</h3><p>{item.description || "Sin descripción todavía."}</p><small>{item.fileName || "Archivo institucional"} · {friendlyDate(item.updatedAt)}</small></div><div className="record-actions"><button onClick={() => editMaterial(item)}>Editar</button><button className="danger" onClick={() => { setDeleteTarget({ kind: "material", id: item.id, title: item.title }); setDeleteConfirmation(""); }}>Borrar</button></div></article>)}</div></section>}
 
-        {tab === "announcements" && <section className="content-library-panel"><div className="content-panel-heading"><div><span>COMUNICACIÓN INTERNA</span><h2>Noticias y avisos</h2></div><p>Al publicar, el aviso aparecerá en la campana de todos los perfiles indicados y quedará como no leído.</p></div><div className="content-record-list announcements-admin-list">{filteredAnnouncements.map((item) => <article key={item.id}><div className={`record-icon priority-${item.priority}`}>A</div><div className="record-main"><div><span>{audienceLabels[item.audience] || item.audience}</span><small className={`content-status ${item.status}`}>{statusLabels[item.status] || item.status}</small></div><h3>{item.title}</h3><p>{item.summary || item.body}</p><small>{item.publishedAt ? `Publicado ${friendlyDate(item.publishedAt)}` : "Todavía no se ha publicado"}</small></div><div className="record-actions"><button onClick={() => editAnnouncement(item)}>Editar</button><button className="danger" onClick={() => { setDeleteTarget({ kind: "announcement", id: item.id, title: item.title }); setDeleteConfirmation(""); }}>Borrar</button></div></article>)}</div></section>}
+        {tab === "announcements" && <div className="notices-workspace"><section className="admin-inbox-panel"><div className="content-panel-heading"><div><span>BANDEJA OPERATIVA</span><h2>Solicitudes y contactos por resolver</h2></div><p>Reúne en una sola vista los pendientes del portal y el contacto que dejó cada persona.</p></div><div className="admin-inbox-summary"><article><span>PENDIENTES</span><strong>{inbox.summary.total}</strong><small>en todas las áreas</small></article><article className={inbox.summary.urgent ? "urgent" : ""}><span>PRIORIDAD ALTA</span><strong>{inbox.summary.urgent}</strong><small>requieren atención pronta</small></article>{Object.entries(inbox.summary.byArea).map(([area, count]) => <article key={area}><span>{area.toUpperCase()}</span><strong>{count}</strong><small>por resolver</small></article>)}</div><div className="admin-inbox-list">{filteredInbox.map((item) => <article className={item.priority === "urgent" ? "urgent" : ""} key={`${item.kind}-${item.id}`}><div className="inbox-area"><span>{item.area}</span><small>{requestStatusLabels[item.status] || item.status}</small></div><div className="inbox-main"><small>Folio {item.id} · {friendlyDate(item.createdAt)}</small><h3>{item.title}</h3><strong>{item.contactName}</strong><div>{item.phone && <a href={`tel:${item.phone}`}>Llamar: {item.phone}</a>}{item.phone && <a href={`https://wa.me/52${item.phone.replace(/\D/g, "").slice(-10)}`} target="_blank" rel="noreferrer">WhatsApp</a>}{item.email && <a href={`mailto:${item.email}`}>{item.email}</a>}</div></div><Link href={item.href}>Resolver →</Link></article>)}{!filteredInbox.length && <div className="empty-panel"><span>✓</span><p>No hay solicitudes que coincidan con esta búsqueda.</p></div>}</div></section><section className="content-library-panel"><div className="content-panel-heading"><div><span>COMUNICACIÓN INTERNA</span><h2>Noticias y avisos publicados</h2></div><p>Al publicar, el aviso aparecerá en la campana de todos los perfiles indicados y quedará como no leído.</p></div><div className="content-record-list announcements-admin-list">{filteredAnnouncements.map((item) => <article key={item.id}><div className={`record-icon priority-${item.priority}`}>A</div><div className="record-main"><div><span>{audienceLabels[item.audience] || item.audience}</span><small className={`content-status ${item.status}`}>{statusLabels[item.status] || item.status}</small></div><h3>{item.title}</h3><p>{item.summary || item.body}</p><small>{item.publishedAt ? `Publicado ${friendlyDate(item.publishedAt)}` : "Todavía no se ha publicado"}</small></div><div className="record-actions"><button onClick={() => editAnnouncement(item)}>Editar</button><button className="danger" onClick={() => { setDeleteTarget({ kind: "announcement", id: item.id, title: item.title }); setDeleteConfirmation(""); }}>Borrar</button></div></article>)}</div></section></div>}
       </div></section>
     </main>
 

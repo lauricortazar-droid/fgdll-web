@@ -96,7 +96,7 @@ export default function ExperienceAdminPage() {
   return <>
     <SubHeader label="Experiencias del mes" />
     <main className="content-admin experience-admin">
-      <section className="content-admin-hero"><div className="shell"><div><span className="eyebrow light">PROGRAMACIÓN POR ZONAS</span><h1>Fechas claras.<br /><em>Escrituras visibles.</em></h1><p>Publica la experiencia de cada zona y especifica las salas de escritura disponibles.</p></div><aside><Link href="/administracion/contenidos">← Centro de contenidos</Link><strong>{items.length}</strong><span>experiencias registradas</span></aside></div></section>
+      <section className="content-admin-hero"><div className="shell"><div><span className="eyebrow light">PROGRAMACIÓN POR ZONAS</span><h1>Fechas claras.<br /><em>Salas y escrituras visibles.</em></h1><p>Publica la experiencia de cada zona y especifica todo lo que estará disponible.</p></div><aside><Link href="/administracion/contenidos">← Centro de contenidos</Link><strong>{items.length}</strong><span>experiencias registradas</span></aside></div></section>
       <section className="content-admin-work"><div className="shell">
         {(error || notice) && <div className={`panel-alert ${error ? "error" : "ok"}`}><span>{error ? "!" : "✓"}</span><p>{error || notice}</p><button onClick={() => { setError(""); setNotice(""); }}>×</button></div>}
         <div className="experience-admin-toolbar"><div><span>PUBLICACIÓN INDEPENDIENTE</span><h2>Experiencias mensuales</h2><p>La agenda general continúa sincronizada con Google Calendar; esta sección se administra aquí.</p></div><button className="button button-gold" onClick={() => setDraft({ ...emptyDraft })}>+ Nueva experiencia</button></div>
@@ -107,14 +107,14 @@ export default function ExperienceAdminPage() {
       </div></section>
     </main>
 
-    {draft && <div className="editor-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setDraft(null); }}><section className="editor-sheet content-editor-sheet" role="dialog" aria-modal="true"><header><div><span>{draft.id ? "EDITAR" : "NUEVA EXPERIENCIA"}</span><h2>{draft.id ? draft.title : "Programar experiencia"}</h2><p>Fecha, sede y escrituras visibles para toda la comunidad.</p></div><button onClick={() => setDraft(null)}>×</button></header><form onSubmit={save}><div className="editor-body"><div className="editor-grid">
+    {draft && <div className="editor-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setDraft(null); }}><section className="editor-sheet content-editor-sheet" role="dialog" aria-modal="true"><header><div><span>{draft.id ? "EDITAR" : "NUEVA EXPERIENCIA"}</span><h2>{draft.id ? draft.title : "Programar experiencia"}</h2><p>Fecha, sede, salas y escrituras visibles para toda la comunidad.</p></div><button onClick={() => setDraft(null)}>×</button></header><form onSubmit={save}><div className="editor-body"><div className="editor-grid">
       <label><span>Zona</span><select value={draft.zone} onChange={(e) => setDraft({ ...draft, zone: e.target.value })}>{zones.map((zone) => <option key={zone}>{zone}</option>)}</select></label>
       <label><span>Estado</span><select value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value })}><option value="published">Publicar</option><option value="draft">Borrador</option><option value="archived">Archivar</option></select></label>
       <label className="wide required-field"><span>Nombre de la experiencia</span><input value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} required /></label>
       <label><span>Fecha de inicio</span><input type="date" value={draft.startDate} onChange={(e) => setDraft({ ...draft, startDate: e.target.value })} required /></label>
       <label><span>Fecha de término</span><input type="date" value={draft.endDate} onChange={(e) => setDraft({ ...draft, endDate: e.target.value })} required /></label>
       <label className="wide"><span>Sede o ubicación</span><input value={draft.location} onChange={(e) => setDraft({ ...draft, location: e.target.value })} placeholder="Ej. La Amada Hacienda, Molas" /></label>
-      <label className="wide"><span>Escrituras disponibles · una por línea</span><textarea value={draft.writings} onChange={(e) => setDraft({ ...draft, writings: e.target.value })} rows={5} placeholder={"Amor\nPerdón\nLlegamos a Creer"} /></label>
+      <label className="wide"><span>Salas y escrituras disponibles · una por línea</span><textarea value={draft.writings} onChange={(e) => setDraft({ ...draft, writings: e.target.value })} rows={6} placeholder={"Primera de Adultos\nPrimera de Jóvenes\nAmor\nPerdón"} /></label>
       <label className="wide"><span>Nota operativa</span><textarea value={draft.notes} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} rows={3} /></label>
     </div></div><footer><button type="button" onClick={() => setDraft(null)}>Cancelar</button><button className="button button-gold" disabled={busy}>{busy ? "Guardando…" : "Guardar experiencia"}</button></footer></form></section></div>}
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import calendarData from "./calendar-data.json";
-import monthlyExperienceData from "./monthly-experiences-data.json";
+import { ExperienceCalendar } from "./experiencias/experience-calendar";
 import publicData from "./public-directory-data.json";
 import {
   groupHref,
@@ -23,22 +23,8 @@ type CalendarEvent = {
   location: string | null;
   url: string | null;
 };
-type MonthlyExperience = {
-  id: string;
-  month: string;
-  zone: string;
-  title: string;
-  startDate: string;
-  endDate: string;
-  location: string;
-  writings: string[];
-  notes: string;
-  status: string;
-};
-
 const initialGroups = publicData.grupos as PublicGroup[];
 const agendaEvents = calendarData as CalendarEvent[];
-const initialExperiences = monthlyExperienceData as MonthlyExperience[];
 const zoneNames = Object.keys(zoneMeta);
 
 function dateFromYmd(value: string) {
@@ -89,16 +75,6 @@ function eventTime(event: CalendarEvent) {
   return `Inicia ${startTime} · termina ${endTime} h`;
 }
 
-function experienceDate(item: MonthlyExperience) {
-  const startDay = Number(item.startDate.slice(8, 10));
-  const endDay = Number(item.endDate.slice(8, 10));
-  if (item.startDate === item.endDate)
-    return `${startDay} de ${shortMonth(item.startDate)}`;
-  if (item.startDate.slice(0, 7) === item.endDate.slice(0, 7))
-    return `${startDay}–${endDay} de ${shortMonth(item.startDate)}`;
-  return `${startDay} de ${shortMonth(item.startDate)} – ${endDay} de ${shortMonth(item.endDate)}`;
-}
-
 function Logo() {
   return (
     <span className="brand-shield" aria-hidden="true">
@@ -145,6 +121,9 @@ function Header() {
           </a>
           <Link href="/centros" onClick={() => setOpen(false)}>
             Centros
+          </Link>
+          <Link href="/experiencias" onClick={() => setOpen(false)}>
+            Experiencias
           </Link>
           <a href="#agenda" onClick={() => setOpen(false)}>
             Agenda
@@ -410,118 +389,6 @@ function Finder({ groups }: { groups: PublicGroup[] }) {
             </button>
           </div>
         )}
-      </div>
-    </section>
-  );
-}
-
-function MonthlyExperiences() {
-  const [items, setItems] = useState(initialExperiences);
-  const months = useMemo(
-    () => Array.from(new Set(items.map((item) => item.month))).sort(),
-    [items],
-  );
-  const [activeMonth, setActiveMonth] = useState(months[0] ?? "");
-  useEffect(() => {
-    let active = true;
-    fetch("/api/monthly-experiences", { cache: "no-store" })
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
-      .then((result) => {
-        if (
-          active &&
-          Array.isArray(result.experiences) &&
-          result.experiences.length
-        )
-          setItems(result.experiences);
-      })
-      .catch(() => undefined);
-    return () => {
-      active = false;
-    };
-  }, []);
-  const monthItems = items.filter((item) => item.month === activeMonth);
-  return (
-    <section className="section monthly-experiences" id="experiencias">
-      <div className="shell">
-        <div className="section-heading split-heading monthly-experience-heading">
-          <div>
-            <span className="eyebrow light">Experiencias</span>
-            <h2>Cada zona, su fecha y sus escrituras.</h2>
-          </div>
-          <p>
-            Fechas, sedes y escrituras publicadas desde una sola agenda
-            institucional.
-          </p>
-        </div>
-        <div
-          className="experience-month-tabs"
-          role="tablist"
-          aria-label="Meses de experiencias"
-        >
-          {months.map((month) => (
-            <button
-              key={month}
-              type="button"
-              role="tab"
-              aria-selected={activeMonth === month}
-              className={activeMonth === month ? "active" : ""}
-              onClick={() => setActiveMonth(month)}
-            >
-              {monthLabel(month)}
-            </button>
-          ))}
-        </div>
-        <div className="experience-zone-grid" role="tabpanel">
-          {zoneNames.map((zone, index) => {
-            const zoneItems = monthItems.filter((item) => item.zone === zone);
-            return (
-              <article
-                className={`experience-zone-card experience-zone-${index + 1}`}
-                key={zone}
-              >
-                <header>
-                  <span>{zoneMeta[zone].icon}</span>
-                  <div>
-                    <small>ZONA</small>
-                    <h3>{zone}</h3>
-                  </div>
-                </header>
-                {zoneItems.length ? (
-                  zoneItems.map((item) => (
-                    <div className="experience-entry" key={item.id}>
-                      <div className="experience-date">
-                        <span>FECHA</span>
-                        <strong>{experienceDate(item)}</strong>
-                      </div>
-                      <h4>{item.title}</h4>
-                      {item.location && (
-                        <p className="experience-location">⌖ {item.location}</p>
-                      )}
-                      <div className="writing-block">
-                        <span>ESCRITURAS DISPONIBLES</span>
-                        <div>
-                          {item.writings.length ? (
-                            item.writings.map((writing) => (
-                              <b key={writing}>{writing}</b>
-                            ))
-                          ) : (
-                            <em>Por confirmar</em>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="experience-empty">
-                    <span>—</span>
-                    <strong>Sin experiencia publicada</strong>
-                    <p>La fecha aparecerá cuando sea confirmada.</p>
-                  </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
       </div>
     </section>
   );
@@ -806,7 +673,7 @@ export default function Home() {
           </div>
         </section>
 
-        <MonthlyExperiences />
+        <ExperienceCalendar />
         <CalendarAgenda />
 
         <section className="section history-section" id="conocenos">

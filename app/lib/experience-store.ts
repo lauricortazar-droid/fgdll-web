@@ -33,7 +33,7 @@ function writings(value: unknown) {
 }
 
 export async function ensureExperiencesSeeded() {
-  const marker = await db().prepare("SELECT value FROM content_settings WHERE key = 'monthly_experiences_v2'").first<{ value: string }>();
+  const marker = await db().prepare("SELECT value FROM content_settings WHERE key = 'monthly_experiences_v3'").first<{ value: string }>();
   if (marker) return;
   const statements = initialExperiences.map((item) => db().prepare(
     `INSERT INTO monthly_experiences
@@ -44,8 +44,11 @@ export async function ensureExperiencesSeeded() {
        writings_json = excluded.writings_json, notes = excluded.notes, status = excluded.status,
        updated_at = CURRENT_TIMESTAMP`
   ).bind(item.id, item.month, item.zone, item.title, item.startDate, item.endDate, item.location, JSON.stringify(item.writings), item.notes, item.status));
-  await db().batch(statements);
-  await db().prepare("INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('monthly_experiences_v2', 'seeded', CURRENT_TIMESTAMP)").run();
+  await db().batch([
+    db().prepare("DELETE FROM monthly_experiences WHERE id = 'EXP-2026-08-TIBURON' AND created_by = 'system'"),
+    ...statements,
+  ]);
+  await db().prepare("INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('monthly_experiences_v3', 'seeded', CURRENT_TIMESTAMP)").run();
 }
 
 export async function listMonthlyExperiences(profile?: PortalProfile, adminView = false) {
