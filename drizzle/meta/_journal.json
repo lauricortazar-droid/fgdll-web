@@ -71,6 +71,13 @@
       "when": 1788830855050,
       "tag": "0009_jazzy_iron_patriot",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1788857906437,
+      "tag": "0010_black_gauntlet",
+      "breakpoints": true
     }
   ]
 }

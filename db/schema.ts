@@ -512,3 +512,61 @@ export const ethicsReportEvents = sqliteTable(
     index("ethics_report_events_report_idx").on(table.reportId, table.createdAt),
   ],
 );
+
+export const universityUsers = sqliteTable(
+  "university_users",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    email: text("email").notNull(),
+    fullName: text("full_name").notNull(),
+    mobilePhone: text("mobile_phone").notNull().default(""),
+    organization: text("organization").notNull().default(""),
+    participantType: text("participant_type").notNull().default("participant"),
+    diplomaVersion: text("diploma_version").notNull().default("2022"),
+    status: text("status").notNull().default("active"),
+    source: text("source").notNull().default("self_registration"),
+    createdBy: text("created_by").notNull().default("public-form"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    uniqueIndex("university_users_email_idx").on(table.email),
+    index("university_users_status_version_idx").on(table.status, table.diplomaVersion),
+  ],
+);
+
+export const universityCenterBatches = sqliteTable(
+  "university_center_batches",
+  {
+    id: text("id").primaryKey(),
+    directorEmail: text("director_email").notNull(),
+    mobilePhone: text("mobile_phone").notNull(),
+    centerName: text("center_name").notNull(),
+    diplomaVersion: text("diploma_version").notNull(),
+    participantNamesJson: text("participant_names_json").notNull().default("[]"),
+    participantCount: integer("participant_count").notNull().default(0),
+    status: text("status").notNull().default("received"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [index("university_center_batches_status_idx").on(table.status, table.createdAt)],
+);
+
+export const universityCertificateRequests = sqliteTable(
+  "university_certificate_requests",
+  {
+    id: text("id").primaryKey(),
+    fullName: text("full_name").notNull(),
+    mobilePhone: text("mobile_phone").notNull(),
+    groupName: text("group_name").notNull(),
+    diplomaVersion: text("diploma_version").notNull(),
+    paymentStatus: text("payment_status").notNull(),
+    requestType: text("request_type").notNull().default("printing"),
+    status: text("status").notNull().default("pending_validation"),
+    adminNotes: text("admin_notes").notNull().default(""),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedBy: text("updated_by").notNull().default("system"),
+  },
+  (table) => [index("university_certificate_requests_status_idx").on(table.status, table.createdAt)],
+);
