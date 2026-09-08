@@ -64,13 +64,52 @@ const principles = ["Amor", "Comprensión", "Tolerancia", "Respeto", "Responsabi
 
 export default function EthicsPage() {
   const [activeCategory, setActiveCategory] = useState(categories[0].id);
-  const [folio, setFolio] = useState("");
+  const [receipt, setReceipt] = useState<{ publicFolio: string; trackingKey: string } | null>(null);
+  const [sending, setSending] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [tracking, setTracking] = useState<{ report: Record<string, string>; events: Array<Record<string, string>> } | null>(null);
+  const [trackingError, setTrackingError] = useState("");
+  const [trackingLoading, setTrackingLoading] = useState(false);
   const selected = useMemo(() => categories.find((item) => item.id === activeCategory) || categories[0], [activeCategory]);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const number = Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join("");
-    setFolio(number.replace(/(.{4})/g, "$1 ").trim());
+    const formElement = event.currentTarget;
+    setSending(true);
+    setFormError("");
+    setReceipt(null);
+    const form = new FormData(formElement);
+    const body = Object.fromEntries(form.entries());
+    body.consent = form.get("consent") === "on";
+    try {
+      const response = await fetch("/api/ethics/reports", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+      const data = await response.json() as { error?: string; publicFolio?: string; trackingKey?: string };
+      if (!response.ok || !data.publicFolio || !data.trackingKey) throw new Error(data.error || "No fue posible registrar el reporte.");
+      setReceipt({ publicFolio: data.publicFolio, trackingKey: data.trackingKey });
+      formElement.reset();
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "No fue posible registrar el reporte.");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  async function track(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setTrackingLoading(true);
+    setTrackingError("");
+    setTracking(null);
+    const body = Object.fromEntries(new FormData(event.currentTarget).entries());
+    try {
+      const response = await fetch("/api/ethics/track", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+      const data = await response.json() as { error?: string; report?: Record<string, string>; events?: Array<Record<string, string>> };
+      if (!response.ok || !data.report) throw new Error(data.error || "No fue posible consultar el seguimiento.");
+      setTracking({ report: data.report, events: data.events || [] });
+    } catch (error) {
+      setTrackingError(error instanceof Error ? error.message : "No fue posible consultar el seguimiento.");
+    } finally {
+      setTrackingLoading(false);
+    }
   }
 
   return <>
@@ -89,7 +128,9 @@ export default function EthicsPage() {
 
       <section className="section ethics-discipline" id="disciplina"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow light">Justicia organizacional</span><h2>Disciplina gradual, no reacción impulsiva.</h2></div><p>El objetivo es proteger, corregir y reparar. La gravedad, reincidencia, evidencia y derecho de audiencia deben formar parte de cada decisión.</p></div><div className="sanction-timeline">{sanctions.map(([number, title, text]) => <article key={number}><b>{number}</b><div><h3>{title}</h3><p>{text}</p></div></article>)}</div><div className="process-strip"><span>Recepción</span><i>→</i><span>Evaluación inicial</span><i>→</i><span>Investigación</span><i>→</i><span>Recomendación</span><i>→</i><span>Resolución y seguimiento</span></div></div></section>
 
-      <section className="section ethics-report" id="reporte"><div className="shell report-layout"><div><span className="eyebrow">Preparación responsable</span><h2>Ordena los hechos antes de reportar.</h2><p>Este ejercicio funciona únicamente como borrador local durante esta sesión. No envía, almacena ni adjunta información. El canal institucional seguro deberá habilitarse antes de recibir denuncias reales.</p><div className="report-guidance"><article><b>1</b><span><strong>Qué ocurrió</strong>Hechos observables, sin rumores.</span></article><article><b>2</b><span><strong>Cuándo y dónde</strong>Fecha, hora y ubicación aproximadas.</span></article><article><b>3</b><span><strong>Quiénes participaron</strong>Personas involucradas y testigos.</span></article><article><b>4</b><span><strong>Qué necesitas</strong>Protección, orientación o revisión.</span></article></div><div className="privacy-warning"><strong>No incluyas aquí datos sensibles ni evidencia real.</strong><p>Conserva los archivos originales en un lugar seguro. Esta versión no elimina metadatos ni ofrece anonimato técnico.</p></div></div><form onSubmit={submit} className="report-form ethics-draft-form"><label>Categoría<select required defaultValue=""><option value="" disabled>Selecciona una categoría</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.roman}. {item.title}</option>)}</select></label><div className="report-form-row"><label>Zona o grupo<input placeholder="Ej. Zona Jaguar / Grupo…" /></label><label>Fecha aproximada<input type="date" /></label></div><label>Relato de práctica<textarea required rows={7} placeholder="Usa información ficticia o general para preparar el orden de tu relato…" /></label><label>Personas o testigos<textarea rows={3} placeholder="Iniciales o roles para este borrador de práctica" /></label><label>Apoyo que se necesita<select defaultValue="Orientación"><option>Orientación</option><option>Protección inmediata</option><option>Revisión institucional</option><option>Mediación</option></select></label><button className="button button-gold" type="submit">Generar folio local de práctica</button>{folio && <div className="folio"><span>Folio local de práctica</span><strong>{folio}</strong><small>No confirma el envío de un reporte ni permite seguimiento.</small></div>}</form></div></section>
+      <section className="section ethics-report" id="reporte"><div className="shell report-layout"><div><span className="eyebrow">Canal confidencial</span><h2>Registra los hechos con claridad.</h2><p>El reporte se almacena en la base institucional y puede consultarse con un folio y una clave privada. El sistema no adjunta deliberadamente el correo de tu cuenta al expediente, pero no puede prometer anonimato técnico absoluto: la plataforma y la infraestructura de red pueden procesar datos de conexión.</p><div className="report-guidance"><article><b>1</b><span><strong>Qué ocurrió</strong>Hechos observables, sin rumores.</span></article><article><b>2</b><span><strong>Cuándo y dónde</strong>Fecha y ubicación aproximadas.</span></article><article><b>3</b><span><strong>Quiénes participaron</strong>Personas involucradas y testigos.</span></article><article><b>4</b><span><strong>Qué necesitas</strong>Protección, orientación o revisión.</span></article></div><div className="privacy-warning"><strong>Comparte solamente lo necesario.</strong><p>No cargues evidencias en este formulario. Conserva los archivos originales en un lugar seguro; si el comité los requiere, acordará contigo un medio de entrega.</p></div></div><form onSubmit={submit} className="report-form ethics-draft-form"><input name="website" tabIndex={-1} autoComplete="off" className="form-honeypot" aria-hidden="true" /><label>Categoría<select name="category" required defaultValue=""><option value="" disabled>Selecciona una categoría</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.roman}. {item.title}</option>)}</select></label><div className="report-form-row"><label>Zona o grupo<input name="groupZone" maxLength={180} placeholder="Ej. Zona Jaguar / Grupo…" /></label><label>Fecha aproximada<input name="approximateDate" type="date" /></label></div><label>Relato de los hechos<textarea name="narrative" required minLength={30} maxLength={10000} rows={7} placeholder="Describe qué ocurrió, cuándo, dónde y cómo. Evita rumores." /></label><label>Personas o testigos<textarea name="peopleOrWitnesses" maxLength={3000} rows={3} placeholder="Nombres, iniciales o roles, si corresponde" /></label><label>Apoyo que se necesita<select name="supportNeeded" defaultValue="Orientación"><option>Orientación</option><option>Protección inmediata</option><option>Revisión institucional</option><option>Mediación</option></select></label><label>¿Cómo podemos contactarte? (opcional)<select name="contactMethod" defaultValue="none"><option value="none">Prefiero no dejar contacto</option><option value="whatsapp">WhatsApp</option><option value="phone">Llamada</option><option value="email">Correo electrónico</option></select></label><label>Dato de contacto seguro<input name="safeContact" maxLength={254} placeholder="Déjalo vacío si elegiste no recibir contacto" /></label><label className="consent-check"><input name="consent" type="checkbox" required /><span>Confirmo que la información es de buena fe y autorizo su tratamiento para recibir, evaluar y dar seguimiento a este reporte.</span></label><button className="button button-gold" type="submit" disabled={sending}>{sending ? "Registrando…" : "Enviar reporte confidencial"}</button>{formError && <p className="form-error" role="alert">{formError}</p>}{receipt && <div className="folio"><span>Reporte recibido — guarda ambos datos ahora</span><strong>{receipt.publicFolio.replace(/(.{4})/g, "$1 ").trim()}</strong><code>{receipt.trackingKey}</code><small>La clave se muestra una sola vez y no podemos recuperarla. Necesitarás el folio y la clave para consultar avances.</small></div>}</form></div></section>
+
+      <section className="section ethics-tracking" id="seguimiento"><div className="shell report-layout"><div><span className="eyebrow">Seguimiento privado</span><h2>Consulta el estado de tu reporte.</h2><p>Introduce exactamente el folio de 16 dígitos y la clave de 48 caracteres que recibiste. La consulta no muestra notas internas ni datos administrativos.</p></div><form className="report-form" onSubmit={track}><label>Folio<input name="publicFolio" required inputMode="numeric" placeholder="0000 0000 0000 0000" /></label><label>Clave privada<input name="trackingKey" required autoComplete="off" placeholder="48 caracteres" /></label><button className="button button-gold" disabled={trackingLoading}>{trackingLoading ? "Consultando…" : "Consultar seguimiento"}</button>{trackingError && <p className="form-error" role="alert">{trackingError}</p>}{tracking && <div className="tracking-result"><strong>Estado: {tracking.report.status}</strong><small>Folio {String(tracking.report.public_folio).replace(/(.{4})/g, "$1 ").trim()}</small>{tracking.events.map((item, index) => <article key={`${item.created_at}-${index}`}><b>{item.public_message}</b><time>{item.created_at}</time></article>)}</div>}</form></div></section>
 
       <section className="ethics-closing"><div className="shell"><span className="eyebrow light">Compromiso institucional</span><h2>La luz también se cuida con límites.</h2><p>Conocer las reglas, documentar con honestidad y actuar sin represalias fortalece el servicio y protege a quien todavía está aprendiendo a pedir ayuda.</p><div><Link className="button button-gold" href="/portal">Volver al Portal de Líderes →</Link><a className="button button-ghost" href="tel:911">Emergencia: llamar al 911</a></div></div></section>
     </main>

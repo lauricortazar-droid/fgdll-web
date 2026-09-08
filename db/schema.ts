@@ -468,3 +468,47 @@ export const groupRegistrationRequests = sqliteTable(
     ),
   ],
 );
+
+export const ethicsReports = sqliteTable(
+  "ethics_reports",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    publicFolio: text("public_folio").notNull(),
+    trackingSecretHash: text("tracking_secret_hash").notNull(),
+    category: text("category").notNull(),
+    groupZone: text("group_zone").notNull().default(""),
+    approximateDate: text("approximate_date").notNull().default(""),
+    narrative: text("narrative").notNull(),
+    peopleOrWitnesses: text("people_or_witnesses").notNull().default(""),
+    supportNeeded: text("support_needed").notNull(),
+    contactMethod: text("contact_method").notNull().default("none"),
+    safeContact: text("safe_contact").notNull().default(""),
+    consent: integer("consent", { mode: "boolean" }).notNull(),
+    status: text("status").notNull().default("received"),
+    severity: text("severity").notNull().default("unclassified"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    uniqueIndex("ethics_reports_public_folio_idx").on(table.publicFolio),
+    uniqueIndex("ethics_reports_tracking_secret_idx").on(table.trackingSecretHash),
+    index("ethics_reports_status_created_idx").on(table.status, table.createdAt),
+  ],
+);
+
+export const ethicsReportEvents = sqliteTable(
+  "ethics_report_events",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    reportId: integer("report_id").notNull().references(() => ethicsReports.id),
+    eventType: text("event_type").notNull(),
+    status: text("status").notNull(),
+    publicMessage: text("public_message").notNull().default(""),
+    privateNote: text("private_note").notNull().default(""),
+    actorEmail: text("actor_email").notNull().default("system"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("ethics_report_events_report_idx").on(table.reportId, table.createdAt),
+  ],
+);
