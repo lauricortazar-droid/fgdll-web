@@ -134,6 +134,13 @@ function Header() {
           <Link href="/portal" onClick={() => setOpen(false)}>
             Acceso de liderazgo
           </Link>
+          <Link
+            className="button button-small nav-report-link"
+            href="/etica#reporte"
+            onClick={() => setOpen(false)}
+          >
+            Quiero levantar un reporte
+          </Link>
         </nav>
       </div>
     </header>

@@ -12,6 +12,7 @@ const TASK_STATUSES = new Set(["complete", "partial", "pending"]);
 const REQUEST_TYPES = new Set(["printing", "reprinting"]);
 const CONTENT_STATUSES = new Set(["draft", "published", "archived"]);
 const SETTING_KEYS = ["phone", "taskUrl", "recognitionCost", "spinHolder", "spinClabe", "spinDepositCode"] as const;
+const TASK_FORM_URL = "https://forms.gle/2K6RpwpTjRU8Sm8s9";
 
 const initialModules = [
   ["El liderazgo comienza contigo", "https://www.youtube.com/watch?v=fo25kF4ubQc&list=PLARxxudTSjh1m4kRlvhlCMdrglV6tMX2E&index=6"],
@@ -51,7 +52,7 @@ const dpl2026Materials = [
   ["Cuadernillo digital M4 · Conflicto y crisis", "Ejercicios interactivos del cuarto módulo.", "/universidad/dpl-2026/cuadernillos/M4.html", "digital_workbook"],
   ["Cuadernillo digital M5 · Servicio y equipo", "Ejercicios interactivos del quinto módulo.", "/universidad/dpl-2026/cuadernillos/M5.html", "digital_workbook"],
   ["Cuadernillo digital M6 · Filosofía del Guerrero de la Luz", "Integración y cierre del diplomado.", "/universidad/dpl-2026/cuadernillos/M6.html", "digital_workbook"],
-  ["Entregar actividades DPL-2026", "Formulario para enviar las evidencias de los cuadernillos.", "https://www.jotform.com/app/260950926773871", "assignment"],
+  ["Entregar actividades DPL-2026", "Formulario oficial de Google para enviar las evidencias de los cuadernillos.", TASK_FORM_URL, "assignment"],
 ];
 
 function db() {
@@ -109,8 +110,8 @@ async function ensureUniversityContent() {
       VALUES ('MAT-DPL1-2022-ACTIVIDAD', 'DPL1-2022', 'Guía de actividades DPL1 2022', 'Instrucciones, módulos y criterios para entregar las actividades.', '/universidad/dpl1-2022', 'guide', 'published', 10, 'initial-import')`),
     db().prepare(`INSERT OR IGNORE INTO university_materials
       (id, program_id, title, description, resource_url, resource_type, status, sort_order, created_by)
-      VALUES ('MAT-DPL1-2022-ENTREGA', 'DPL1-2022', 'Enviar actividades', 'Formulario para cargar las fotografías de las tareas.', 'https://forms.gle/2K6RpwpTjRU8Sm8s9', 'assignment', 'published', 20, 'initial-import')`),
-    ...Object.entries({ phone: "9999011852", taskUrl: "https://forms.gle/2K6RpwpTjRU8Sm8s9", recognitionCost: "$50 a $100", spinHolder: "LAURA CORTAZAR", spinClabe: "728969000008838228", spinDepositCode: "2242-1787-4421-1658" })
+      VALUES ('MAT-DPL1-2022-ENTREGA', 'DPL1-2022', 'Enviar actividades', 'Formulario oficial de Google para cargar las fotografías de las tareas.', ?, 'assignment', 'published', 20, 'initial-import')`).bind(TASK_FORM_URL),
+    ...Object.entries({ phone: "9999011852", taskUrl: TASK_FORM_URL, recognitionCost: "$50 a $100", spinHolder: "LAURA CORTAZAR", spinClabe: "728969000008838228", spinDepositCode: "2242-1787-4421-1658" })
       .map(([key, value]) => db().prepare("INSERT OR IGNORE INTO content_settings (key, value) VALUES (?, ?)").bind(`university.${key}`, value)),
     db().prepare("INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('university_content_v1', 'seeded', CURRENT_TIMESTAMP)"),
   ];
@@ -135,6 +136,16 @@ async function ensureDpl2026Content() {
     db().prepare("INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('university_dpl2026_v1', 'seeded', CURRENT_TIMESTAMP)"),
   ];
   await db().batch(statements);
+}
+
+async function ensureOfficialTaskForm() {
+  const marker = await db().prepare("SELECT value FROM content_settings WHERE key = 'university_task_form_v2'").first();
+  if (marker) return;
+  await db().batch([
+    db().prepare("UPDATE university_materials SET resource_url = ?, description = 'Formulario oficial de Google para enviar las evidencias de las tareas.', updated_at = CURRENT_TIMESTAMP WHERE resource_type = 'assignment'").bind(TASK_FORM_URL),
+    db().prepare("INSERT INTO content_settings (key, value, updated_at) VALUES ('university.taskUrl', ?, CURRENT_TIMESTAMP) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP").bind(TASK_FORM_URL),
+    db().prepare("INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('university_task_form_v2', 'google-forms', CURRENT_TIMESTAMP)"),
+  ]);
 }
 
 async function audit(actorEmail: string, action: string, targetId: string, details: unknown) {
@@ -242,6 +253,7 @@ export async function requestCertificate(input: Record<string, unknown>) {
 export async function listUniversityContent(adminView = false, profile?: PortalProfile) {
   await ensureUniversityContent();
   await ensureDpl2026Content();
+  await ensureOfficialTaskForm();
   if (adminView) {
     if (!profile) throw new PortalError("Inicia sesión para continuar.", 401);
     requireAdmin(profile);
