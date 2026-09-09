@@ -426,3 +426,11 @@
 
 .uni-record-list blockquote{margin:12px 0 0;border-left:3px solid var(--gold);background:#f7f3e8;padding:12px 14px;color:#52657b;font-size:.72rem;line-height:1.55}
 .uni-record-list blockquote b{color:var(--navy-deep)}
+
+/* Universidad open registration */
+.uni-message{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.uni-message .button{flex:0 0 auto}
+.uni-open-access{margin:0 0 14px;border-left:4px solid var(--gold);border-radius:8px;background:#fff8df;padding:15px 17px}
+.uni-open-access strong{color:var(--navy-deep);font-size:.92rem}
+.uni-open-access p{margin:5px 0 0;color:#596e84;line-height:1.55}
+@media(max-width:680px){.uni-message{align-items:stretch;flex-direction:column}.uni-message .button{text-align:center}}

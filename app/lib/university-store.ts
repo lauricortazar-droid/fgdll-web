@@ -104,17 +104,27 @@ export async function registerUniversityUser(input: Record<string, unknown>, act
   const diplomaVersion = version(input.diplomaVersion);
   const participantType = PARTICIPANT_TYPES.has(String(input.participantType)) ? String(input.participantType) : "participant";
   const requestNotes = clean(input.requestNotes, 2000);
-  const initialStatus = source === "admin_manual" ? "active" : "pending";
+  // Toda persona que completa el registro recibe acceso inmediato al aula.
+  // La solicitud permanece en Administración para seguimiento, pero ya no
+  // funciona como una barrera de admisión.
+  const initialStatus = "active";
   if (!fullName) throw new PortalError("Escribe el nombre completo.");
   if (source !== "admin_manual" && !organization) throw new PortalError("Escribe el grupo o centro.");
   const existing = await db().prepare("SELECT id, status FROM university_users WHERE email = ?").bind(userEmail).first<Record<string, unknown>>();
-  if (existing) throw new PortalError("Este correo ya está registrado en Universidad FGDLL.", 409);
+  if (existing) {
+    if (existing.status === "pending") {
+      await db().prepare("UPDATE university_users SET status = 'active', updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+        .bind(existing.id).run();
+    }
+    await audit(actorEmail, "university_access_confirmed", userEmail, { source, previousStatus: existing.status });
+    return { ok: true, id: Number(existing.id), email: userEmail, status: "active", accessGranted: true, existing: true };
+  }
   const result = await db().prepare(`INSERT INTO university_users
     (email, full_name, mobile_phone, organization, participant_type, diploma_version, status, source, request_notes, created_by)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
     .bind(userEmail, fullName, mobilePhone, organization, participantType, diplomaVersion, initialStatus, source, requestNotes, actorEmail).run();
   await audit(actorEmail, "university_user_created", userEmail, { source, diplomaVersion, participantType });
-  return { ok: true, id: Number(result.meta.last_row_id), email: userEmail };
+  return { ok: true, id: Number(result.meta.last_row_id), email: userEmail, status: initialStatus, accessGranted: true };
 }
 
 export async function registerCenterBatch(input: Record<string, unknown>) {
