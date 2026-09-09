@@ -8,6 +8,7 @@ const USER_STATUSES = new Set(["pending", "active", "paused", "completed", "arch
 const REQUEST_STATUSES = new Set(["received", "in_review", "approved", "changes_requested", "closed"]);
 const CERTIFICATE_STATUSES = new Set(["pending_validation", "in_review", "approved", "ready", "delivered", "closed"]);
 const PAYMENT_STATUSES = new Set(["total", "partial", "pending"]);
+const TASK_STATUSES = new Set(["complete", "partial", "pending"]);
 const REQUEST_TYPES = new Set(["printing", "reprinting"]);
 const CONTENT_STATUSES = new Set(["draft", "published", "archived"]);
 const SETTING_KEYS = ["phone", "taskUrl", "recognitionCost", "spinHolder", "spinClabe", "spinDepositCode"] as const;
@@ -216,22 +217,25 @@ export async function registerCenterBatch(input: Record<string, unknown>) {
 
 export async function requestCertificate(input: Record<string, unknown>) {
   const fullName = clean(input.fullName, 180);
+  const requesterEmail = email(input.email);
   const mobilePhone = phone(input.mobilePhone);
   const groupName = clean(input.groupName, 180);
   const diplomaVersion = version(input.diplomaVersion);
   const paymentStatus = clean(input.paymentStatus, 20);
+  const tasksStatus = clean(input.tasksStatus, 20);
   const requestType = clean(input.requestType, 20);
   const requestNotes = clean(input.requestNotes, 2000);
   if (!fullName) throw new PortalError("Escribe el nombre completo.");
   if (!groupName) throw new PortalError("Escribe el grupo o centro.");
   if (!PAYMENT_STATUSES.has(paymentStatus)) throw new PortalError("Indica el estado del pago del diplomado.");
+  if (!TASK_STATUSES.has(tasksStatus)) throw new PortalError("Indica el avance de tus tareas.");
   if (!REQUEST_TYPES.has(requestType)) throw new PortalError("Selecciona impresión o reimpresión.");
   const id = `UNI-REC-${new Date().getUTCFullYear()}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
   await db().prepare(`INSERT INTO university_certificate_requests
-    (id, full_name, mobile_phone, group_name, diploma_version, payment_status, request_type, request_notes)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
-    .bind(id, fullName, mobilePhone, groupName, diplomaVersion, paymentStatus, requestType, requestNotes).run();
-  await audit("public-certificate-form", "university_certificate_requested", id, { diplomaVersion, paymentStatus, requestType });
+    (id, full_name, email, mobile_phone, group_name, diploma_version, payment_status, tasks_status, request_type, request_notes)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .bind(id, fullName, requesterEmail, mobilePhone, groupName, diplomaVersion, paymentStatus, tasksStatus, requestType, requestNotes).run();
+  await audit("public-certificate-form", "university_certificate_requested", id, { diplomaVersion, paymentStatus, tasksStatus, requestType });
   return { ok: true, id };
 }
 
@@ -328,6 +332,8 @@ export async function updateUniversityRecord(profile: PortalProfile, input: Reco
   const id = clean(String(input.id ?? ""), 80);
   const status = clean(input.status, 30);
   const adminNotes = clean(input.adminNotes, 3000);
+  const designCompleted = input.designCompleted === true || input.designCompleted === "true" ? 1 : 0;
+  const sentToContact = input.sentToContact === true || input.sentToContact === "true" ? 1 : 0;
   if (!id) throw new PortalError("Selecciona un registro válido.");
   let table: string;
   let allowed: Set<string>;
@@ -338,12 +344,12 @@ export async function updateUniversityRecord(profile: PortalProfile, input: Reco
   if (!allowed.has(status)) throw new PortalError("Selecciona un estado válido.");
   const idColumn = kind === "user" ? "id" : "id";
   const sql = kind === "certificate"
-    ? `UPDATE ${table} SET status = ?, admin_notes = ?, updated_at = CURRENT_TIMESTAMP, updated_by = ? WHERE ${idColumn} = ?`
-    : `UPDATE ${table} SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE ${idColumn} = ?`;
+    ? `UPDATE ${table} SET status = ?, admin_notes = ?, design_completed = ?, sent_to_contact = ?, updated_at = CURRENT_TIMESTAMP, updated_by = ? WHERE ${idColumn} = ?`
+    : `UPDATE ${table} SET status = ?, design_completed = ?, sent_to_contact = ?, updated_at = CURRENT_TIMESTAMP WHERE ${idColumn} = ?`;
   const result = kind === "certificate"
-    ? await db().prepare(sql).bind(status, adminNotes, profile.email, id).run()
-    : await db().prepare(sql).bind(status, id).run();
+    ? await db().prepare(sql).bind(status, adminNotes, designCompleted, sentToContact, profile.email, id).run()
+    : await db().prepare(sql).bind(status, designCompleted, sentToContact, id).run();
   if (!result.meta.changes) throw new PortalError("El registro no existe.", 404);
-  await audit(profile.email, "university_record_updated", id, { kind, status, notesChanged: Boolean(adminNotes) });
-  return { ok: true, kind, id, status };
+  await audit(profile.email, "university_record_updated", id, { kind, status, designCompleted: Boolean(designCompleted), sentToContact: Boolean(sentToContact), notesChanged: Boolean(adminNotes) });
+  return { ok: true, kind, id, status, designCompleted: Boolean(designCompleted), sentToContact: Boolean(sentToContact) };
 }
