@@ -42,9 +42,14 @@ function closestMonth(months: string[]) {
   return months.find((month) => month >= current) || months.at(-1) || "";
 }
 
+function currentMonthKey() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
 export function ExperienceCalendar({ standalone = false }: { standalone?: boolean }) {
   const [items, setItems] = useState(initialExperiences);
-  const months = useMemo(() => Array.from(new Set(items.map((item) => item.month))).sort(), [items]);
+  const months = useMemo(() => Array.from(new Set(items.map((item) => item.month).filter((month) => month >= currentMonthKey()))).sort(), [items]);
   const [activeMonth, setActiveMonth] = useState(() => closestMonth(Array.from(new Set(initialExperiences.map((item) => item.month))).sort()));
 
   useEffect(() => {

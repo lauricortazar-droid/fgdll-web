@@ -423,3 +423,6 @@
 .uni-delivery-strip span{color:var(--gold);font-size:.7rem;font-weight:900;letter-spacing:.12em}
 .uni-delivery-strip h3{margin:7px 0 0;font-size:1.35rem}
 @media(max-width:680px){.uni-delivery-strip .shell{align-items:stretch;flex-direction:column}.uni-delivery-strip .button{text-align:center}}
+
+.uni-record-list blockquote{margin:12px 0 0;border-left:3px solid var(--gold);background:#f7f3e8;padding:12px 14px;color:#52657b;font-size:.72rem;line-height:1.55}
+.uni-record-list blockquote b{color:var(--navy-deep)}
