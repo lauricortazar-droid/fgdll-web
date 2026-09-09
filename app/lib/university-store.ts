@@ -28,6 +28,31 @@ const initialModules = [
   ["ADN FGDLL", "https://www.youtube.com/watch?v=vmZpoi3dbOk"],
 ];
 
+const dpl2026Modules = [
+  ["M1 · El liderazgo comienza contigo", "https://youtu.be/LEF07f077Us"],
+  ["M1 · Repaso", "https://youtu.be/Vsu1DuyINEY"],
+  ["M2 · Tu brújula interior", "https://youtu.be/oynTPaOFXLk"],
+  ["M2 · Repaso", "https://youtu.be/GQcofqCg0Ys"],
+  ["M3 · Comunicación consciente · Parte 1", "https://youtu.be/8WAt3AEEkN8"],
+  ["M3 · Comunicación consciente · Parte 2", "https://youtu.be/g3mkioyQKos"],
+  ["M3 · Repaso", "https://youtu.be/DVU_wtAYlUc"],
+  ["M4 · El triángulo dramático", "https://youtu.be/8ngXSlUMUkg"],
+  ["M5 · El liderazgo prescindible", "https://youtu.be/cN5HfW5YOe8"],
+  ["M6 · La filosofía del Guerrero de la Luz · Parte 1", "https://youtu.be/u8Fx1O0lfJ0"],
+  ["M6 · La filosofía del Guerrero de la Luz · Parte 2", "https://youtu.be/r69vgXnX2dA"],
+];
+
+const dpl2026Materials = [
+  ["Aula completa DPL-2026", "Índice con los seis módulos, clases, repasos, cuadernillos y entrega de actividades.", "/universidad/dpl-2026/index.html", "guide"],
+  ["Cuadernillo digital M1 · El liderazgo empieza contigo", "Ejercicios interactivos del primer módulo.", "/universidad/dpl-2026/cuadernillos/M1.html", "digital_workbook"],
+  ["Cuadernillo digital M2 · La brújula interior", "Ejercicios interactivos del segundo módulo.", "/universidad/dpl-2026/cuadernillos/M2.html", "digital_workbook"],
+  ["Cuadernillo digital M3 · Comunicación consciente", "Ejercicios interactivos del tercer módulo.", "/universidad/dpl-2026/cuadernillos/M3.html", "digital_workbook"],
+  ["Cuadernillo digital M4 · Conflicto y crisis", "Ejercicios interactivos del cuarto módulo.", "/universidad/dpl-2026/cuadernillos/M4.html", "digital_workbook"],
+  ["Cuadernillo digital M5 · Servicio y equipo", "Ejercicios interactivos del quinto módulo.", "/universidad/dpl-2026/cuadernillos/M5.html", "digital_workbook"],
+  ["Cuadernillo digital M6 · Filosofía del Guerrero de la Luz", "Integración y cierre del diplomado.", "/universidad/dpl-2026/cuadernillos/M6.html", "digital_workbook"],
+  ["Entregar actividades DPL-2026", "Formulario para enviar las evidencias de los cuadernillos.", "https://www.jotform.com/app/260950926773871", "assignment"],
+];
+
 function db() {
   const value = getRuntimeEnv().DB;
   if (!value) throw new PortalError("Universidad FGDLL no está disponible en este momento.", 503);
@@ -87,6 +112,26 @@ async function ensureUniversityContent() {
     ...Object.entries({ phone: "9999011852", taskUrl: "https://forms.gle/2K6RpwpTjRU8Sm8s9", recognitionCost: "$50 a $100", spinHolder: "LAURA CORTAZAR", spinClabe: "728969000008838228", spinDepositCode: "2242-1787-4421-1658" })
       .map(([key, value]) => db().prepare("INSERT OR IGNORE INTO content_settings (key, value) VALUES (?, ?)").bind(`university.${key}`, value)),
     db().prepare("INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('university_content_v1', 'seeded', CURRENT_TIMESTAMP)"),
+  ];
+  await db().batch(statements);
+}
+
+async function ensureDpl2026Content() {
+  const marker = await db().prepare("SELECT value FROM content_settings WHERE key = 'university_dpl2026_v1'").first();
+  if (marker) return;
+  const statements = [
+    db().prepare(`INSERT OR IGNORE INTO university_programs
+      (id, title, generation, description, status, sort_order, created_by)
+      VALUES ('DPL1-2026', 'Diplomado de Liderazgo Efectivo I', '2026', 'Seis módulos para trabajar liderazgo personal, brújula interior, comunicación consciente, conflicto, servicio y filosofía del Guerrero de la Luz.', 'published', 20, 'dpl2026-import')`),
+    ...dpl2026Modules.map(([title, videoUrl], index) => db().prepare(`INSERT OR IGNORE INTO university_modules
+      (id, program_id, title, video_url, status, sort_order, created_by)
+      VALUES (?, 'DPL1-2026', ?, ?, 'published', ?, 'dpl2026-import')`)
+      .bind(`DPL1-2026-VIDEO-${String(index + 1).padStart(2, "0")}`, title, videoUrl, (index + 1) * 10)),
+    ...dpl2026Materials.map(([title, description, resourceUrl, resourceType], index) => db().prepare(`INSERT OR IGNORE INTO university_materials
+      (id, program_id, title, description, resource_url, resource_type, status, sort_order, created_by)
+      VALUES (?, 'DPL1-2026', ?, ?, ?, ?, 'published', ?, 'dpl2026-import')`)
+      .bind(`DPL1-2026-MATERIAL-${String(index + 1).padStart(2, "0")}`, title, description, resourceUrl, resourceType, (index + 1) * 10)),
+    db().prepare("INSERT OR REPLACE INTO content_settings (key, value, updated_at) VALUES ('university_dpl2026_v1', 'seeded', CURRENT_TIMESTAMP)"),
   ];
   await db().batch(statements);
 }
@@ -192,6 +237,7 @@ export async function requestCertificate(input: Record<string, unknown>) {
 
 export async function listUniversityContent(adminView = false, profile?: PortalProfile) {
   await ensureUniversityContent();
+  await ensureDpl2026Content();
   if (adminView) {
     if (!profile) throw new PortalError("Inicia sesión para continuar.", 401);
     requireAdmin(profile);
