@@ -434,3 +434,8 @@
 .uni-open-access strong{color:var(--navy-deep);font-size:.92rem}
 .uni-open-access p{margin:5px 0 0;color:#596e84;line-height:1.55}
 @media(max-width:680px){.uni-message{align-items:stretch;flex-direction:column}.uni-message .button{text-align:center}}
+
+/* Pending leadership requests still have immediate University access */
+.form-message.standalone .button{display:inline-block;margin-top:12px}
+.pending-access-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+.pending-access-actions .button{padding:11px 15px}

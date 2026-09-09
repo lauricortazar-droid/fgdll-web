@@ -10,6 +10,7 @@ import {
   reviewAccessRequest,
 } from "../../lib/directory-store";
 import { apiError, readJson, requireApiProfile, requireApiUser } from "../../lib/portal-api";
+import { grantUniversityAccessFromPortalRequest } from "../../lib/university-store";
 
 export const dynamic = "force-dynamic";
 
@@ -85,6 +86,16 @@ export async function GET() {
     const user = await requireApiUser();
     const profile = await getPortalProfile(user.email, user.displayName);
     const rows = profile ? await listAccessRequests(profile, user.email) : await listOwnAccessRequests(user.email);
+    if (!profile && rows.length) {
+      const ownRequest = rows.find((row) => String(row.requester_email ?? "").toLowerCase() === user.email.toLowerCase()) ?? rows[0];
+      await grantUniversityAccessFromPortalRequest({
+        email: user.email,
+        fullName: String(ownRequest.requester_name ?? user.displayName),
+        mobilePhone: String(ownRequest.phone ?? ""),
+        organization: String(ownRequest.directory_group_name ?? ownRequest.group_name ?? ownRequest.zone ?? ""),
+        requestNotes: `Solicitud general ${String(ownRequest.id ?? "")}`,
+      });
+    }
     const requestIds = rows.map((row) => String(row.id));
     const eventRows = await listAccessRequestEvents(requestIds);
     const eventsByRequest = new Map<string, ReturnType<typeof serializeEvent>[]>();
@@ -108,7 +119,14 @@ export async function POST(request: Request) {
     const body = await readJson(request);
     const payload = await accessPayload(body);
     const result = await createAccessRequest({ email: user.email, ...payload });
-    return Response.json(result, { status: 201 });
+    await grantUniversityAccessFromPortalRequest({
+      email: user.email,
+      fullName: payload.name,
+      mobilePhone: payload.phone,
+      organization: payload.groupName || payload.zone || "",
+      requestNotes: `Solicitud general ${result.id}`,
+    });
+    return Response.json({ ...result, accessGranted: true, universityUrl: "/universidad#aula" }, { status: 201 });
   } catch (error) {
     return apiError(error);
   }

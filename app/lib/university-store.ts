@@ -127,6 +127,30 @@ export async function registerUniversityUser(input: Record<string, unknown>, act
   return { ok: true, id: Number(result.meta.last_row_id), email: userEmail, status: initialStatus, accessGranted: true };
 }
 
+export async function grantUniversityAccessFromPortalRequest(input: {
+  email: string; fullName?: string; mobilePhone?: string; organization?: string; requestNotes?: string;
+}) {
+  await ensureUniversityContent();
+  const userEmail = email(input.email);
+  const fullName = clean(input.fullName, 180) || userEmail.split("@")[0];
+  const mobilePhone = clean(input.mobilePhone, 30).replace(/[^\d+]/g, "").slice(0, 18);
+  const organization = clean(input.organization, 180);
+  const requestNotes = clean(input.requestNotes, 2000);
+  const existing = await db().prepare("SELECT status FROM university_users WHERE email = ?").bind(userEmail).first<Record<string, unknown>>();
+  if (existing?.status === "active") {
+    return { ok: true, email: userEmail, status: "active", accessGranted: true, existing: true };
+  }
+  await db().prepare(`INSERT INTO university_users
+    (email, full_name, mobile_phone, organization, participant_type, diploma_version, status, source, request_notes, created_by)
+    VALUES (?, ?, ?, ?, 'participant', 'Acceso general', 'active', 'portal_access_request', ?, ?)
+    ON CONFLICT(email) DO UPDATE SET full_name = excluded.full_name, mobile_phone = excluded.mobile_phone,
+    organization = CASE WHEN excluded.organization != '' THEN excluded.organization ELSE university_users.organization END,
+    status = 'active', updated_at = CURRENT_TIMESTAMP`)
+    .bind(userEmail, fullName, mobilePhone, organization, requestNotes, userEmail).run();
+  await audit(userEmail, "university_access_granted_from_portal", userEmail, { organization });
+  return { ok: true, email: userEmail, status: "active", accessGranted: true };
+}
+
 export async function registerCenterBatch(input: Record<string, unknown>) {
   const directorEmail = email(input.directorEmail);
   const mobilePhone = phone(input.mobilePhone);
