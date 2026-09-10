@@ -14,6 +14,68 @@ type Category = {
   impact: string;
 };
 
+type EthicsReceipt = { publicFolio: string; trackingKey: string };
+
+function downloadReceipt(receipt: EthicsReceipt) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1400;
+  canvas.height = 1000;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "#042f66";
+  context.fillRect(0, 0, canvas.width, 190);
+  context.fillStyle = "#f2ad00";
+  context.fillRect(0, 190, canvas.width, 12);
+
+  context.fillStyle = "#ffffff";
+  context.font = "700 30px system-ui, sans-serif";
+  context.fillText("FRATERNIDAD GUERREROS DE LA LUZ", 90, 82);
+  context.font = "800 52px system-ui, sans-serif";
+  context.fillText("Comprobante de reporte confidencial", 90, 148);
+
+  context.fillStyle = "#64748b";
+  context.font = "700 24px system-ui, sans-serif";
+  context.fillText("FOLIO DE SEGUIMIENTO", 90, 292);
+  context.fillStyle = "#042f66";
+  context.font = "800 55px ui-monospace, monospace";
+  context.fillText(receipt.publicFolio.replace(/(.{4})/g, "$1 ").trim(), 90, 360);
+
+  context.fillStyle = "#64748b";
+  context.font = "700 24px system-ui, sans-serif";
+  context.fillText("CONTRASEÑA PRIVADA", 90, 452);
+  context.fillStyle = "#1d1d1b";
+  context.font = "700 34px ui-monospace, monospace";
+  context.fillText(receipt.trackingKey.slice(0, 24), 90, 510);
+  context.fillText(receipt.trackingKey.slice(24), 90, 560);
+
+  context.fillStyle = "#fff7dd";
+  context.fillRect(75, 630, 1250, 185);
+  context.fillStyle = "#7a5700";
+  context.font = "800 30px system-ui, sans-serif";
+  context.fillText("GUARDA ESTE ARCHIVO EN UN LUGAR SEGURO", 110, 690);
+  context.fillStyle = "#3f3a2d";
+  context.font = "500 25px system-ui, sans-serif";
+  context.fillText("La contraseña se muestra una sola vez y no puede recuperarse.", 110, 742);
+  context.fillText("Necesitarás ambos datos para consultar el seguimiento de tu caso.", 110, 782);
+
+  context.fillStyle = "#042f66";
+  context.font = "700 25px system-ui, sans-serif";
+  context.fillText("Seguimiento: fgdll.org/etica#seguimiento", 90, 890);
+  context.fillStyle = "#64748b";
+  context.font = "500 20px system-ui, sans-serif";
+  context.fillText(`Generado el ${new Date().toLocaleString("es-MX")}`, 90, 932);
+
+  const link = document.createElement("a");
+  link.download = `FGDLL-folio-${receipt.publicFolio}.png`;
+  link.href = canvas.toDataURL("image/png");
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
 const categories: Category[] = [
   {
     id: "autoridad", roman: "I", title: "Abuso de autoridad y ética del liderazgo",
@@ -64,7 +126,7 @@ const principles = ["Amor", "Comprensión", "Tolerancia", "Respeto", "Responsabi
 
 export default function EthicsPage() {
   const [activeCategory, setActiveCategory] = useState(categories[0].id);
-  const [receipt, setReceipt] = useState<{ publicFolio: string; trackingKey: string } | null>(null);
+  const [receipt, setReceipt] = useState<EthicsReceipt | null>(null);
   const [sending, setSending] = useState(false);
   const [formError, setFormError] = useState("");
   const [tracking, setTracking] = useState<{ report: Record<string, string>; events: Array<Record<string, string>> } | null>(null);
@@ -85,7 +147,9 @@ export default function EthicsPage() {
       const response = await fetch("/api/ethics/reports", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
       const data = await response.json() as { error?: string; publicFolio?: string; trackingKey?: string };
       if (!response.ok || !data.publicFolio || !data.trackingKey) throw new Error(data.error || "No fue posible registrar el reporte.");
-      setReceipt({ publicFolio: data.publicFolio, trackingKey: data.trackingKey });
+      const nextReceipt = { publicFolio: data.publicFolio, trackingKey: data.trackingKey };
+      setReceipt(nextReceipt);
+      downloadReceipt(nextReceipt);
       formElement.reset();
     } catch (error) {
       setFormError(error instanceof Error ? error.message : "No fue posible registrar el reporte.");
@@ -130,9 +194,9 @@ export default function EthicsPage() {
 
       <section className="section ethics-trusted-channels" id="incidencias"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow">Canales para servidores de confianza</span><h2>Documentar también es servir.</h2></div><p>Un reporte preciso no busca culpables: convierte una dificultad en aprendizaje institucional y ayuda a que la fraternidad no tropiece dos veces con la misma piedra.</p></div><div className="trusted-channel-grid"><article><span>INCIDENCIAS Y NUEVOS ACUERDOS</span><h3>Registra una falla operativa.</h3><p>Para asuntos administrativos, logísticos, fallas de proceso o incumplimientos de acuerdos. Este canal está dirigido al Consejo Directivo, directores de zona, delegados y servidores de confianza.</p><div className="channel-boundary"><strong>Si existe violencia, acoso o una falta ética grave, no uses este formulario.</strong><a href="#reporte">Ve directamente al reporte confidencial →</a></div><a className="button button-gold" href="https://docs.google.com/forms/d/e/1FAIpQLSeg0wdj3WGDQjTxQLo_7Pm0TMoq--NT3Orfz3VzYnJnTYp45g/viewform" target="_blank" rel="noopener noreferrer">Abrir formulario de incidencias ↗</a></article><article id="transparencia-proactiva"><span>TRANSPARENCIA PROACTIVA</span><h3>Comparte información antes de que se vuelva un problema.</h3><p>Utiliza este canal para aportar datos, observaciones y oportunidades de mejora que fortalezcan la rendición de cuentas, la prevención y la confianza institucional.</p><div className="channel-boundary neutral"><strong>La transparencia no sustituye una denuncia ética.</strong><a href="#reporte">Para una conducta grave, levanta un reporte →</a></div><a className="button button-outline" href="https://forms.gle/oFduxZGVyw5jUnfP6" target="_blank" rel="noopener noreferrer">Abrir transparencia proactiva ↗</a></article></div></div></section>
 
-      <section className="section ethics-report" id="reporte"><div className="shell report-layout"><div><span className="eyebrow">Canal confidencial</span><h2>Registra los hechos con claridad.</h2><p>El reporte se almacena en la base institucional y puede consultarse con un folio y una clave privada. El sistema no adjunta deliberadamente el correo de tu cuenta al expediente, pero no puede prometer anonimato técnico absoluto: la plataforma y la infraestructura de red pueden procesar datos de conexión.</p><div className="report-guidance"><article><b>1</b><span><strong>Qué ocurrió</strong>Hechos observables, sin rumores.</span></article><article><b>2</b><span><strong>Cuándo y dónde</strong>Fecha y ubicación aproximadas.</span></article><article><b>3</b><span><strong>Quiénes participaron</strong>Personas involucradas y testigos.</span></article><article><b>4</b><span><strong>Qué necesitas</strong>Protección, orientación o revisión.</span></article></div><div className="privacy-warning"><strong>Comparte solamente lo necesario.</strong><p>No cargues evidencias en este formulario. Conserva los archivos originales en un lugar seguro; si el comité los requiere, acordará contigo un medio de entrega.</p></div></div><form onSubmit={submit} className="report-form ethics-draft-form"><input name="website" tabIndex={-1} autoComplete="off" className="form-honeypot" aria-hidden="true" /><label>Categoría<select name="category" required defaultValue=""><option value="" disabled>Selecciona una categoría</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.roman}. {item.title}</option>)}</select></label><div className="report-form-row"><label>Zona o grupo<input name="groupZone" maxLength={180} placeholder="Ej. Zona Jaguar / Grupo…" /></label><label>Fecha aproximada<input name="approximateDate" type="date" /></label></div><label>Relato de los hechos<textarea name="narrative" required minLength={30} maxLength={10000} rows={7} placeholder="Describe qué ocurrió, cuándo, dónde y cómo. Evita rumores." /></label><label>Personas o testigos<textarea name="peopleOrWitnesses" maxLength={3000} rows={3} placeholder="Nombres, iniciales o roles, si corresponde" /></label><label>Apoyo que se necesita<select name="supportNeeded" defaultValue="Orientación"><option>Orientación</option><option>Protección inmediata</option><option>Revisión institucional</option><option>Mediación</option></select></label><label>¿Cómo podemos contactarte? (opcional)<select name="contactMethod" defaultValue="none"><option value="none">Prefiero no dejar contacto</option><option value="whatsapp">WhatsApp</option><option value="phone">Llamada</option><option value="email">Correo electrónico</option></select></label><label>Dato de contacto seguro<input name="safeContact" maxLength={254} placeholder="Déjalo vacío si elegiste no recibir contacto" /></label><label className="consent-check"><input name="consent" type="checkbox" required /><span>Confirmo que la información es de buena fe y autorizo su tratamiento para recibir, evaluar y dar seguimiento a este reporte.</span></label><button className="button button-gold" type="submit" disabled={sending}>{sending ? "Registrando…" : "Enviar reporte confidencial"}</button>{formError && <p className="form-error" role="alert">{formError}</p>}{receipt && <div className="folio"><span>Reporte recibido — guarda ambos datos ahora</span><strong>{receipt.publicFolio.replace(/(.{4})/g, "$1 ").trim()}</strong><code>{receipt.trackingKey}</code><small>La clave se muestra una sola vez y no podemos recuperarla. Necesitarás el folio y la clave para consultar avances.</small></div>}</form></div></section>
+      <section className="section ethics-report" id="reporte"><div className="shell report-layout"><div><span className="eyebrow">Canal confidencial</span><h2>Registra los hechos con claridad.</h2><p>El reporte se almacena en la base institucional y puede consultarse con un folio y una contraseña privada. El sistema no adjunta deliberadamente el correo de tu cuenta al expediente, pero no puede prometer anonimato técnico absoluto: la plataforma y la infraestructura de red pueden procesar datos de conexión.</p><div className="report-guidance"><article><b>1</b><span><strong>Qué ocurrió</strong>Hechos observables, sin rumores.</span></article><article><b>2</b><span><strong>Cuándo y dónde</strong>Fecha y ubicación aproximadas.</span></article><article><b>3</b><span><strong>Quiénes participaron</strong>Personas involucradas y testigos.</span></article><article><b>4</b><span><strong>Qué necesitas</strong>Protección, orientación o revisión.</span></article></div><div className="privacy-warning"><strong>Comparte solamente lo necesario.</strong><p>No cargues evidencias en este formulario. Conserva los archivos originales en un lugar seguro; si el comité los requiere, acordará contigo un medio de entrega.</p></div></div><form onSubmit={submit} className="report-form ethics-draft-form"><input name="website" tabIndex={-1} autoComplete="off" className="form-honeypot" aria-hidden="true" /><label>Categoría<select name="category" required defaultValue=""><option value="" disabled>Selecciona una categoría</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.roman}. {item.title}</option>)}</select></label><div className="report-form-row"><label>Zona o grupo<input name="groupZone" maxLength={180} placeholder="Ej. Zona Jaguar / Grupo…" /></label><label>Fecha aproximada<input name="approximateDate" type="date" /></label></div><label>Relato de los hechos<textarea name="narrative" required minLength={30} maxLength={10000} rows={7} placeholder="Describe qué ocurrió, cuándo, dónde y cómo. Evita rumores." /></label><label>Personas o testigos<textarea name="peopleOrWitnesses" maxLength={3000} rows={3} placeholder="Nombres, iniciales o roles, si corresponde" /></label><label>Apoyo que se necesita<select name="supportNeeded" defaultValue="Orientación"><option>Orientación</option><option>Protección inmediata</option><option>Revisión institucional</option><option>Mediación</option></select></label><label>¿Cómo podemos contactarte? (opcional)<select name="contactMethod" defaultValue="none"><option value="none">Prefiero no dejar contacto</option><option value="whatsapp">WhatsApp</option><option value="phone">Llamada</option><option value="email">Correo electrónico</option></select></label><label>Dato de contacto seguro<input name="safeContact" maxLength={254} placeholder="Déjalo vacío si elegiste no recibir contacto" /></label><label className="consent-check"><input name="consent" type="checkbox" required /><span>Confirmo que la información es de buena fe y autorizo su tratamiento para recibir, evaluar y dar seguimiento a este reporte.</span></label><button className="button button-gold" type="submit" disabled={sending}>{sending ? "Registrando…" : "Enviar reporte confidencial"}</button>{formError && <p className="form-error" role="alert">{formError}</p>}{receipt && <div className="folio"><span>Reporte recibido — la imagen con tus datos se descargó automáticamente</span><strong>{receipt.publicFolio.replace(/(.{4})/g, "$1 ").trim()}</strong><code>{receipt.trackingKey}</code><small>Guárdala en un lugar seguro. La contraseña se muestra una sola vez y no podemos recuperarla; necesitarás el folio y la contraseña para consultar el seguimiento.</small><button className="button button-outline receipt-download" type="button" onClick={() => downloadReceipt(receipt)}>Descargar nuevamente en PNG</button></div>}</form></div></section>
 
-      <section className="section ethics-tracking" id="seguimiento"><div className="shell report-layout"><div><span className="eyebrow">Seguimiento privado</span><h2>Consulta el estado de tu reporte.</h2><p>Introduce exactamente el folio de 16 dígitos y la clave de 48 caracteres que recibiste. La consulta no muestra notas internas ni datos administrativos.</p></div><form className="report-form" onSubmit={track}><label>Folio<input name="publicFolio" required inputMode="numeric" placeholder="0000 0000 0000 0000" /></label><label>Clave privada<input name="trackingKey" required autoComplete="off" placeholder="48 caracteres" /></label><button className="button button-gold" disabled={trackingLoading}>{trackingLoading ? "Consultando…" : "Consultar seguimiento"}</button>{trackingError && <p className="form-error" role="alert">{trackingError}</p>}{tracking && <div className="tracking-result"><strong>Estado: {tracking.report.status}</strong><small>Folio {String(tracking.report.public_folio).replace(/(.{4})/g, "$1 ").trim()}</small>{tracking.events.map((item, index) => <article key={`${item.created_at}-${index}`}><b>{item.public_message}</b><time>{item.created_at}</time></article>)}</div>}</form></div></section>
+      <section className="section ethics-tracking" id="seguimiento"><div className="shell report-layout"><div><span className="eyebrow">Seguimiento privado</span><h2>Consulta el estado de tu reporte.</h2><p>Introduce exactamente el folio de 16 dígitos y la contraseña de 48 caracteres que recibiste. La consulta no muestra notas internas ni datos administrativos.</p></div><form className="report-form" onSubmit={track}><label>Folio<input name="publicFolio" required inputMode="numeric" placeholder="0000 0000 0000 0000" /></label><label>Contraseña privada<input name="trackingKey" required autoComplete="off" placeholder="48 caracteres" /></label><button className="button button-gold" disabled={trackingLoading}>{trackingLoading ? "Consultando…" : "Consultar seguimiento"}</button>{trackingError && <p className="form-error" role="alert">{trackingError}</p>}{tracking && <div className="tracking-result"><strong>Estado: {tracking.report.status}</strong><small>Folio {String(tracking.report.public_folio).replace(/(.{4})/g, "$1 ").trim()}</small>{tracking.events.map((item, index) => <article key={`${item.created_at}-${index}`}><b>{item.public_message}</b><time>{item.created_at}</time></article>)}</div>}</form></div></section>
 
       <section className="ethics-closing"><div className="shell"><span className="eyebrow light">Compromiso institucional</span><h2>La luz también se cuida con límites.</h2><p>Conocer las reglas, documentar con honestidad y actuar sin represalias fortalece el servicio y protege a quien todavía está aprendiendo a pedir ayuda.</p><div><Link className="button button-gold" href="/portal">Volver al Portal de Líderes →</Link><a className="button button-ghost" href="tel:911">Emergencia: llamar al 911</a></div></div></section>
     </main>

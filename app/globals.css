@@ -563,3 +563,11 @@ input,select,textarea,.search-field,.finder-search,.form-field{border-radius:4px
 
 @media(max-width:960px){.main-nav{top:72px;gap:7px}.main-nav>a:not(.button){padding:11px 2px}.hero{min-height:auto}.hero-grid{gap:44px}}
 @media(max-width:620px){.shell{width:min(100% - 28px,1160px)}.topbar{height:68px}.main-nav,.sub-nav{top:68px}.section{padding:68px 0}.hero{padding:54px 0 64px}.hero h1{font-size:clamp(2.75rem,15vw,3.7rem)}.subhero{padding:62px 0 58px}.subhero h1{font-size:clamp(2.65rem,14vw,3.65rem)}.zone-card{min-height:190px}.group-card{min-height:0}.month-panel{border-radius:4px}.event-row{padding:17px}.trusted-channel-grid>article{min-height:0;padding:22px}}
+
+/* Comprobantes y avisos administrativos */
+.receipt-download{margin-top:14px;background:#fff;color:var(--navy-deep)}
+.notification-list article.admin-alert{border-left-color:#2e6da6}
+.notification-list article.admin-alert.priority-urgent{border-left-color:#b52e42}
+.notification-actions{justify-content:flex-start!important;gap:14px!important;margin-top:11px}
+.notification-actions a,.notification-actions button{border:0;background:transparent;padding:0;color:#225d96;font-size:.64rem;font-weight:900;cursor:pointer}
+.notification-actions a{color:var(--navy-deep);text-decoration:underline;text-underline-offset:3px}

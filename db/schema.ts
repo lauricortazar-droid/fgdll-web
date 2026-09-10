@@ -402,6 +402,25 @@ export const announcementReads = sqliteTable(
   ],
 );
 
+export const adminInboxReads = sqliteTable(
+  "admin_inbox_reads",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    itemKey: text("item_key").notNull(),
+    userEmail: text("user_email").notNull(),
+    sourceUpdatedAt: text("source_updated_at").notNull(),
+    readAt: text("read_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    uniqueIndex("admin_inbox_reads_item_user_idx").on(
+      table.itemKey,
+      table.userEmail,
+    ),
+  ],
+);
+
 export const monthlyExperiences = sqliteTable(
   "monthly_experiences",
   {
