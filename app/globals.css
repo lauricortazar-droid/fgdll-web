@@ -615,7 +615,7 @@ input,select,textarea,.search-field,.finder-search,.form-field{border-radius:4px
 @media(max-width:640px){.recognition-admin-bar>.shell{align-items:flex-start;flex-direction:column;justify-content:center;padding:26px 0}.recognition-admin-bar>div>div:last-child{text-align:left}.recognition-summary{grid-template-columns:1fr}.recognition-form-grid{grid-template-columns:1fr}.recognition-form-grid label.wide{grid-column:auto}.recognition-preview-panel>header,.recognition-table-panel>header{align-items:stretch;flex-direction:column}.recognition-table-panel>header input{width:100%}.recognition-valid-card dl{grid-template-columns:1fr}}
 
 /* QR único, centrado en la zona inferior libre del reconocimiento. */
-.recognition-preview .recognition-preview-code{bottom:16.2%;left:46.75%;width:6.5%;height:auto;justify-content:flex-start;background:transparent;padding:0;gap:2px}
+.recognition-preview .recognition-preview-code{bottom:6.4%;left:46.75%;width:6.5%;height:auto;justify-content:flex-start;background:transparent;padding:0;gap:2px}
 .recognition-preview-code img,.recognition-preview-code>span{width:100%;aspect-ratio:1}
 .recognition-preview-code b,.recognition-preview-code small+small{display:none}
 .recognition-preview-code small{max-width:145%;overflow:visible;color:#071f41;font-size:clamp(.24rem,.42vw,.38rem);font-weight:850;line-height:1;white-space:nowrap}
