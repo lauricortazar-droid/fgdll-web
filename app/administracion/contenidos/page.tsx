@@ -51,7 +51,8 @@ const requestStatusLabels: Record<string, string> = {
   pending: "Pendiente", in_review: "En revisión", changes_requested: "Esperando corrección", new: "Nueva",
   contacted: "Contactada", oriented: "Orientada", referred: "Canalizada", received: "Recibida",
   screening: "Valoración", investigation: "Investigación", resolution: "Resolución", pending_validation: "Por validar",
-  approved: "Aprobada", ready: "Lista",
+  approved: "Aprobada", ready: "Lista", pending_print: "Por imprimir", pending_send: "Por enviar",
+  ready_delivery: "Por entregar",
 };
 
 async function jsonResponse(response: Response) {

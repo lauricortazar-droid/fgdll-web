@@ -18,7 +18,8 @@ const emptyInbox: PendingInbox = { items: [], summary: { total: 0, unread: 0, ur
 const statusLabels: Record<string, string> = {
   new: "Nueva", received: "Recibida", pending: "Pendiente", pending_validation: "Por validar",
   active: "Registro activo", in_review: "En revisión", changes_requested: "Esperando corrección",
-  approved: "Aprobada", ready: "Lista",
+  approved: "Aprobada", ready: "Lista", pending_print: "Por imprimir", pending_send: "Por enviar",
+  ready_delivery: "Por entregar",
 };
 
 function friendlyDate(value: string) {

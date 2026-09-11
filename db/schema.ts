@@ -601,6 +601,30 @@ export const universityCertificateRequests = sqliteTable(
   (table) => [index("university_certificate_requests_status_idx").on(table.status, table.createdAt)],
 );
 
+export const universityRecognitions = sqliteTable(
+  "university_recognitions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    folio: text("folio").notNull(),
+    sequence: integer("sequence").notNull(),
+    program: text("program").notNull(),
+    year: integer("year").notNull(),
+    fullName: text("full_name").notNull(),
+    conocerFolio: text("conocer_folio").notNull().default(""),
+    sentAt: text("sent_at"),
+    printedAt: text("printed_at"),
+    deliveredAt: text("delivered_at"),
+    createdBy: text("created_by").notNull(),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    uniqueIndex("university_recognitions_folio_idx").on(table.folio),
+    uniqueIndex("university_recognitions_year_sequence_idx").on(table.year, table.sequence),
+    index("university_recognitions_program_year_idx").on(table.program, table.year),
+  ],
+);
+
 export const universityPrograms = sqliteTable(
   "university_programs",
   {

@@ -49,6 +49,11 @@ const inboxQueries = [
     full_name AS contact_name, email, mobile_phone AS phone,
     status, created_at, updated_at, '/administracion/universidad' AS href, 'normal' AS priority
   FROM university_certificate_requests WHERE status IN ('pending_validation', 'in_review', 'approved', 'ready')`,
+  `SELECT CAST(id AS TEXT) AS id, 'issued_recognition' AS kind, 'Universidad' AS area,
+    'Reconocimiento por concluir · ' || full_name AS title, full_name AS contact_name, '' AS email, '' AS phone,
+    CASE WHEN printed_at IS NULL THEN 'pending_print' WHEN sent_at IS NULL THEN 'pending_send' ELSE 'ready_delivery' END AS status,
+    created_at, updated_at, '/administracion/universidad/reconocimientos' AS href, 'normal' AS priority
+  FROM university_recognitions WHERE delivered_at IS NULL`,
 ];
 
 function db() {
