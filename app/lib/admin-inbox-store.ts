@@ -53,7 +53,7 @@ const inboxQueries = [
     'Reconocimiento por concluir · ' || full_name AS title, full_name AS contact_name, '' AS email, '' AS phone,
     CASE WHEN printed_at IS NULL THEN 'pending_print' WHEN sent_at IS NULL THEN 'pending_send' ELSE 'ready_delivery' END AS status,
     created_at, updated_at, '/administracion/universidad/reconocimientos' AS href, 'normal' AS priority
-  FROM university_recognitions WHERE delivered_at IS NULL`,
+  FROM university_recognitions WHERE delivered_at IS NULL AND archived_at IS NULL`,
 ];
 
 function db() {

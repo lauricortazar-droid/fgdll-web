@@ -614,6 +614,7 @@ export const universityRecognitions = sqliteTable(
     sentAt: text("sent_at"),
     printedAt: text("printed_at"),
     deliveredAt: text("delivered_at"),
+    archivedAt: text("archived_at"),
     createdBy: text("created_by").notNull(),
     createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
     updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),

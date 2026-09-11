@@ -28,16 +28,18 @@ function normalizeFolio(value: unknown) {
 
 export async function listRecognitions(profile: PortalProfile) {
   requireAdmin(profile);
-  const result = await db().prepare("SELECT * FROM university_recognitions ORDER BY created_at DESC, id DESC LIMIT 1000")
+  const result = await db().prepare("SELECT * FROM university_recognitions ORDER BY archived_at IS NOT NULL, created_at DESC, id DESC LIMIT 1000")
     .all<Record<string, unknown>>();
   const items = result.results ?? [];
+  const activeItems = items.filter((item) => !item.archived_at);
   return {
     items,
     summary: {
       total: items.length,
-      pendingSend: items.filter((item) => !item.sent_at).length,
-      pendingPrint: items.filter((item) => !item.printed_at).length,
-      delivered: items.filter((item) => Boolean(item.delivered_at)).length,
+      pendingSend: activeItems.filter((item) => !item.sent_at).length,
+      pendingPrint: activeItems.filter((item) => !item.printed_at).length,
+      delivered: activeItems.filter((item) => Boolean(item.delivered_at)).length,
+      archived: items.length - activeItems.length,
     },
   };
 }
@@ -77,17 +79,45 @@ export async function createRecognition(profile: PortalProfile, input: Record<st
 export async function updateRecognition(profile: PortalProfile, input: Record<string, unknown>) {
   requireAdmin(profile);
   const id = Number(input.id);
-  const action = clean(input.action, 20) as keyof typeof ACTION_COLUMNS;
-  const column = ACTION_COLUMNS[action];
-  if (!Number.isInteger(id) || id < 1 || !column) throw new PortalError("Selecciona una acción válida.");
+  const action = clean(input.action, 20);
+  if (!Number.isInteger(id) || id < 1) throw new PortalError("Selecciona un reconocimiento válido.");
+
+  if (action === "archive" || action === "unarchive") {
+    const archivedAt = action === "archive" ? "CURRENT_TIMESTAMP" : "NULL";
+    const result = await db().prepare(`UPDATE university_recognitions
+      SET archived_at = ${archivedAt}, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ? RETURNING *`).bind(id).first<Record<string, unknown>>();
+    if (!result) throw new PortalError("El reconocimiento ya no existe.", 404);
+    await db().prepare(`INSERT INTO audit_log (actor_email, action, target_type, target_id, details_json)
+      VALUES (?, ?, 'university_recognition', ?, '{}')`)
+      .bind(profile.email, `university_recognition_${action}`, String(result.folio)).run();
+    return { recognition: result };
+  }
+
+  const statusAction = action as keyof typeof ACTION_COLUMNS;
+  const column = ACTION_COLUMNS[statusAction];
+  if (!column) throw new PortalError("Selecciona una acción válida.");
   const result = await db().prepare(`UPDATE university_recognitions
     SET ${column} = COALESCE(${column}, CURRENT_TIMESTAMP), updated_at = CURRENT_TIMESTAMP
     WHERE id = ? RETURNING *`).bind(id).first<Record<string, unknown>>();
   if (!result) throw new PortalError("El reconocimiento ya no existe.", 404);
   await db().prepare(`INSERT INTO audit_log (actor_email, action, target_type, target_id, details_json)
     VALUES (?, ?, 'university_recognition', ?, '{}')`)
-    .bind(profile.email, `university_recognition_${action}`, String(result.folio)).run();
+    .bind(profile.email, `university_recognition_${statusAction}`, String(result.folio)).run();
   return { recognition: result };
+}
+
+export async function deleteRecognition(profile: PortalProfile, input: Record<string, unknown>) {
+  requireAdmin(profile);
+  const id = Number(input.id);
+  if (!Number.isInteger(id) || id < 1) throw new PortalError("Selecciona un reconocimiento válido.");
+  const result = await db().prepare("DELETE FROM university_recognitions WHERE id = ? RETURNING folio")
+    .bind(id).first<Record<string, unknown>>();
+  if (!result) throw new PortalError("El reconocimiento ya no existe.", 404);
+  await db().prepare(`INSERT INTO audit_log (actor_email, action, target_type, target_id, details_json)
+    VALUES (?, 'university_recognition_deleted', 'university_recognition', ?, '{}')`)
+    .bind(profile.email, String(result.folio)).run();
+  return { deleted: true, folio: result.folio };
 }
 
 export async function findPublicRecognition(folioValue: unknown) {

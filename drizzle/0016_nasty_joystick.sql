@@ -1,0 +1,1 @@
+ALTER TABLE `university_recognitions` ADD `archived_at` text;
