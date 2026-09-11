@@ -131,11 +131,11 @@ async function downloadPdf(item: Recognition) {
   pdf.line(72, 122.5, 207, 122.5);
 
   // La plantilla queda intacta: se agregan el QR y el folio institucional abajo y al centro.
-  pdf.addImage(qr, "PNG", 130.7, 138.5, 18, 18);
+  pdf.addImage(qr, "PNG", 130.7, 158.5, 18, 18);
   pdf.setTextColor(3, 31, 66);
   pdf.setFont("helvetica", "bold");
   pdf.setFontSize(5.2);
-  pdf.text(item.folio, width / 2, 160.5, { align: "center" });
+  pdf.text(item.folio, width / 2, 180.5, { align: "center" });
   pdf.save(`${item.folio}-${item.full_name.replace(/[^\p{L}\p{N}]+/gu, "-")}.pdf`);
 }
 
