@@ -71,13 +71,11 @@ async function downloadPdf(item: Recognition) {
   pdf.text(item.full_name.toUpperCase(), width / 2, 118, { align: "center" });
   pdf.setDrawColor(180, 133, 10); pdf.setLineWidth(.45); pdf.line(72, 122.5, 207, 122.5);
 
-  pdf.setFillColor(247, 244, 235); pdf.rect(119.5, 154, 40.4, 62, "F");
-  pdf.addImage(qr, "PNG", 128.7, 158, 22, 22);
-  pdf.setTextColor(3, 31, 66); pdf.setFont("helvetica", "bold"); pdf.setFontSize(6.8);
-  pdf.text("VALIDACIÓN FGDLL", width / 2, 184.5, { align: "center" });
-  pdf.setFont("helvetica", "normal"); pdf.setFontSize(6.1);
-  pdf.text(item.folio, width / 2, 188.5, { align: "center" });
-  if (item.conocer_folio) pdf.text(`CONOCER: ${item.conocer_folio}`, width / 2, 192.3, { align: "center" });
+  // La plantilla ya contiene el folio CONOCER institucional, común a todos.
+  // El QR de validación y el folio individual quedan juntos, a un costado.
+  pdf.addImage(qr, "PNG", 162.5, 187.5, 17, 17);
+  pdf.setTextColor(3, 31, 66); pdf.setFont("helvetica", "bold"); pdf.setFontSize(5.2);
+  pdf.text(item.folio, 171, 208, { align: "center" });
   pdf.save(`${item.folio}-${item.full_name.replace(/[^\p{L}\p{N}]+/gu, "-")}.pdf`);
 }
 
