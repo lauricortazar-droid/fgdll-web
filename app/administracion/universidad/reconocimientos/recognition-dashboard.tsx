@@ -26,6 +26,15 @@ type RecognitionData = {
   summary: { total: number; pendingSend: number; pendingPrint: number; delivered: number; archived: number };
 };
 
+type ImportPreviewRow = {
+  row: number;
+  fullName: string;
+  program: string;
+  year: number;
+  conocerFolio: string;
+  error: string;
+};
+
 const emptyData: RecognitionData = {
   items: [],
   summary: { total: 0, pendingSend: 0, pendingPrint: 0, delivered: 0, archived: 0 },
@@ -56,6 +65,16 @@ function dateLabel(value: string | null) {
 
 function verificationUrl(folio: string) {
   return `https://fgdll.org/reconocimientos/${encodeURIComponent(folio)}`;
+}
+
+function normalizedHeader(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es").replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function readColumn(row: Record<string, unknown>, names: string[]) {
+  const wanted = new Set(names.map(normalizedHeader));
+  const entry = Object.entries(row).find(([key]) => wanted.has(normalizedHeader(key)));
+  return entry?.[1] ?? "";
 }
 
 function loadImage(src: string) {
@@ -126,6 +145,9 @@ export function RecognitionDashboard() {
   const [draftConocer, setDraftConocer] = useState("");
   const [search, setSearch] = useState("");
   const [view, setView] = useState<"active" | "archived">("active");
+  const [importRows, setImportRows] = useState<ImportPreviewRow[]>([]);
+  const [importFileName, setImportFileName] = useState("");
+  const [importMessage, setImportMessage] = useState("");
   const [busy, setBusy] = useState("");
   const [message, setMessage] = useState("");
 
@@ -236,6 +258,80 @@ export function RecognitionDashboard() {
     }
   }
 
+  async function readImportFile(file: File | undefined) {
+    if (!file) return;
+    setImportMessage("");
+    setImportRows([]);
+    setImportFileName(file.name);
+    if (file.size > 8 * 1024 * 1024) {
+      setImportMessage("El archivo supera 8 MB. Divide la lista en archivos más pequeños.");
+      return;
+    }
+    try {
+      const XLSX = await import("xlsx");
+      const workbook = XLSX.read(await file.arrayBuffer(), { type: "array" });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      if (!firstSheet) throw new Error("El archivo no contiene una hoja legible.");
+      const sourceRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(firstSheet, { defval: "", raw: false });
+      const parsed = sourceRows.flatMap<ImportPreviewRow>((row, index) => {
+        const fullName = String(readColumn(row, ["Nombre completo", "Nombre", "Participante"])).trim().replace(/\s+/g, " ");
+        const rawProgram = String(readColumn(row, ["Programa", "Diplomado"])).toUpperCase().replace(/[^A-Z0-9]/g, "");
+        const rawYear = String(readColumn(row, ["Año", "Anio", "Generación", "Generacion"])).replace(/[^0-9]/g, "");
+        const conocerFolio = String(readColumn(row, ["Folio CONOCER", "CONOCER", "Folio conocer"])).trim().toUpperCase();
+        if (!fullName && !rawProgram && !rawYear && !conocerFolio) return [];
+        const year = Number(rawYear);
+        const problems: string[] = [];
+        if (fullName.length < 4) problems.push("Falta el nombre completo");
+        if (!(["DPL1", "DPL2"] as string[]).includes(rawProgram)) problems.push("El programa debe ser DPL1 o DPL2");
+        if (![2022, 2025, 2026].includes(year)) problems.push("El año debe ser 2022, 2025 o 2026");
+        return [{ row: index + 2, fullName, program: rawProgram, year, conocerFolio, error: problems.join(". ") }];
+      });
+      if (!parsed.length) throw new Error("No se encontraron participantes. Revisa los encabezados de la plantilla.");
+      setImportRows(parsed);
+    } catch (error) {
+      setImportMessage(error instanceof Error ? error.message : "No fue posible leer el archivo.");
+    }
+  }
+
+  async function downloadImportTemplate() {
+    const XLSX = await import("xlsx");
+    const sheet = XLSX.utils.aoa_to_sheet([
+      ["Nombre completo", "Programa", "Año", "Folio CONOCER"],
+      ["José Montañez", "DPL1", 2026, ""],
+    ]);
+    sheet["!cols"] = [{ wch: 34 }, { wch: 14 }, { wch: 10 }, { wch: 22 }];
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, sheet, "Participantes");
+    XLSX.writeFile(workbook, "Plantilla_reconocimientos_FGDLL.xlsx");
+  }
+
+  async function importValidRows() {
+    const validRows = importRows.filter((row) => !row.error);
+    if (!validRows.length) return;
+    setBusy("import");
+    setImportMessage("");
+    try {
+      const result = await fetch("/api/admin/recognitions", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ items: validRows.map(({ row, fullName, program, year, conocerFolio }) => ({ row, fullName, program, year, conocerFolio })) }),
+      }).then(readJson) as { created: Recognition[]; errors: { row: number; error: string }[] };
+      const serverErrors = new Map(result.errors.map((error) => [error.row, error.error]));
+      const unresolved = importRows
+        .filter((row) => row.error || serverErrors.has(row.row))
+        .map((row) => ({ ...row, error: row.error || serverErrors.get(row.row) || "No fue posible registrar esta fila." }));
+      setImportRows(unresolved);
+      setView("active");
+      await load();
+      setImportMessage(`${result.created.length} reconocimiento${result.created.length === 1 ? "" : "s"} registrado${result.created.length === 1 ? "" : "s"}.${unresolved.length ? ` ${unresolved.length} fila${unresolved.length === 1 ? " necesita" : "s necesitan"} corrección.` : ""}`);
+      if (!unresolved.length) setImportFileName("");
+    } catch (error) {
+      setImportMessage(error instanceof Error ? error.message : "No fue posible importar los participantes.");
+    } finally {
+      setBusy("");
+    }
+  }
+
   const preview = draftName.trim()
     ? {
         id: 0,
@@ -304,6 +400,39 @@ export function RecognitionDashboard() {
                 ) : <div className="recognition-preview-empty">La vista previa aparecerá aquí.</div>}
               </section>
             </div>
+
+            <section className="recognition-import-panel">
+              <header>
+                <div><span>REGISTRO EN LOTE</span><h2>Importar participantes desde Excel</h2></div>
+                <button type="button" onClick={() => void downloadImportTemplate()}>Descargar plantilla Excel</button>
+              </header>
+              <div className="recognition-import-body">
+                <div className="recognition-import-drop">
+                  <label>
+                    <strong>Seleccionar archivo</strong>
+                    <small>Excel (.xlsx o .xls) y CSV. Máximo 200 participantes.</small>
+                    <input type="file" accept=".xlsx,.xls,.csv" onChange={(event) => void readImportFile(event.target.files?.[0])} />
+                  </label>
+                  {importFileName && <p><b>{importFileName}</b><span>{importRows.filter((row) => !row.error).length} listas · {importRows.filter((row) => row.error).length} con observaciones</span></p>}
+                </div>
+                {importMessage && <div className="recognition-import-message">{importMessage}</div>}
+                {importRows.length > 0 && (
+                  <>
+                    <div className="recognition-import-preview">
+                      <table>
+                        <thead><tr><th>Fila</th><th>Nombre completo</th><th>Programa</th><th>Año</th><th>Folio CONOCER</th><th>Revisión</th></tr></thead>
+                        <tbody>{importRows.slice(0, 12).map((row) => <tr key={row.row} className={row.error ? "invalid" : "valid"}><td>{row.row}</td><td>{row.fullName || "—"}</td><td>{row.program || "—"}</td><td>{row.year || "—"}</td><td>{row.conocerFolio || "Opcional"}</td><td>{row.error || "Lista para importar"}</td></tr>)}</tbody>
+                      </table>
+                    </div>
+                    {importRows.length > 12 && <small className="recognition-import-more">Se muestran 12 de {importRows.length} filas.</small>}
+                    <div className="recognition-import-actions">
+                      <button type="button" onClick={() => { setImportRows([]); setImportFileName(""); setImportMessage(""); }}>Cancelar</button>
+                      <button type="button" className="button button-gold" disabled={busy === "import" || !importRows.some((row) => !row.error)} onClick={() => void importValidRows()}>{busy === "import" ? "Registrando…" : `Registrar ${importRows.filter((row) => !row.error).length} válidos`}</button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </section>
 
             <section className="recognition-table-panel">
               <header>

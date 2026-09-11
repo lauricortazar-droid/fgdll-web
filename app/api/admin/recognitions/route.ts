@@ -1,4 +1,4 @@
-import { createRecognition, deleteRecognition, listRecognitions, updateRecognition } from "../../../lib/recognition-store";
+import { createRecognition, createRecognitionsBatch, deleteRecognition, listRecognitions, updateRecognition } from "../../../lib/recognition-store";
 import { apiError, readJson, requireApiProfile, requireSameOrigin } from "../../../lib/portal-api";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +14,11 @@ export async function POST(request: Request) {
   try {
     requireSameOrigin(request);
     const { profile } = await requireApiProfile();
-    return Response.json(await createRecognition(profile, await readJson(request)), { status: 201 });
+    const input = await readJson(request);
+    const result = Array.isArray(input.items)
+      ? await createRecognitionsBatch(profile, input)
+      : await createRecognition(profile, input);
+    return Response.json(result, { status: 201 });
   } catch (error) { return apiError(error); }
 }
 

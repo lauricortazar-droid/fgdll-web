@@ -76,6 +76,27 @@ export async function createRecognition(profile: PortalProfile, input: Record<st
   throw new PortalError("No fue posible asignar el folio. Inténtalo de nuevo.");
 }
 
+export async function createRecognitionsBatch(profile: PortalProfile, input: Record<string, unknown>) {
+  requireAdmin(profile);
+  const items = Array.isArray(input.items) ? input.items : [];
+  if (!items.length) throw new PortalError("El archivo no contiene participantes válidos.");
+  if (items.length > 200) throw new PortalError("Puedes importar hasta 200 participantes por archivo.");
+
+  const created: Record<string, unknown>[] = [];
+  const errors: { row: number; error: string }[] = [];
+  for (const [index, value] of items.entries()) {
+    const item = value && typeof value === "object" ? value as Record<string, unknown> : {};
+    const row = Number(item.row) || index + 2;
+    try {
+      const result = await createRecognition(profile, item);
+      if (result.recognition) created.push(result.recognition);
+    } catch (error) {
+      errors.push({ row, error: error instanceof Error ? error.message : "No fue posible registrar esta fila." });
+    }
+  }
+  return { created, errors };
+}
+
 export async function updateRecognition(profile: PortalProfile, input: Record<string, unknown>) {
   requireAdmin(profile);
   const id = Number(input.id);
