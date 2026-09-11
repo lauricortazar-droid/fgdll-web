@@ -130,8 +130,12 @@ async function downloadPdf(item: Recognition) {
   pdf.setLineWidth(0.45);
   pdf.line(72, 122.5, 207, 122.5);
 
-  // La plantilla queda intacta: se agrega únicamente el QR abajo y al centro.
-  pdf.addImage(qr, "PNG", 130.7, 190, 18, 18);
+  // La plantilla queda intacta: se agregan el QR y el folio institucional abajo y al centro.
+  pdf.addImage(qr, "PNG", 130.7, 188.5, 18, 18);
+  pdf.setTextColor(3, 31, 66);
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(5.2);
+  pdf.text(item.folio, width / 2, 210.5, { align: "center" });
   pdf.save(`${item.folio}-${item.full_name.replace(/[^\p{L}\p{N}]+/gu, "-")}.pdf`);
 }
 
@@ -395,7 +399,10 @@ export function RecognitionDashboard() {
                     <img src={templates[`${preview.program}-${preview.year}`]} alt="Vista previa del reconocimiento" />
                     {preview.program === "DPL2" && preview.year !== 2025 && <div className="recognition-preview-program"><small>POR HABER CONCLUIDO SATISFACTORIAMENTE EL</small><b>DIPLOMADO EN LIDERAZGO EFECTIVO II - {preview.year}</b></div>}
                     <strong>{preview.full_name.toUpperCase()}</strong>
-                    <div className="recognition-preview-code">{displayQr ? <img src={displayQr} alt="Código QR de validación" /> : <span>QR</span>}</div>
+                    <div className="recognition-preview-code">
+                      {displayQr ? <img src={displayQr} alt="Código QR de validación" /> : <span>QR</span>}
+                      <small>{preview.folio}</small>
+                    </div>
                   </div>
                 ) : <div className="recognition-preview-empty">La vista previa aparecerá aquí.</div>}
               </section>
