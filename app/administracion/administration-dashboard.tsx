@@ -5,6 +5,27 @@ import { useEffect, useState } from "react";
 import { SubFooter, SubHeader } from "../section-shell";
 
 type Profile = { email: string; name: string; role: "leader" | "osg" | "delegate" | "director" | "council" | "admin"; roleLabel: string; zone: string | null; groupId: number | null; centerId: number | null };
+type PendingRequest = {
+  id: string; itemKey: string; area: string; title: string; contactName: string;
+  status: string; createdAt: string; updatedAt: string; href: string; priority: string; unread: boolean;
+};
+type PendingInbox = {
+  items: PendingRequest[];
+  summary: { total: number; unread: number; urgent: number; byArea: Record<string, number> };
+};
+
+const emptyInbox: PendingInbox = { items: [], summary: { total: 0, unread: 0, urgent: 0, byArea: {} } };
+const statusLabels: Record<string, string> = {
+  new: "Nueva", received: "Recibida", pending: "Pendiente", pending_validation: "Por validar",
+  active: "Registro activo", in_review: "En revisión", changes_requested: "Esperando corrección",
+  approved: "Aprobada", ready: "Lista",
+};
+
+function friendlyDate(value: string) {
+  const normalized = value.includes("T") ? value : `${value.replace(" ", "T")}Z`;
+  const date = new Date(normalized);
+  return Number.isNaN(date.valueOf()) ? value : date.toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" });
+}
 
 const roleScope = {
   leader: { title: "Líder", text: "Puede registrar su grupo, consultar el expediente y enviar correcciones o propuestas de actualización." },
@@ -17,10 +38,23 @@ const roleScope = {
 
 export function AdministrationDashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [inbox, setInbox] = useState<PendingInbox>(emptyInbox);
+  const [pendingFilter, setPendingFilter] = useState("Todas");
+  const [inboxLoading, setInboxLoading] = useState(true);
+  const [inboxError, setInboxError] = useState("");
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     let active = true;
     fetch("/api/portal/me", { cache: "no-store" }).then((response) => response.ok ? response.json() : Promise.reject()).then((data) => { if (active) setProfile(data.profile || null); }).catch(() => undefined).finally(() => { if (active) setLoading(false); });
+    fetch("/api/admin/inbox", { cache: "no-store" })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "No fue posible cargar los pendientes.");
+        return data as PendingInbox;
+      })
+      .then((data) => { if (active) setInbox(data); })
+      .catch((error) => { if (active) setInboxError(error instanceof Error ? error.message : "No fue posible cargar los pendientes."); })
+      .finally(() => { if (active) setInboxLoading(false); });
     return () => { active = false; };
   }, []);
 
@@ -31,7 +65,14 @@ export function AdministrationDashboard() {
   const canReview = ["delegate", "council", "admin"].includes(profile.role);
   const canReviewAccess = ["council", "admin"].includes(profile.role);
   const isAdmin = profile.role === "admin";
+  const filteredPending = pendingFilter === "Todas" ? inbox.items : inbox.items.filter((item) => item.area === pendingFilter);
   return <><SubHeader label="Administración" /><main className="administration-hub">
+    {isAdmin && <section className="admin-pending-overview"><div className="shell">
+      <header className="admin-pending-heading"><div><span>CENTRO DE PENDIENTES</span><h1>{inboxLoading ? "Cargando solicitudes…" : inbox.summary.total ? `${inbox.summary.total} asuntos necesitan atención` : "No hay solicitudes pendientes"}</h1><p>Solicitudes y reportes abiertos de todas las áreas del portal.</p></div><Link href="/administracion/contenidos?tab=announcements">Abrir bandeja completa →</Link></header>
+      {!inboxLoading && !inboxError && <div className="admin-pending-stats"><button className={pendingFilter === "Todas" ? "active" : ""} type="button" onClick={() => setPendingFilter("Todas")}><span>TODAS</span><strong>{inbox.summary.total}</strong><small>{inbox.summary.unread} sin leer</small></button>{Object.entries(inbox.summary.byArea).map(([area, count]) => <button className={pendingFilter === area ? "active" : ""} type="button" key={area} onClick={() => setPendingFilter(area)}><span>{area.toUpperCase()}</span><strong>{count}</strong><small>pendientes</small></button>)}</div>}
+      {inboxError && <div className="admin-pending-error">{inboxError}</div>}
+      {!inboxLoading && !inboxError && <div className="admin-pending-list">{filteredPending.map((item) => <article className={item.priority === "urgent" ? "urgent" : ""} key={item.itemKey}><div><span>{item.priority === "urgent" ? "URGENTE" : item.area.toUpperCase()}</span><small>{friendlyDate(item.updatedAt || item.createdAt)}</small></div><h2>{item.title}</h2><p>{item.contactName || "Contacto protegido"}</p><footer><span>{statusLabels[item.status] || item.status}</span><Link href={item.href}>Atender →</Link></footer></article>)}{!filteredPending.length && <div className="admin-pending-empty"><span>✓</span><p>No hay asuntos pendientes en esta categoría.</p></div>}</div>}
+    </div></section>}
     <section className="administration-hero"><div className="shell"><div><span className="eyebrow light">GESTIÓN SEGÚN FACULTADES</span><h1>Actualizar con orden.<br /><em>Decidir con trazabilidad.</em></h1><p>Cada persona ve únicamente las herramientas que corresponden a su servicio y alcance.</p></div><aside><span>PERFIL ACTIVO</span><strong>{scope.title}</strong><p>{profile.zone ? `Zona ${profile.zone}` : "Alcance institucional"}</p></aside></div></section>
     <section className="administration-scope"><div className="shell"><span>LO QUE PUEDES HACER</span><h2>{scope.title}</h2><p>{scope.text}</p></div></section>
     <section className="section administration-actions"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow">Centro de gestión</span><h2>Elige la acción que necesitas.</h2></div><p>Las modificaciones sensibles conservan folio, autor, fecha y estado de revisión.</p></div><div className="administration-card-grid">
