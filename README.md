@@ -1,4 +1,37 @@
-# vinext-starter
+# Portal FGDLL
+
+Fuente real del portal de la Fraternidad Guerreros de la Luz publicado en
+`https://fgdll.org`.
+
+Este proyecto esta unificado para trabajar con ChatGPT Sites, GitHub y
+Hostinger desde una misma base de codigo. Consulta `UNIFIED_PORTAL.md` para el
+flujo operativo y `SITES-CONNECTION.md` para la conexion exacta de Sites.
+
+## Comandos principales
+
+```bash
+npm run install:ci
+npm run build
+npm test
+```
+
+## Datos publicos versionados
+
+- Directorio publico: `app/public-directory-data.json`
+- Centros: `app/public-centers-data.json`
+- Agenda: `app/calendar-data.json`
+- Experiencias: `app/monthly-experiences-data.json`
+- Testimonios: `app/testimonios-data.json`
+
+Los datos privados viven en D1 y se acceden desde los stores en `app/lib/`.
+
+## Base tecnica
+
+Este portal usa Vinext, React, Cloudflare Worker, D1, R2 y Drizzle.
+
+---
+
+# Vinext Starter Notes
 
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
