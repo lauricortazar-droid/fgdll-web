@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { SubFooter, SubHeader } from "../section-shell";
+import { MessagingAccess } from "../messaging-access";
 
 type Material = {
   id: string; title: string; category: string; description: string; versionLabel: string;
@@ -78,6 +79,7 @@ export default function PortalPage() {
   }, [materials]);
 
   return <><SubHeader label="Liderazgo" /><main className="subpage">
+    <MessagingAccess />
     <section className="subhero portal-subhero"><div className="shell subhero-grid"><div><span className="eyebrow light">Portal del Guerrero</span><h1>Servir con orden.<br /><em>Actuar con claridad.</em></h1><p>Avisos, grupo, agenda, documentos, formación y solicitudes reunidos para quienes tienen una responsabilidad de servicio.</p>{isAdmin && <Link className="button button-gold" href="/administracion/contenidos">Administrar contenidos →</Link>}</div><div className="quick-panel"><span>ACCESO RÁPIDO</span><Link href="/directorio/gestion"><b>Mi Grupo</b><i>→</i></Link><a href="#avisos"><b>Noticias y avisos</b><i>↓</i></a><a href="#materiales"><b>Documentos y manuales</b><i>↓</i></a><Link href="/universidad"><b>Universidad FGDLL</b><i>→</i></Link><Link href="/administracion"><b>Solicitudes y administración</b><i>→</i></Link></div></div></section>
 
     {announcements.length > 0 && <section className="portal-announcements" id="avisos"><div className="shell"><div className="portal-announcement-head"><div><span className="eyebrow">Noticias y avisos</span><h2>Información que acompaña tu servicio.</h2></div><p>Los comunicados urgentes e importantes también aparecen en la campana superior hasta que los marques como leídos.</p></div><div className="portal-announcement-grid">{announcements.slice(0, 3).map((item) => <article key={item.id} className={`priority-${item.priority}`}><div><span>{item.priority === "urgent" ? "URGENTE" : item.priority === "important" ? "IMPORTANTE" : "AVISO"}</span><small>{friendlyDate(item.publishedAt)}</small></div><h3>{item.title}</h3><p>{item.summary || item.body}</p>{(item.summary || item.body.length > 180) && <details><summary>Leer aviso completo</summary><p>{item.body}</p></details>}</article>)}</div></div></section>}

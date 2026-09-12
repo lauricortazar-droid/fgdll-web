@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SubFooter, SubHeader } from "../section-shell";
+import { MessagingAccess } from "../messaging-access";
 
 type Profile = { email: string; name: string; role: "leader" | "osg" | "delegate" | "director" | "council" | "admin"; roleLabel: string; zone: string | null; groupId: number | null; centerId: number | null };
 type PendingRequest = {
@@ -75,6 +76,7 @@ export function AdministrationDashboard() {
       {!inboxLoading && !inboxError && <div className="admin-pending-list">{filteredPending.map((item) => <article className={item.priority === "urgent" ? "urgent" : ""} key={item.itemKey}><div><span>{item.priority === "urgent" ? "URGENTE" : item.area.toUpperCase()}</span><small>{friendlyDate(item.updatedAt || item.createdAt)}</small></div><h2>{item.title}</h2><p>{item.contactName || "Contacto protegido"}</p><footer><span>{statusLabels[item.status] || item.status}</span><Link href={item.href}>Atender →</Link></footer></article>)}{!filteredPending.length && <div className="admin-pending-empty"><span>✓</span><p>No hay asuntos pendientes en esta categoría.</p></div>}</div>}
     </div></section>}
     <section className="administration-hero"><div className="shell"><div><span className="eyebrow light">GESTIÓN SEGÚN FACULTADES</span><h1>Actualizar con orden.<br /><em>Decidir con trazabilidad.</em></h1><p>Cada persona ve únicamente las herramientas que corresponden a su servicio y alcance.</p></div><aside><span>PERFIL ACTIVO</span><strong>{scope.title}</strong><p>{profile.zone ? `Zona ${profile.zone}` : "Alcance institucional"}</p></aside></div></section>
+    <MessagingAccess />
     <section className="administration-scope"><div className="shell"><span>LO QUE PUEDES HACER</span><h2>{scope.title}</h2><p>{scope.text}</p></div></section>
     <section className="section administration-actions"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow">Centro de gestión</span><h2>Elige la acción que necesitas.</h2></div><p>Las modificaciones sensibles conservan folio, autor, fecha y estado de revisión.</p></div><div className="administration-card-grid">
       <Link href="/directorio/gestion"><span>01</span><small>DIRECTORIO</small><h3>{canReview ? "Administrar grupos y propuestas" : "Actualizar datos de mi grupo"}</h3><p>{canReview ? "Revisa grupos bajo tu alcance, cambios pendientes y expedientes." : "Corrige datos operativos o envía cambios sensibles a aprobación."}</p><b>Abrir gestión →</b></Link>

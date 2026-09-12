@@ -33,6 +33,7 @@ export async function ProtectedAccess({
         <div className="shell private-access-inner">
           <span className="private-access-status"><b aria-hidden="true">●</b> Zona privada FGDLL{profile ? ` · ${profile.role === "admin" ? "Administración" : "Liderazgo"}` : ""}</span>
           <NotificationCenter />
+          {profile && <a className="messaging-nav-link" href="https://fgdll.org/envios">Mensajería</a>}
           <span className="private-access-user">
             <span>Sesión de <strong>{user.displayName}</strong></span>
             <Link href={chatGPTSignOutPath("/")}>Cerrar sesión</Link>
