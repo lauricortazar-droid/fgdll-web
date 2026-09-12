@@ -675,3 +675,9 @@ export const universityMaterials = sqliteTable(
   },
   (table) => [index("university_materials_program_order_idx").on(table.programId, table.status, table.sortOrder)],
 );
+export const distributionWorkspaces = sqliteTable("distribution_workspaces", {
+  ownerEmail: text("owner_email").primaryKey().notNull(),
+  payloadJson: text("payload_json").notNull().default("{}"),
+  revision: integer("revision").notNull().default(1),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
