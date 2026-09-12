@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuadernillo M1 · El liderazgo empieza contigo · Guerreros de la Luz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0F0E0C;
+  --bg2: #161512;
+  --bg3: #1D1B17;
+  --bg4: #242219;
+  --gold: #C8A45A;
+  --gold-dim: #8A6E3A;
+  --gold-faint: rgba(200,164,90,0.08);
+  --gold-border: rgba(200,164,90,0.2);
+  --text: #E8E4DC;
+  --text-mid: #9A9488;
+  --text-dim: #5C584F;
+  --ember: #B84C2A;
+  --sage: #4A6741;
+  --border: rgba(255,255,255,0.07);
+  --border-mid: rgba(255,255,255,0.12);
+  --radius: 4px;
+  --radius-lg: 8px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ─── COVER ─── */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 60px 48px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(200,164,90,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(184,76,42,0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cover-rule {
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  margin-bottom: 48px;
+  opacity: 0.6;
+}
+.cover-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.cover-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(42px, 8vw, 72px);
+  font-weight: 300;
+  line-height: 1.05;
+  color: var(--text);
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+.cover-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+.cover-subtitle {
+  font-size: 14px;
+  color: var(--text-mid);
+  font-weight: 300;
+  max-width: 320px;
+  line-height: 1.6;
+  margin-bottom: 48px;
+}
+.cover-meta {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.cover-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cover-meta-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.cover-meta-value {
+  font-size: 13px;
+  color: var(--text-mid);
+}
+
+.name-field-cover {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 400px;
+}
+.name-field-cover label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.name-field-cover input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-mid);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 300;
+  padding: 6px 0;
+  flex: 1;
+  outline: none;
+  transition: border-color 0.3s;
+}
+.name-field-cover input:focus {
+  border-bottom-color: var(--gold);
+}
+.name-field-cover input::placeholder { color: var(--text-dim); }
+
+.cover-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 48px;
+  padding: 14px 28px;
+  background: transparent;
+  border: 1px solid var(--gold-border);
+  color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+}
+.cover-cta:hover {
+  background: var(--gold-faint);
+  border-color: var(--gold);
+}
+.cover-cta svg { width: 14px; height: 14px; }
+
+.cover-number {
+  position: absolute;
+  right: 48px;
+  bottom: 48px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 120px;
+  font-weight: 300;
+  color: rgba(200,164,90,0.05);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ─── MAIN LAYOUT ─── */
+.main { display: none; }
+.main.visible { display: block; }
+
+/* ─── PROGRESS BAR ─── */
+.progress-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 48px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.progress-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.progress-track {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  position: relative;
+}
+.progress-fill {
+  position: absolute;
+  left: 0; top: 0; height: 100%;
+  background: var(--gold);
+  transition: width 0.5s ease;
+}
+.progress-pct {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--gold-dim);
+  white-space: nowrap;
+}
+
+/* ─── SECTION ─── */
+.section {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 72px 48px;
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.section.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-id {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.section-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+.section-line {
+  height: 1px;
+  flex: 1;
+  background: var(--border);
+}
+.section-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.tag-somatico { color: #5A8DD4; border: 1px solid rgba(90,141,212,0.3); }
+.tag-escrito  { color: #4A9E6A; border: 1px solid rgba(74,158,106,0.3); }
+.tag-privado  { color: #9A6AC8; border: 1px solid rgba(154,106,200,0.3); }
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.section-title em { font-style: italic; color: var(--gold); }
+
+.section-premise {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+
+.section-intro {
+  font-size: 15px;
+  color: var(--text-mid);
+  line-height: 1.75;
+  margin-bottom: 40px;
+  padding-left: 20px;
+  border-left: 2px solid var(--gold-border);
+}
+
+/* ─── QUESTION BLOCK ─── */
+.q-block {
+  margin-bottom: 36px;
+}
+.q-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.q-text {
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.55;
+  margin-bottom: 14px;
+  font-weight: 300;
+}
+.q-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+textarea {
+  width: 100%;
+  min-height: 90px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.7;
+  padding: 14px 16px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.3s, background 0.3s;
+}
+textarea:focus {
+  border-color: var(--gold-dim);
+  background: var(--bg3);
+}
+textarea::placeholder { color: var(--text-dim); font-style: italic; }
+
+/* ─── BODY MAP ─── */
+.body-map {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+.body-figure {
+  flex-shrink: 0;
+  width: 90px;
+}
+.body-figure svg {
+  width: 100%;
+  height: auto;
+  opacity: 0.4;
+}
+.body-zones {
+  flex: 1;
+  min-width: 200px;
+}
+.body-zones-title {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.zone-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.zone-btn {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.zone-btn:hover { border-color: var(--border-mid); color: var(--text); }
+.zone-btn.sel {
+  background: var(--gold-faint);
+  border-color: var(--gold-border);
+  color: var(--gold);
+}
+
+.sensation-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.sensation-chip {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  font-size: 12px;
+  font-weight: 300;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sensation-chip:hover { border-color: var(--border-mid); color: var(--text); }
+.sensation-chip.sel {
+  background: var(--gold-faint);
+  border-color: var(--gold-border);
+  color: var(--gold);
+}
+
+/* ─── MIRROR (Excusa/Verdad) ─── */
+.mirror-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.mirror-side {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+.mirror-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.mirror-label.excusa { color: var(--text-dim); }
+.mirror-label.verdad { color: var(--gold-dim); }
+.mirror-side textarea {
+  border: none;
+  background: transparent;
+  padding: 0;
+  min-height: 70px;
+  font-size: 13px;
+}
+.mirror-side textarea:focus { background: transparent; border: none; }
+
+/* ─── COST METER ─── */
+.cost-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+.cost-title {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.cost-areas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.cost-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cost-area-label {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.cost-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: var(--border-mid);
+  outline: none;
+  border-radius: 1px;
+}
+.cost-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--ember);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.cost-slider::-webkit-slider-thumb:hover { transform: scale(1.3); }
+.cost-value {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--ember);
+  text-align: right;
+}
+
+/* ─── PRIVATE BADGE ─── */
+.private-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(154,106,200,0.08);
+  border: 1px solid rgba(154,106,200,0.2);
+  color: #9A6AC8;
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 1px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.private-badge svg { width: 12px; height: 12px; }
+
+/* ─── PRESENCE TIMER ─── */
+.timer-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.timer-display {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 56px;
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 8px;
+  transition: color 0.5s;
+}
+.timer-display.running { color: var(--gold); }
+.timer-display.done { color: var(--sage); }
+.timer-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.timer-btn {
+  background: transparent;
+  border: 1px solid var(--gold-border);
+  color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  padding: 10px 28px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.timer-btn:hover { background: var(--gold-faint); }
+.timer-btn:disabled { opacity: 0.3; cursor: default; }
+.timer-note {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 14px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* ─── ACTION ─── */
+.action-declaration {
+  background: var(--bg3);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  position: relative;
+}
+.action-declaration::before {
+  content: '"';
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 80px;
+  color: var(--gold);
+  opacity: 0.15;
+  position: absolute;
+  top: -8px; left: 16px;
+  line-height: 1;
+}
+.action-declaration textarea {
+  background: transparent;
+  border: none;
+  min-height: 50px;
+  font-size: 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+}
+.action-declaration textarea:focus { background: transparent; border: none; }
+
+/* ─── SECTION COMPLETE ─── */
+.section-complete {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(74,103,65,0.1);
+  border: 1px solid rgba(74,103,65,0.25);
+  border-radius: var(--radius);
+  margin-top: 32px;
+}
+.section-complete.visible { display: flex; }
+.section-complete-icon {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--sage);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.section-complete-text {
+  font-size: 13px;
+  color: var(--sage);
+}
+
+/* ─── NAV BETWEEN SECTIONS ─── */
+.section-nav {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 32px;
+}
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: transparent;
+  border: 1px solid var(--border-mid);
+  color: var(--text-mid);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all 0.3s;
+}
+.nav-btn:hover {
+  border-color: var(--gold-border);
+  color: var(--gold);
+}
+.nav-btn svg { width: 14px; height: 14px; }
+
+/* ─── CIERRE ─── */
+.cierre {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 72px 48px 100px;
+  text-align: center;
+}
+.cierre-symbol {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 48px;
+  color: var(--gold);
+  opacity: 0.5;
+  margin-bottom: 24px;
+  line-height: 1;
+}
+.cierre-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.cierre-body {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.8;
+  max-width: 440px;
+  margin: 0 auto 40px;
+}
+
+.summary-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-align: left;
+  margin-bottom: 24px;
+}
+.summary-section {
+  margin-bottom: 20px;
+}
+.summary-section:last-child { margin-bottom: 0; }
+.summary-section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 8px;
+}
+.summary-section-body {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.7;
+}
+
+.btn-group {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 28px;
+  background: var(--gold-faint);
+  border: 1px solid var(--gold-border);
+  color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all 0.3s;
+}
+.btn-primary:hover { background: rgba(200,164,90,0.15); }
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 28px;
+  background: transparent;
+  border: 1px solid var(--border-mid);
+  color: var(--text-mid);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all 0.3s;
+}
+.btn-secondary:hover { border-color: var(--border-mid); color: var(--text); }
+
+/* ─── DIVIDER ─── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 32px 0;
+}
+.divider-line { flex: 1; height: 1px; background: var(--border); }
+.divider-mark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  color: var(--text-dim);
+}
+
+/* ─── PRINT ─── */
+@media print {
+  body { background: #fff; color: #1a1a1a; }
+  .progress-wrap, .cover-cta, .nav-btn, .timer-btn, .btn-group { display: none !important; }
+  .cover { min-height: auto; padding: 40px; page-break-after: always; }
+  .section { opacity: 1 !important; transform: none !important; border-bottom: 1px solid #ddd; }
+  textarea { border: 1px solid #ccc; min-height: 80px; color: #1a1a1a; background: #fafafa; }
+  .section-title { color: #1a1a1a; }
+  .section-intro { color: #444; border-left-color: #C8A45A; }
+  .q-text { color: #1a1a1a; }
+  .q-hint { color: #666; }
+  .body-figure svg { opacity: 0.6; }
+  .zone-btn, .sensation-chip { border: 1px solid #ccc; color: #444; }
+  .zone-btn.sel, .sensation-chip.sel { background: #fef9ee; border-color: #C8A45A; color: #8A6E3A; }
+  .mirror-side { background: #fafafa; border: 1px solid #e0e0e0; }
+  .cost-block, .action-declaration, .summary-card { background: #fafafa; border: 1px solid #e0e0e0; }
+  .timer-block { display: none; }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 600px) {
+  .cover { padding: 40px 24px 36px; }
+  .section { padding: 48px 24px; }
+  .progress-wrap { padding: 10px 24px; }
+  .mirror-block { grid-template-columns: 1fr; }
+  .cost-areas { grid-template-columns: 1fr; }
+  .cierre { padding: 48px 24px 72px; }
+  .cover-number { font-size: 80px; right: 24px; bottom: 36px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ COVER ═══════════════════ -->
+<section class="cover" id="cover">
+  <div>
+    <div class="cover-rule"></div>
+    <div class="cover-eyebrow">Guerreros de la Luz · Diplomado de Liderazgo Consciente</div>
+    <h1 class="cover-title">Módulo 1<br><em>El liderazgo<br>empieza contigo</em></h1>
+    <p class="cover-subtitle">Cuadernillo vivencial de autoconocimiento. Trabájalo con honestidad. Sin ella, es solo papel.</p>
+
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Ejercicios</span>
+        <span class="cover-meta-value">4 ejercicios guiados</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Tipo</span>
+        <span class="cover-meta-value">Somático · Escrito · Privado</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Duración estimada</span>
+        <span class="cover-meta-value">45–60 minutos</span>
+      </div>
+    </div>
+
+    <div class="name-field-cover">
+      <label for="nombre-alumno">Nombre</label>
+      <input type="text" id="nombre-alumno" placeholder="Tu nombre completo" autocomplete="name">
+    </div>
+
+    <button class="cover-cta" onclick="iniciar()">
+      Comenzar el cuadernillo
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+  <div class="cover-number">1</div>
+</section>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<div class="main" id="main">
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <span class="progress-label">Progreso</span>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <span class="progress-pct" id="progress-pct">0%</span>
+  </div>
+
+  <!-- ─── EJERCICIO 1: EL MAPA TÉRMICO ─── -->
+  <section class="section" id="sec-1">
+    <div class="section-id">
+      <span class="section-num">01</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-somatico">Somático</span>
+    </div>
+
+    <h2 class="section-title">El <em>Mapa<br>Térmico</em></h2>
+    <p class="section-premise">Tu cuerpo reacciona antes que tu mente lo decide.</p>
+
+    <p class="section-intro">
+      Piensa en la última vez que reaccionaste de una forma que después lamentaste. Una respuesta dura, un silencio cargado, una evasión. No analices la situación todavía. Cierra los ojos 30 segundos y vuelve a ese momento — solo con tu cuerpo.
+    </p>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 1 de 5</div>
+      <p class="q-text">¿En qué situación concreta reaccionaste de una forma que después lamentaste?</p>
+      <p class="q-hint">Descríbela brevemente, sin justificarla todavía. Solo los hechos.</p>
+      <textarea id="t1-q1" placeholder="La situación fue..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="body-map">
+      <div class="body-figure">
+        <svg viewBox="0 0 90 200" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="45" cy="20" rx="16" ry="18" fill="none" stroke="#C8A45A" stroke-width="1"/>
+          <line x1="45" y1="38" x2="45" y2="120" stroke="#C8A45A" stroke-width="1"/>
+          <line x1="45" y1="50" x2="15" y2="85" stroke="#C8A45A" stroke-width="1"/>
+          <line x1="45" y1="50" x2="75" y2="85" stroke="#C8A45A" stroke-width="1"/>
+          <line x1="45" y1="120" x2="28" y2="175" stroke="#C8A45A" stroke-width="1"/>
+          <line x1="45" y1="120" x2="62" y2="175" stroke="#C8A45A" stroke-width="1"/>
+          <text x="45" y="108" text-anchor="middle" font-family="DM Mono" font-size="6" fill="#C8A45A" opacity="0.5">pecho</text>
+          <text x="45" y="68" text-anchor="middle" font-family="DM Mono" font-size="6" fill="#C8A45A" opacity="0.5">garganta</text>
+          <text x="45" y="145" text-anchor="middle" font-family="DM Mono" font-size="6" fill="#C8A45A" opacity="0.5">estómago</text>
+        </svg>
+      </div>
+      <div class="body-zones">
+        <div class="body-zones-title">¿Dónde lo sentiste?</div>
+        <div class="zone-grid">
+          <button class="zone-btn" data-group="zona" data-val="garganta" onclick="toggleSelect(this)">Garganta</button>
+          <button class="zone-btn" data-group="zona" data-val="pecho" onclick="toggleSelect(this)">Pecho</button>
+          <button class="zone-btn" data-group="zona" data-val="estomago" onclick="toggleSelect(this)">Estómago</button>
+          <button class="zone-btn" data-group="zona" data-val="mandibula" onclick="toggleSelect(this)">Mandíbula</button>
+          <button class="zone-btn" data-group="zona" data-val="espalda" onclick="toggleSelect(this)">Espalda</button>
+          <button class="zone-btn" data-group="zona" data-val="otro" onclick="toggleSelect(this)">Otro lugar</button>
+        </div>
+        <div class="body-zones-title">¿Cómo se sintió?</div>
+        <div class="sensation-grid">
+          <button class="sensation-chip" data-group="sensacion" data-val="calor" onclick="toggleSelect(this)">Calor</button>
+          <button class="sensation-chip" data-group="sensacion" data-val="tension" onclick="toggleSelect(this)">Tensión</button>
+          <button class="sensation-chip" data-group="sensacion" data-val="contraccion" onclick="toggleSelect(this)">Contracción</button>
+          <button class="sensation-chip" data-group="sensacion" data-val="vacio" onclick="toggleSelect(this)">Vacío</button>
+          <button class="sensation-chip" data-group="sensacion" data-val="aceleracion" onclick="toggleSelect(this)">Aceleración</button>
+          <button class="sensation-chip" data-group="sensacion" data-val="nausea" onclick="toggleSelect(this)">Náusea</button>
+          <button class="sensation-chip" data-group="sensacion" data-val="pesadez" onclick="toggleSelect(this)">Pesadez</button>
+          <button class="sensation-chip" data-group="sensacion" data-val="hormigueo" onclick="toggleSelect(this)">Hormigueo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 3 de 5</div>
+      <p class="q-text">¿Esa sensación apareció antes de que dijeras o hicieras algo?</p>
+      <p class="q-hint">Intenta ser preciso. ¿Milisegundos antes? ¿Un segundo? ¿Ya mientras actuabas?</p>
+      <textarea id="t1-q3" placeholder="La sensación apareció cuando..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 4 de 5</div>
+      <p class="q-text">¿Qué te estaba intentando decir esa sensación que no escuchaste?</p>
+      <p class="q-hint">Sin autocastigo. Solo observación.</p>
+      <textarea id="t1-q4" placeholder="Creo que me estaba diciendo..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 5 de 5</div>
+      <p class="q-text">Si hubieras pausado 3 segundos antes de reaccionar, ¿qué habrías elegido diferente?</p>
+      <textarea id="t1-q5" placeholder="Habría elegido..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="section-complete" id="complete-1">
+      <div class="section-complete-icon">
+        <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="section-complete-text">Ejercicio 1 completado — buen trabajo siendo honesto contigo.</span>
+    </div>
+
+    <div class="section-nav">
+      <button class="nav-btn" onclick="scrollToSection('sec-2')">
+        Siguiente ejercicio
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ─── EJERCICIO 2: LA EXCUSA CON CORBATA ─── -->
+  <section class="section" id="sec-2">
+    <div class="section-id">
+      <span class="section-num">02</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-escrito">Escrito</span>
+    </div>
+
+    <h2 class="section-title">La Excusa<br>con <em>Corbata</em></h2>
+    <p class="section-premise">Una justificación que suena responsable pero evita la acción.</p>
+
+    <p class="section-intro">
+      "No puedo porque tengo mucho servicio." "No es el momento correcto." "Cuando las condiciones sean mejores." Estas excusas no suenan a pretexto — suenan a razón adulta. Eso las hace más peligrosas. Identifica la tuya.
+    </p>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 1 de 4</div>
+      <p class="q-text">¿Qué es lo que llevas tiempo diciendo que harías — y no has hecho?</p>
+      <p class="q-hint">Puede ser en tu liderazgo, en tus relaciones, en tu crecimiento personal, en tu cuerpo.</p>
+      <textarea id="t2-q1" placeholder="Llevo tiempo diciendo que voy a..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-mark">⊙</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 2 de 4</div>
+      <p class="q-text">Escribe la excusa que usas. Ahora escribe la verdad debajo de ella.</p>
+      <p class="q-hint">La excusa suena razonable. La verdad, a veces, duele.</p>
+    </div>
+
+    <div class="mirror-block">
+      <div class="mirror-side">
+        <div class="mirror-label excusa">La excusa</div>
+        <textarea id="t2-excusa" placeholder="No lo he hecho porque..." oninput="saveAndUpdate()"></textarea>
+      </div>
+      <div class="mirror-side">
+        <div class="mirror-label verdad">La verdad</div>
+        <textarea id="t2-verdad" placeholder="En realidad, la verdad es que..." oninput="saveAndUpdate()"></textarea>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 3 de 4</div>
+      <p class="q-text">¿Cuál es el costo real de seguir usando esa excusa?</p>
+      <p class="q-hint">Pon un número del 1 al 10 en cada área de tu vida. 10 = costo devastador.</p>
+    </div>
+
+    <div class="cost-block">
+      <div class="cost-title">Costo por área</div>
+      <div class="cost-areas">
+        <div class="cost-area">
+          <span class="cost-area-label">Mi liderazgo</span>
+          <input type="range" class="cost-slider" min="1" max="10" value="5" oninput="updateCost(this,'cost-liderazgo')">
+          <span class="cost-value" id="cost-liderazgo">5/10</span>
+        </div>
+        <div class="cost-area">
+          <span class="cost-area-label">Mis relaciones</span>
+          <input type="range" class="cost-slider" min="1" max="10" value="5" oninput="updateCost(this,'cost-relaciones')">
+          <span class="cost-value" id="cost-relaciones">5/10</span>
+        </div>
+        <div class="cost-area">
+          <span class="cost-area-label">Mi crecimiento</span>
+          <input type="range" class="cost-slider" min="1" max="10" value="5" oninput="updateCost(this,'cost-crecimiento')">
+          <span class="cost-value" id="cost-crecimiento">5/10</span>
+        </div>
+        <div class="cost-area">
+          <span class="cost-area-label">Mi integridad</span>
+          <input type="range" class="cost-slider" min="1" max="10" value="5" oninput="updateCost(this,'cost-integridad')">
+          <span class="cost-value" id="cost-integridad">5/10</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 4 de 4</div>
+      <p class="q-text">Una sola acción concreta que puedes hacer esta semana — sin esperar condiciones perfectas.</p>
+      <p class="q-hint">Debe ser específica, pequeña y posible. "Mejorar mi vida" no es una acción. "Escribirle un mensaje a X el martes" sí lo es.</p>
+    </div>
+    <div class="action-declaration">
+      <textarea id="t2-accion" placeholder="Esta semana voy a hacer específicamente..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="section-complete" id="complete-2">
+      <div class="section-complete-icon">
+        <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="section-complete-text">Ejercicio 2 completado — nombraste la excusa. Eso ya es acto de responsabilidad.</span>
+    </div>
+
+    <div class="section-nav">
+      <button class="nav-btn" onclick="scrollToSection('sec-3')">
+        Siguiente ejercicio
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ─── EJERCICIO 3: LA VERDAD SIN ESCUDO ─── -->
+  <section class="section" id="sec-3">
+    <div class="section-id">
+      <span class="section-num">03</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-privado">Solo tuyo</span>
+    </div>
+
+    <h2 class="section-title">La Verdad<br>sin <em>Escudo</em></h2>
+    <p class="section-premise">Este ejercicio no se manda. Es tuyo.</p>
+
+    <div class="private-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Guardado solo en este dispositivo — nadie más lo lee
+    </div>
+
+    <p class="section-intro">
+      Se trata de escribir algo que sabes de ti mismo y que no has dicho en voz alta — ni en tribuna, ni en terapia, ni aquí. Nadie verá estas respuestas a menos que tú lo decidas. Ese es el único escenario donde la verdad sin escudo es posible.
+    </p>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 1 de 4</div>
+      <p class="q-text">¿Qué patrón tuyo has visto repetirse en diferentes grupos, relaciones o roles de liderazgo?</p>
+      <p class="q-hint">No el de los demás. El tuyo. El que tú reconoces cuando eres honesto.</p>
+      <textarea id="t3-q1" placeholder="El patrón que se repite en mí es..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 2 de 4</div>
+      <p class="q-text">¿Cuál es la historia que te cuentas sobre ese patrón para no tener que cambiarlo?</p>
+      <p class="q-hint">La historia siempre tiene una justificación que suena razonable. A veces hasta tiene nombres y fechas.</p>
+      <textarea id="t3-q2" placeholder="La historia que me cuento es que..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 3 de 4</div>
+      <p class="q-text">¿Qué pasaría si esa historia no fuera cierta?</p>
+      <p class="q-hint">No tienes que responder que es falsa. Solo: ¿qué pasaría si lo fuera?</p>
+      <textarea id="t3-q3" placeholder="Si esa historia no fuera cierta, entonces..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 4 de 4</div>
+      <p class="q-text">Escribe la versión más honesta de quién eres cuando nadie te ve.</p>
+      <p class="q-hint">Sin adornos, sin el rol, sin el título. Solo tú.</p>
+      <textarea id="t3-q4" style="min-height: 120px;" placeholder="Cuando nadie me ve, yo soy..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="section-complete" id="complete-3">
+      <div class="section-complete-icon">
+        <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="section-complete-text">Ejercicio 3 completado — escribir la verdad sin escudo es el acto de valentía más silencioso.</span>
+    </div>
+
+    <div class="section-nav">
+      <button class="nav-btn" onclick="scrollToSection('sec-4')">
+        Último ejercicio
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ─── EJERCICIO 4: PRINCIPIO DE PRESENCIA ─── -->
+  <section class="section" id="sec-4">
+    <div class="section-id">
+      <span class="section-num">04</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-somatico">Somático</span>
+    </div>
+
+    <h2 class="section-title">El Principio<br>de <em>Presencia</em></h2>
+    <p class="section-premise">Un minuto. No diez. No tienes que meditar — tienes que detenerte.</p>
+
+    <p class="section-intro">
+      La neurociencia confirma que la atención al presente disminuye la reactividad del sistema nervioso. Esto no es meditación de lujo — es tecnología de autorregulación. Cuando tu mente te lleve al futuro (¿y si...?) o al pasado (ya deberías...), este es el antídoto.
+    </p>
+
+    <div class="timer-block">
+      <div class="timer-display" id="timer-display">1:00</div>
+      <div class="timer-label" id="timer-label">Un minuto de presencia</div>
+      <button class="timer-btn" id="timer-btn" onclick="startTimer()">Comenzar el minuto</button>
+      <p class="timer-note">Cierra los ojos. Siente dónde está tu respiración. ¿Nariz? ¿Garganta? ¿Pecho? Cuando aparezca un pensamiento, obsérvalo como una nube. Pasa.</p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 1 de 4</div>
+      <p class="q-text">¿Dónde estás realmente ahora mismo?</p>
+      <p class="q-hint">No donde deberías estar. No donde querías estar. Donde estás.</p>
+      <textarea id="t4-q1" placeholder="Ahora mismo estoy en..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 2 de 4</div>
+      <p class="q-text">¿Qué emoción está presente aunque estés intentando ignorarla?</p>
+      <p class="q-hint">Si dices "ninguna", probablemente es la que más estás ignorando.</p>
+      <textarea id="t4-q2" placeholder="La emoción que está presente es..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 3 de 4</div>
+      <p class="q-text">¿Qué pensamiento ha aparecido una y otra vez hoy?</p>
+      <textarea id="t4-q3" placeholder="El pensamiento que regresa es..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Pregunta 4 de 4</div>
+      <p class="q-text">¿Qué pequeña acción leal a tus valores puedes hacer en las próximas 2 horas?</p>
+      <p class="q-hint">No mañana. No "cuando pueda". En las próximas 2 horas.</p>
+    </div>
+    <div class="action-declaration">
+      <textarea id="t4-accion" placeholder="En las próximas 2 horas voy a..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="section-complete" id="complete-4">
+      <div class="section-complete-icon">
+        <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="section-complete-text">Ejercicio 4 completado — cuatro ejercicios, cuatro verdades.</span>
+    </div>
+
+    <div class="section-nav">
+      <button class="nav-btn" onclick="scrollToSection('sec-cierre')">
+        Ver mi resumen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ─── CIERRE ─── -->
+  <section class="cierre section" id="sec-cierre">
+    <div class="cierre-symbol">◈</div>
+    <h2 class="cierre-title">Cuadernillo completo</h2>
+    <p class="cierre-body">
+      Terminar esto no es un logro. Es el punto de partida. Lo que escribiste aquí vale cero si no va seguido de una acción concreta esta semana. Manda la foto del cuadernillo a la madrina — o este archivo — como evidencia de que lo hiciste.
+    </p>
+
+    <div class="summary-card" id="summary-card">
+      <div class="summary-section">
+        <div class="summary-section-title">Nombre</div>
+        <div class="summary-section-body" id="s-nombre">—</div>
+      </div>
+      <div class="summary-section">
+        <div class="summary-section-title">Mi Mapa Térmico — la señal que ignoré</div>
+        <div class="summary-section-body" id="s-q1"></div>
+      </div>
+      <div class="summary-section">
+        <div class="summary-section-title">La excusa con corbata</div>
+        <div class="summary-section-body" id="s-excusa"></div>
+      </div>
+      <div class="summary-section">
+        <div class="summary-section-title">La verdad detrás de la excusa</div>
+        <div class="summary-section-body" id="s-verdad"></div>
+      </div>
+      <div class="summary-section">
+        <div class="summary-section-title">Mi acción concreta esta semana</div>
+        <div class="summary-section-body" id="s-accion"></div>
+      </div>
+      <div class="summary-section">
+        <div class="summary-section-title">Práctica semanal del módulo</div>
+        <div class="summary-section-body">Admitir un error diciendo únicamente <em>"me equivoqué"</em> — sin pero, sin embargo, sin contexto. Sostener el silencio después. Registrar en bitácora qué pasó en el cuerpo.</div>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-primary" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+        Imprimir / Guardar PDF
+      </button>
+      <button class="btn-secondary" onclick="resetAll()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 109-9 9 9 0 00-9 9zM3 12h4M7 12L5 10M7 12L5 14"/></svg>
+        Nuevo intento
+      </button>
+    </div>
+  </section>
+
+</div><!-- /main -->
+
+<script>
+// ── STATE ──────────────────────────────────────────
+const KEY = 'gdl_m1_v1';
+let timerInterval = null;
+let timerSecs = 60;
+let timerRunning = false;
+
+// ── INIT ──────────────────────────────────────────
+function iniciar() {
+  const nombre = document.getElementById('nombre-alumno').value.trim();
+  if (!nombre) {
+    document.getElementById('nombre-alumno').focus();
+    return;
+  }
+  document.getElementById('cover').style.display = 'none';
+  const main = document.getElementById('main');
+  main.classList.add('visible');
+  loadSaved();
+  revealSections();
+  updateProgress();
+}
+
+// ── SAVE / LOAD ────────────────────────────────────
+function getData() {
+  const d = {};
+  document.querySelectorAll('textarea[id]').forEach(t => d[t.id] = t.value);
+  document.querySelectorAll('.zone-btn.sel, .sensation-chip.sel').forEach(b => {
+    d['sel_' + b.dataset.val] = true;
+  });
+  d['nombre'] = document.getElementById('nombre-alumno').value;
+  document.querySelectorAll('.cost-slider').forEach(s => {
+    d['slider_' + s.closest('.cost-area').querySelector('.cost-area-label').textContent] = s.value;
+  });
+  return d;
+}
+
+function saveAndUpdate() {
+  try { localStorage.setItem(KEY, JSON.stringify(getData())); } catch(e) {}
+  updateProgress();
+  updateSummary();
+}
+
+function loadSaved() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+    Object.keys(saved).forEach(k => {
+      const el = document.getElementById(k);
+      if (el && el.tagName === 'TEXTAREA') el.value = saved[k];
+    });
+    if (saved.nombre) document.getElementById('nombre-alumno').value = saved.nombre;
+  } catch(e) {}
+}
+
+// ── PROGRESS ───────────────────────────────────────
+function updateProgress() {
+  const all = document.querySelectorAll('textarea[id]');
+  let filled = 0;
+  all.forEach(t => { if (t.value.trim().length > 10) filled++; });
+  const pct = Math.round((filled / all.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+
+  // section completions
+  checkSection(1, ['t1-q1','t1-q3','t1-q4','t1-q5']);
+  checkSection(2, ['t2-q1','t2-excusa','t2-verdad','t2-accion']);
+  checkSection(3, ['t3-q1','t3-q2','t3-q3','t3-q4']);
+  checkSection(4, ['t4-q1','t4-q2','t4-q3','t4-accion']);
+}
+
+function checkSection(n, ids) {
+  const done = ids.every(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim().length > 5;
+  });
+  const badge = document.getElementById('complete-' + n);
+  if (badge) badge.classList.toggle('visible', done);
+}
+
+// ── SUMMARY ────────────────────────────────────────
+function updateSummary() {
+  const nombre = document.getElementById('nombre-alumno')?.value || '—';
+  setText('s-nombre', nombre);
+  setText('s-q1', document.getElementById('t1-q4')?.value || '—');
+  setText('s-excusa', document.getElementById('t2-excusa')?.value || '—');
+  setText('s-verdad', document.getElementById('t2-verdad')?.value || '—');
+  const a1 = document.getElementById('t2-accion')?.value || '';
+  const a2 = document.getElementById('t4-accion')?.value || '';
+  setText('s-accion', [a1,a2].filter(Boolean).join(' · ') || '—');
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+// ── SELECT BUTTONS ─────────────────────────────────
+function toggleSelect(btn) {
+  btn.classList.toggle('sel');
+  saveAndUpdate();
+}
+
+// ── COST SLIDERS ───────────────────────────────────
+function updateCost(slider, labelId) {
+  document.getElementById(labelId).textContent = slider.value + '/10';
+  saveAndUpdate();
+}
+
+// ── TIMER ──────────────────────────────────────────
+function startTimer() {
+  if (timerRunning) return;
+  timerRunning = true;
+  timerSecs = 60;
+  const display = document.getElementById('timer-display');
+  const label = document.getElementById('timer-label');
+  const btn = document.getElementById('timer-btn');
+  display.classList.add('running');
+  btn.disabled = true;
+  label.textContent = 'Respira. Solo observa.';
+
+  timerInterval = setInterval(() => {
+    timerSecs--;
+    const m = Math.floor(timerSecs / 60);
+    const s = timerSecs % 60;
+    display.textContent = m + ':' + String(s).padStart(2, '0');
+    if (timerSecs <= 0) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      display.classList.remove('running');
+      display.classList.add('done');
+      display.textContent = '✓';
+      label.textContent = 'Minuto completado. Ahora responde.';
+      btn.disabled = false;
+      btn.textContent = 'Repetir';
+    }
+  }, 1000);
+}
+
+// ── REVEAL SECTIONS ────────────────────────────────
+function revealSections() {
+  const sections = document.querySelectorAll('.section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('revealed');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05 });
+  sections.forEach(s => observer.observe(s));
+  // Reveal first immediately
+  setTimeout(() => sections[0]?.classList.add('revealed'), 100);
+}
+
+// ── SCROLL ─────────────────────────────────────────
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.add('revealed');
+    const top = el.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+}
+
+// ── RESET ──────────────────────────────────────────
+function resetAll() {
+  if (!confirm('¿Borrar todas las respuestas y empezar de nuevo?')) return;
+  try { localStorage.removeItem(KEY); } catch(e) {}
+  document.querySelectorAll('textarea').forEach(t => t.value = '');
+  document.querySelectorAll('.zone-btn, .sensation-chip').forEach(b => b.classList.remove('sel'));
+  updateProgress();
+  updateSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── AUTOSAVE on load ───────────────────────────────
+window.addEventListener('beforeunload', saveAndUpdate);
+</script>
+</body>
+</html>

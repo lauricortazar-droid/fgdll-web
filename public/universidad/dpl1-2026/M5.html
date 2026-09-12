@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuadernillo M5 · Servicio y Equipo · Guerreros de la Luz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#090D0A;--bg2:#0E1410;--bg3:#141C16;--bg4:#1C261E;
+  --forest:#3A6B45;--forest-dim:#254530;--forest-faint:rgba(58,107,69,0.07);--forest-border:rgba(58,107,69,0.22);
+  --moss:#5A8A60;--moss-faint:rgba(90,138,96,0.08);--moss-border:rgba(90,138,96,0.2);
+  --ember:#A04828;--ember-faint:rgba(160,72,40,0.07);--ember-border:rgba(160,72,40,0.2);
+  --gold:#8A7030;--gold-faint:rgba(138,112,48,0.07);--gold-border:rgba(138,112,48,0.2);
+  --slate:#4A5868;--slate-faint:rgba(74,88,104,0.07);--slate-border:rgba(74,88,104,0.2);
+  --text:#D8E0D2;--text-mid:#6A7868;--text-dim:#3A4436;
+  --border:rgba(255,255,255,0.05);--border-mid:rgba(255,255,255,0.09);
+  --radius:4px;--radius-lg:10px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7;min-height:100vh}
+
+/* ── COVER ── */
+.cover{min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;padding:60px 52px 52px;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 10% 30%,rgba(58,107,69,0.07) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 85% 75%,rgba(90,138,96,0.04) 0%,transparent 70%);pointer-events:none}
+.c-top{position:relative}
+.c-badge{display:inline-flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:40px}
+.c-badge::before{content:'';width:24px;height:1px;background:var(--forest-dim)}
+.c-title{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,7vw,64px);font-weight:300;line-height:1.06;letter-spacing:-1px;color:var(--text);margin-bottom:10px}
+.c-title em{font-style:italic;color:var(--forest)}
+.c-sub{font-size:14px;color:var(--text-mid);max-width:380px;line-height:1.65;margin-bottom:40px}
+.c-quote{border-left:1px solid var(--forest-border);padding:14px 20px;margin-bottom:36px;max-width:460px}
+.c-quote p{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--moss);line-height:1.55;margin-bottom:6px}
+.c-quote cite{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text-dim);font-style:normal;text-transform:uppercase}
+.c-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:40px}
+.c-pill{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:1px;padding:5px 14px;border:1px solid var(--border-mid);border-radius:20px;color:var(--text-dim)}
+.name-row{display:flex;align-items:center;gap:16px;max-width:400px;margin-bottom:28px}
+.name-row label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
+.name-row input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--border-mid);color:var(--text);font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;padding:6px 0;outline:none;transition:border-color .3s}
+.name-row input:focus{border-bottom-color:var(--forest)}
+.name-row input::placeholder{color:var(--text-dim)}
+.c-cta{display:inline-flex;align-items:center;gap:12px;padding:14px 28px;background:transparent;border:1px solid var(--forest-border);color:var(--forest);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;border-radius:var(--radius);transition:all .3s}
+.c-cta:hover{background:var(--forest-faint)}
+.c-cta svg{width:14px;height:14px}
+.c-num{position:absolute;right:52px;bottom:52px;font-family:'Cormorant Garamond',serif;font-size:clamp(80px,18vw,140px);font-weight:300;color:rgba(58,107,69,0.04);line-height:1;user-select:none;pointer-events:none}
+
+/* ── MAIN ── */
+.main{display:none}.main.visible{display:block}
+
+/* ── PROGRESS ── */
+.prog{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 52px;display:flex;align-items:center;gap:18px}
+.prog-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
+.prog-track{flex:1;height:1px;background:var(--border);position:relative}
+.prog-fill{position:absolute;left:0;top:0;height:100%;background:var(--forest);transition:width .5s ease}
+.prog-pct{font-family:'DM Mono',monospace;font-size:9px;color:var(--forest-dim)}
+
+/* ── SECTION ── */
+.section{max-width:700px;margin:0 auto;padding:80px 52px;border-bottom:1px solid var(--border);opacity:0;transform:translateY(24px);transition:opacity .65s,transform .65s}
+.section.revealed{opacity:1;transform:none}
+.s-eye{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.s-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim)}
+.s-line{flex:1;height:1px;background:var(--border)}
+.s-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:20px}
+.tag-deteccion{color:var(--forest);border:1px solid var(--forest-border)}
+.tag-autopsia{color:var(--ember);border:1px solid var(--ember-border)}
+.tag-resonancia{color:var(--moss);border:1px solid var(--moss-border)}
+.tag-inventario{color:var(--gold);border:1px solid var(--gold-border)}
+.tag-limite{color:var(--slate);border:1px solid var(--slate-border)}
+.s-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,38px);font-weight:300;line-height:1.08;color:var(--text);margin-bottom:6px}
+.s-title em{font-style:italic;color:var(--moss)}
+.s-premise{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--text-dim);margin-bottom:22px}
+.s-intro{font-size:15px;color:var(--text-mid);line-height:1.78;margin-bottom:40px;padding-left:20px;border-left:1px solid var(--forest-border)}
+.q-block{margin-bottom:34px}
+.q-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px}
+.q-text{font-size:16px;color:var(--text);line-height:1.5;margin-bottom:12px;font-weight:300}
+.q-hint{font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:12px;font-style:italic}
+textarea{width:100%;min-height:88px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;line-height:1.7;padding:14px 16px;resize:vertical;outline:none;transition:border-color .3s,background .3s}
+textarea:focus{border-color:var(--forest-dim);background:var(--bg3)}
+textarea::placeholder{color:var(--text-dim);font-style:italic}
+
+/* ── URGENCIA / SENSOR CORPORAL ── */
+.sensor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.sensor-btn{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:var(--text-mid);cursor:pointer;transition:all .2s;text-align:center}
+.sensor-btn:hover{border-color:var(--border-mid);color:var(--text)}
+.sensor-btn.sel{background:var(--forest-faint);border-color:var(--forest-border);color:var(--forest)}
+
+/* ── AUTOPSIA CARDS ── */
+.autopsia-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
+.autopsia-header{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg3);display:flex;align-items:center;gap:10px}
+.autopsia-dot{width:8px;height:8px;border-radius:50%;background:var(--ember);flex-shrink:0}
+.autopsia-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ember)}
+.autopsia-qs{padding:4px}
+.autopsia-q{border-bottom:1px solid var(--border);padding:4px 0}
+.autopsia-q:last-child{border-bottom:none}
+.autopsia-q-label{padding:10px 16px 4px;font-size:11px;color:var(--text-dim);font-family:'DM Mono',monospace;letter-spacing:1px}
+.autopsia-q textarea{border:none;background:transparent;min-height:56px;font-size:13px;padding:6px 16px 10px;border-radius:0}
+.autopsia-q textarea:focus{background:var(--bg3);border:none}
+
+/* ── RESONANCIA vs ABSORCIÓN ── */
+.res-abs-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.res-card{border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden}
+.res-card-header{padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg3);display:flex;align-items:center;gap:10px}
+.res-icon{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.res-icon.res{background:var(--moss)}
+.res-icon.abs{background:var(--ember)}
+.res-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase}
+.res-title.res{color:var(--moss)}
+.res-title.abs{color:var(--ember)}
+.res-def{padding:12px 14px;font-size:12px;color:var(--text-mid);line-height:1.6;border-bottom:1px solid var(--border);background:var(--bg2);font-style:italic}
+.res-card textarea{border:none;background:var(--bg2);min-height:64px;font-size:13px;padding:8px 14px;border-radius:0}
+.res-card textarea:focus{background:var(--bg3);border:none}
+
+/* ── INVENTARIO DE CUADROS ── */
+.cuadros-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px}
+.cuadros-table th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:10px 14px;border-bottom:1px solid var(--border);text-align:left;font-weight:400;background:var(--bg3)}
+.cuadros-table td{padding:4px;border-bottom:1px solid var(--border);vertical-align:top}
+.cuadros-table tr:last-child td{border-bottom:none}
+.cuadros-table textarea{border:none;background:var(--bg2);min-height:52px;font-size:13px;padding:8px 12px;border-radius:0}
+.cuadros-table textarea:focus{background:var(--bg3);border:none}
+.cuadros-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
+.cuadros-tally{background:var(--bg3);border-top:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.tally-item{display:flex;flex-direction:column;gap:2px}
+.tally-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+.tally-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:400;color:var(--gold);line-height:1}
+.tally-slider-wrap{flex:1;min-width:180px}
+.tally-track{height:2px;background:var(--border-mid);border-radius:1px;position:relative;margin-top:8px}
+.tally-fill{position:absolute;left:0;top:0;height:100%;background:var(--ember);border-radius:1px;transition:width .4s}
+input[type=range].tslider{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:transparent;outline:none;position:absolute;left:0;top:0;cursor:pointer}
+input[type=range].tslider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--ember);cursor:pointer;margin-top:-6px}
+
+/* ── LÍMITE SCAFFOLD ── */
+.limite-scaffold{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
+.limite-part{border-bottom:1px solid var(--border)}
+.limite-part:last-child{border-bottom:none}
+.limite-part-header{padding:12px 18px;background:var(--bg3);display:flex;align-items:center;gap:12px}
+.limite-part-num{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim)}
+.limite-part-title{font-size:13px;color:var(--text);font-weight:500}
+.limite-part textarea{border:none;background:transparent;min-height:60px;font-size:13px;padding:10px 18px;border-radius:0}
+.limite-part textarea:focus{background:var(--bg3);border:none}
+
+/* ── FRASE ANCLA ── */
+.ancla-builder{background:var(--bg3);border:1px solid var(--forest-border);border-radius:var(--radius-lg);padding:28px;margin-bottom:20px;text-align:center;position:relative}
+.ancla-builder::before{content:'⚓';position:absolute;top:12px;right:18px;font-size:20px;opacity:.2;line-height:1}
+.ancla-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--forest);margin-bottom:14px;display:block}
+.ancla-template{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--text-mid);margin-bottom:14px;line-height:1.6}
+.ancla-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--forest-border);color:var(--text);font-family:'Cormorant Garamond',serif;font-size:clamp(17px,3.5vw,22px);font-style:italic;font-weight:300;text-align:center;padding:10px 8px;outline:none;transition:border-color .3s}
+.ancla-input:focus{border-bottom-color:var(--forest)}
+.ancla-input::placeholder{color:var(--text-dim)}
+.ancla-hint{font-size:11px;color:var(--text-dim);margin-top:12px;font-style:italic}
+.ancla-examples{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.ancla-example{display:flex;align-items:flex-start;gap:12px;padding:11px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s}
+.ancla-example:hover{border-color:var(--forest-border);background:var(--forest-faint)}
+.ancla-ex-num{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);flex-shrink:0;padding-top:2px}
+.ancla-ex-text{font-family:'Cormorant Garamond',serif;font-size:15px;font-style:italic;color:var(--text-mid);line-height:1.5}
+
+/* ── COMPLETE / NAV ── */
+.sec-complete{display:none;align-items:center;gap:12px;padding:14px 18px;background:var(--forest-faint);border:1px solid var(--forest-border);border-radius:var(--radius);margin-top:32px}
+.sec-complete.visible{display:flex}
+.sec-complete-icon{width:18px;height:18px;border-radius:50%;background:var(--forest);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-complete-text{font-size:13px;color:var(--forest)}
+.sec-nav{display:flex;justify-content:flex-end;margin-top:32px}
+.nav-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;background:transparent;border:1px solid var(--border-mid);color:var(--text-mid);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;border-radius:var(--radius);transition:all .3s}
+.nav-btn:hover{border-color:var(--forest-border);color:var(--forest)}
+.nav-btn svg{width:14px;height:14px}
+.divider{display:flex;align-items:center;gap:16px;margin:32px 0}
+.divider-line{flex:1;height:1px;background:var(--border)}
+.divider-mark{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--text-dim)}
+
+/* ── AXIOM BOX ── */
+.axiom{background:var(--bg3);border-left:2px solid var(--forest-border);padding:14px 20px;margin-bottom:24px;border-radius:0 var(--radius) var(--radius) 0}
+.axiom p{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--moss);line-height:1.55}
+
+/* ── CIERRE ── */
+.cierre{max-width:700px;margin:0 auto;padding:80px 52px 100px}
+.cierre-icon{font-family:'Cormorant Garamond',serif;font-size:48px;color:var(--forest);opacity:.35;margin-bottom:20px}
+.cierre-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--text);margin-bottom:16px}
+.cierre-body{font-size:14px;color:var(--text-mid);line-height:1.8;max-width:500px;margin-bottom:40px}
+.summary-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin-bottom:28px}
+.sum-sec{margin-bottom:22px}
+.sum-sec:last-child{margin-bottom:0}
+.sum-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--forest-dim);margin-bottom:8px}
+.sum-body{font-size:13px;color:var(--text-mid);line-height:1.7}
+.sum-ancla{font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;color:var(--forest);line-height:1.5}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn-p{display:inline-flex;align-items:center;gap:10px;padding:13px 28px;background:var(--forest-faint);border:1px solid var(--forest-border);color:var(--forest);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;border-radius:var(--radius);transition:all .3s}
+.btn-p:hover{background:rgba(58,107,69,.12)}
+.btn-s{display:inline-flex;align-items:center;gap:10px;padding:13px 28px;background:transparent;border:1px solid var(--border-mid);color:var(--text-mid);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;border-radius:var(--radius);transition:all .3s}
+.btn-s:hover{color:var(--text)}
+
+/* ── PRINT ── */
+@media print{
+  body{background:#fff;color:#1a1a1a}
+  .prog,.nav-btn,.btn-row,.c-cta,.ancla-examples,.sensor-btn{display:none!important}
+  .cover{min-height:auto;page-break-after:always;background:#fff}
+  .cover::before,.c-num{display:none}
+  .c-title,.cierre-title,.s-title{color:#1a1a1a}
+  .section{opacity:1!important;transform:none!important;border-bottom:1px solid #e0e0e0}
+  textarea{color:#1a1a1a;background:#f8f8f8;border-color:#ddd}
+  .autopsia-block,.res-card,.cuadros-wrap,.limite-scaffold,.ancla-builder,.summary-card{background:#f8f8f8;border-color:#ddd}
+  .autopsia-header,.res-card-header,.limite-part-header,.cuadros-table th,.cuadros-tally{background:#efefef}
+  .sensor-btn.sel{background:#f0f5f0;border-color:#3A6B45;color:#254530}
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .cover,.section,.cierre{padding:48px 24px}
+  .prog{padding:10px 24px}
+  .sensor-grid{grid-template-columns:1fr 1fr}
+  .res-abs-wrap{grid-template-columns:1fr}
+  .cuadros-table{display:block;overflow-x:auto}
+  .c-num{font-size:80px;right:24px;bottom:36px}
+  .name-row input{font-size:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ COVER ═══ -->
+<section class="cover" id="cover">
+  <div class="c-top">
+    <div class="c-badge">Guerreros de la Luz · Módulo 5 de 6</div>
+    <h1 class="c-title">Servicio<br>y <em>Equipo</em></h1>
+    <p class="c-sub">La soberbia operativa. La diferencia entre acompañar y rescatar. Cómo ocupar tu lugar sin invadir el ajeno.</p>
+    <div class="c-quote">
+      <p>"No todo lo que puedes hacer te toca hacerlo. Ayudar es un arte. Rescatar es una interferencia."</p>
+      <cite>Transcripción sesión M5 · Guerreros de la Luz</cite>
+    </div>
+    <div class="c-pills">
+      <span class="c-pill">5 ejercicios</span>
+      <span class="c-pill">Autopsia del rescate</span>
+      <span class="c-pill">Resonancia vs. absorción</span>
+      <span class="c-pill">Inventario de cuadros</span>
+      <span class="c-pill">Frase ancla</span>
+      <span class="c-pill">60–75 min</span>
+    </div>
+    <div class="name-row">
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" placeholder="Tu nombre completo" autocomplete="name">
+    </div>
+    <button class="c-cta" onclick="iniciar()">
+      Comenzar
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  <div class="c-num">5</div>
+</section>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main" id="main">
+  <div class="prog">
+    <span class="prog-label">Progreso</span>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <span class="prog-pct" id="prog-pct">0%</span>
+  </div>
+
+  <!-- ── EJ 1: DETECCIÓN — DESDE DÓNDE ME MUEVO ── -->
+  <section class="section" id="sec-1">
+    <div class="s-eye"><span class="s-num">01</span><div class="s-line"></div><span class="s-tag tag-deteccion">Detección</span></div>
+    <h2 class="s-title">Desde dónde<br><em>me muevo</em></h2>
+    <p class="s-premise">Cuando hay presión, solemos reaccionar desde impulsos automáticos — antes de que lo decidamos.</p>
+    <p class="s-intro">Piensa en una situación reciente donde sentiste la urgencia de intervenir en una tarea, mensaje o conversación que no era tu responsabilidad directa. La soberbia operativa no siempre llega como arrogancia — a veces llega como ansiedad, como incomodidad de ver el caos, como la certeza silenciosa de que sin ti algo va a salir mal.</p>
+
+    <div class="q-block">
+      <div class="q-num">La situación</div>
+      <p class="q-text">¿Cuál fue la situación donde sentiste la urgencia de intervenir aunque no te correspondía?</p>
+      <textarea id="d-situacion" placeholder="La situación fue..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-num">El sensor corporal</div>
+      <p class="q-text">¿En qué parte del cuerpo sentiste esa urgencia?</p>
+      <p class="q-hint">Tu cuerpo registró la urgencia antes que tu mente la nombrara. Selecciona dónde la sentiste.</p>
+    </div>
+    <div class="sensor-grid">
+      <button class="sensor-btn" id="sb-pecho" onclick="toggleSensor('pecho')">Presión en el pecho</button>
+      <button class="sensor-btn" id="sb-mandibula" onclick="toggleSensor('mandibula')">Mandíbula trabada</button>
+      <button class="sensor-btn" id="sb-calor" onclick="toggleSensor('calor')">Calor en el cuerpo</button>
+      <button class="sensor-btn" id="sb-estomago" onclick="toggleSensor('estomago')">Nudos en el estómago</button>
+      <button class="sensor-btn" id="sb-aceleracion" onclick="toggleSensor('aceleracion')">Aceleración del pulso</button>
+      <button class="sensor-btn" id="sb-tension" onclick="toggleSensor('tension')">Tensión en los hombros</button>
+    </div>
+
+    <div class="axiom">
+      <p>"No todo lo que puedes hacer te toca hacerlo."</p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-num">La pregunta honesta</div>
+      <p class="q-text">¿Te correspondía intervenir — o te incomodaba quedarte fuera y ver el caos?</p>
+      <p class="q-hint">Estas dos cosas no son lo mismo. Una viene del sistema. La otra viene de tu ansiedad.</p>
+      <textarea id="d-honesta" placeholder="Lo que me corresponde reconocer es que..." oninput="saveAndUpdate()" style="min-height:72px"></textarea>
+    </div>
+
+    <div class="sec-complete" id="complete-1">
+      <div class="sec-complete-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <span class="sec-complete-text">Ejercicio 1 completado — detectaste desde dónde te moviste.</span>
+    </div>
+    <div class="sec-nav">
+      <button class="nav-btn" onclick="goTo('sec-2')">Siguiente<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </section>
+
+  <!-- ── EJ 2: AUTOPSIA DEL RESCATE ── -->
+  <section class="section" id="sec-2">
+    <div class="s-eye"><span class="s-num">02</span><div class="s-line"></div><span class="s-tag tag-autopsia">Autopsia del rescate</span></div>
+    <h2 class="s-title">La autopsia<br>del <em>rescate</em></h2>
+    <p class="s-premise">Detecta cuándo tu ayuda es en realidad una búsqueda de control o un alivio personal.</p>
+    <p class="s-intro">Nos cuesta tanto trabajo tolerar la impotencia, el silencio o el error ajeno que actuamos para calmar nuestra propia ansiedad. Cuando rescatas a alguien de su propia responsabilidad, le robas su fuerza y desordenas el sistema. Esta autopsia no es para culparte — es para ver con claridad lo que estás haciendo y por qué.</p>
+
+    <div class="q-block">
+      <div class="q-num">Identifica la persona o área</div>
+      <p class="q-text">¿A quién le estás ayudando de forma intensa o constante ahora mismo — en tu servicio, trabajo o familia?</p>
+      <p class="q-hint">Pon el nombre o la función. No la situación — la persona o el área específica.</p>
+      <textarea id="a-persona" placeholder="La persona o área es..." oninput="saveAndUpdate()" style="min-height:60px"></textarea>
+    </div>
+
+    <div class="autopsia-block">
+      <div class="autopsia-header"><div class="autopsia-dot"></div><span class="autopsia-title">Honestidad brutal — responde las tres preguntas</span></div>
+      <div class="autopsia-qs">
+        <div class="autopsia-q">
+          <div class="autopsia-q-label">01 · ¿A quién estás intentando salvar — y qué rol tomas al hacerlo?</div>
+          <textarea id="a-q1" placeholder="Estoy intentando salvar a... y desde el rol de..." oninput="saveAndUpdate()"></textarea>
+        </div>
+        <div class="autopsia-q">
+          <div class="autopsia-q-label">02 · ¿Qué sientes cuando no intervienes — cuando te quedas callado y dejas que el otro resuelva?</div>
+          <textarea id="a-q2" placeholder="Cuando no intervengo, siento..." oninput="saveAndUpdate()"></textarea>
+        </div>
+        <div class="autopsia-q">
+          <div class="autopsia-q-label">03 · ¿Tu ayuda le está desarrollando su capacidad — o se la está reemplazando?</div>
+          <textarea id="a-q3" placeholder="Lo que mi ayuda en realidad le está haciendo es..." oninput="saveAndUpdate()"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="axiom">
+      <p>"Te acompaño a tu orilla. No me tiro al mar."</p>
+    </div>
+
+    <div class="sec-complete" id="complete-2">
+      <div class="sec-complete-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <span class="sec-complete-text">Ejercicio 2 completado — autopsia del rescate hecha.</span>
+    </div>
+    <div class="sec-nav">
+      <button class="nav-btn" onclick="goTo('sec-3')">Siguiente<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </section>
+
+  <!-- ── EJ 3: RESONANCIA vs ABSORCIÓN ── -->
+  <section class="section" id="sec-3">
+    <div class="s-eye"><span class="s-num">03</span><div class="s-line"></div><span class="s-tag tag-resonancia">Diferenciación</span></div>
+    <h2 class="s-title">Resonancia<br>vs. <em>Absorción</em></h2>
+    <p class="s-premise">Para sostener al otro, primero debes estar bien sostenido en tu propio lugar.</p>
+    <p class="s-intro">La resonancia es: "Siento lo que te pasa, te puedo comprender — y sigo siendo yo y tú sigues siendo tú. Puedo ayudarte porque estoy firme en mi orilla." La absorción es: "Me convertí en tu dolor, me llevo tu problema a casa, dejo de dormir por tu crisis." La diferencia no está en cuánto te importa la persona — está en desde dónde le respondes.</p>
+
+    <div class="res-abs-wrap">
+      <div class="res-card">
+        <div class="res-card-header"><div class="res-icon res"></div><span class="res-title res">Resonancia</span></div>
+        <div class="res-def">Estoy contigo sin perderme a mí mismo. Firme en mi orilla.</div>
+        <textarea id="r-resonancia" placeholder="En esta situación, resonar significa para mí..." oninput="saveAndUpdate()"></textarea>
+      </div>
+      <div class="res-card">
+        <div class="res-card-header"><div class="res-icon abs"></div><span class="res-title abs">Absorción</span></div>
+        <div class="res-def">Me hundo contigo. Pierdo mi lugar para estar en el tuyo.</div>
+        <textarea id="r-absorcion" placeholder="Cuando me absorbo, lo que suele pasar es..." oninput="saveAndUpdate()"></textarea>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-num">Tu patrón actual</div>
+      <p class="q-text">¿Tiendes más a la resonancia o a la absorción? ¿En qué relación o contexto específico se nota más?</p>
+      <textarea id="r-patron" placeholder="Tiendo más a... y se nota especialmente cuando..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-num">Lo que te cuesta no absorber</div>
+      <p class="q-text">¿Qué tendría que tolerar — sentir — si te quedas en tu orilla en lugar de tirarte al mar?</p>
+      <p class="q-hint">Tolerar la impotencia, el silencio, el error ajeno, la incomodidad de no resolver... Nómbralo.</p>
+      <textarea id="r-tolerar" placeholder="Lo que tendría que tolerar es..." oninput="saveAndUpdate()" style="min-height:68px"></textarea>
+    </div>
+
+    <div class="sec-complete" id="complete-3">
+      <div class="sec-complete-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <span class="sec-complete-text">Ejercicio 3 completado — reconociste tu orilla.</span>
+    </div>
+    <div class="sec-nav">
+      <button class="nav-btn" onclick="goTo('sec-4')">Siguiente<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </section>
+
+  <!-- ── EJ 4: INVENTARIO DE CUADROS ── -->
+  <section class="section" id="sec-4">
+    <div class="s-eye"><span class="s-num">04</span><div class="s-line"></div><span class="s-tag tag-inventario">Inventario de cuadros</span></div>
+    <h2 class="s-title">¿Quién sostiene<br><em>tu lugar?</em></h2>
+    <p class="s-premise">Un líder que está en todas partes no está en ninguna. Cuando ocupas el lugar del otro, abandonas el tuyo.</p>
+    <p class="s-intro">En Guerreros de la Luz, cada servicio es una frontera. Cuando cruzas la frontera ajena, dejas tu propia tierra sin guardia. Ocurren dos tragedias: invades al compañero y le robas su dignidad de servidor — y abandonas tu cuadro, donde nadie está cuidando lo que realmente te toca.</p>
+
+    <div class="q-block">
+      <div class="q-num">Las tres situaciones de esta semana</div>
+      <p class="q-text">Haz una lista de tres situaciones que más te quitaron el sueño, la paz o el tiempo esta semana — en tu servicio, trabajo o familia.</p>
+    </div>
+
+    <div class="cuadros-wrap">
+      <table class="cuadros-table">
+        <thead>
+          <tr>
+            <th style="width:40%">La situación</th>
+            <th style="width:30%">¿Me correspondía?</th>
+            <th style="width:30%">Lo que descuidé al ir ahí</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><textarea id="c1-sit" placeholder="Qué pasó..." oninput="saveAndUpdate()"></textarea></td>
+            <td><textarea id="c1-corr" placeholder="Sí / No / Parcialmente — porque..." oninput="saveAndUpdate()"></textarea></td>
+            <td><textarea id="c1-desc" placeholder="Mientras estaba ahí, descuidé..." oninput="saveAndUpdate()"></textarea></td>
+          </tr>
+          <tr>
+            <td><textarea id="c2-sit" placeholder="Qué pasó..." oninput="saveAndUpdate()"></textarea></td>
+            <td><textarea id="c2-corr" placeholder="Sí / No / Parcialmente — porque..." oninput="saveAndUpdate()"></textarea></td>
+            <td><textarea id="c2-desc" placeholder="Mientras estaba ahí, descuidé..." oninput="saveAndUpdate()"></textarea></td>
+          </tr>
+          <tr>
+            <td><textarea id="c3-sit" placeholder="Qué pasó..." oninput="saveAndUpdate()"></textarea></td>
+            <td><textarea id="c3-corr" placeholder="Sí / No / Parcialmente — porque..." oninput="saveAndUpdate()"></textarea></td>
+            <td><textarea id="c3-desc" placeholder="Mientras estaba ahí, descuidé..." oninput="saveAndUpdate()"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="cuadros-tally">
+        <div class="tally-item">
+          <span class="tally-label">De las 3, estaban fuera de mi cuadro</span>
+          <span class="tally-val" id="tally-val">—</span>
+        </div>
+        <div class="tally-slider-wrap">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;font-family:'DM Mono',monospace;letter-spacing:1px">Cantidad fuera de mi cuadro</div>
+          <div class="tally-track" style="position:relative;height:2px;">
+            <div class="tally-fill" id="tally-fill" style="width:0%"></div>
+            <input type="range" class="tslider" id="tally-slider" min="0" max="3" value="0" step="1" oninput="updateTally(this.value)">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-num">Lo que está huérfano</div>
+      <p class="q-text">Mientras vigilabas esas situaciones ajenas, ¿qué parte de tu propio servicio quedó descuidada por tu ausencia?</p>
+      <textarea id="c-huerfano" placeholder="Lo que quedó sin atención en mi cuadro real fue..." oninput="saveAndUpdate()"></textarea>
+    </div>
+
+    <div class="sec-complete" id="complete-4">
+      <div class="sec-complete-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <span class="sec-complete-text">Ejercicio 4 completado — inventario de cuadros hecho.</span>
+    </div>
+    <div class="sec-nav">
+      <button class="nav-btn" onclick="goTo('sec-5')">Último ejercicio<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </section>
+
+  <!-- ── EJ 5: LÍMITES CON PROPÓSITO + FRASE ANCLA ── -->
+  <section class="section" id="sec-5">
+    <div class="s-eye"><span class="s-num">05</span><div class="s-line"></div><span class="s-tag tag-limite">Límites con propósito</span></div>
+    <h2 class="s-title">El no<br>que <em>cuida</em></h2>
+    <p class="s-premise">El que no sabe decir no termina odiando el servicio que alguna vez amó.</p>
+    <p class="s-intro">Un límite no es un muro para separar — es un filtro para proteger. Cuando dices no a una carga que no te toca, le estás diciendo sí a la salud, al orden y a la sostenibilidad de tu propio servicio. Un límite sano fomenta la madurez: obliga a los demás a ocupar su lugar y resolver lo que les toca.</p>
+
+    <div class="q-block">
+      <div class="q-num">El límite que te da pavor poner</div>
+      <p class="q-text">Completa las tres partes del ejercicio de límite con propósito.</p>
+    </div>
+
+    <div class="limite-scaffold">
+      <div class="limite-part">
+        <div class="limite-part-header">
+          <span class="limite-part-num">01</span>
+          <span class="limite-part-title">El límite — escríbelo específico y directo</span>
+        </div>
+        <textarea id="l-limite" placeholder="No voy a... / No puedo hacer... / A partir de ahora..." oninput="saveAndUpdate()"></textarea>
+      </div>
+      <div class="limite-part">
+        <div class="limite-part-header">
+          <span class="limite-part-num">02</span>
+          <span class="limite-part-title">El fantasma — ¿qué te dice tu mente sobre lo que va a pasar si lo pones?</span>
+        </div>
+        <textarea id="l-fantasma" placeholder="Mi mente me dice que si pongo este límite, va a pasar que..." oninput="saveAndUpdate()"></textarea>
+      </div>
+      <div class="limite-part">
+        <div class="limite-part-header">
+          <span class="limite-part-num">03</span>
+          <span class="limite-part-title">La verdad sistémica — ¿de qué manera este límite ayudaría al equipo a largo plazo?</span>
+        </div>
+        <textarea id="l-verdad" placeholder="A largo plazo, si pongo este límite, el sistema se beneficia porque..." oninput="saveAndUpdate()"></textarea>
+      </div>
+    </div>
+
+    <div class="axiom">
+      <p>"Mi límite no te aleja. Protege nuestro servicio."</p>
+    </div>
+
+    <div class="divider"><div class="divider-line"></div><span class="divider-mark">◈</span><div class="divider-line"></div></div>
+
+    <div class="q-block">
+      <div class="q-num">Frase ancla — práctica semanal</div>
+      <p class="q-text">Elige o construye tu frase ancla. Es la frase que vas a decirte a ti mismo cuando quieras intervenir donde no te corresponde.</p>
+      <p class="q-hint">Un ancla no te lleva a ningún lado — te detiene en tu lugar cuando viene la tormenta. La frase ancla hace lo mismo con tu urgencia de intervenir.</p>
+    </div>
+
+    <div class="ancla-examples">
+      <div class="ancla-example" onclick="usarAncla('Para que mi servicio sea digno, yo me comprometo a ocupar mi lugar.')">
+        <span class="ancla-ex-num">01</span>
+        <span class="ancla-ex-text">"Para que mi servicio sea digno, yo me comprometo a ocupar mi lugar."</span>
+      </div>
+      <div class="ancla-example" onclick="usarAncla('Respondo al valor, no a la presión.')">
+        <span class="ancla-ex-num">02</span>
+        <span class="ancla-ex-text">"Respondo al valor, no a la presión."</span>
+      </div>
+      <div class="ancla-example" onclick="usarAncla('Te acompaño a tu orilla. No me tiro al mar.')">
+        <span class="ancla-ex-num">03</span>
+        <span class="ancla-ex-text">"Te acompaño a tu orilla. No me tiro al mar."</span>
+      </div>
+      <div class="ancla-example" onclick="usarAncla('Si ocupo mi lugar, el sistema descansa.')">
+        <span class="ancla-ex-num">04</span>
+        <span class="ancla-ex-text">"Si ocupo mi lugar, el sistema descansa."</span>
+      </div>
+    </div>
+
+    <div class="ancla-builder">
+      <span class="ancla-label">Mi frase ancla</span>
+      <div class="ancla-template">Cuando quiera intervenir donde no me toca, me digo:</div>
+      <input class="ancla-input" id="frase-ancla" type="text" placeholder="Escribe o edita tu frase aquí..." oninput="saveAndUpdate()">
+      <div class="ancla-hint">Corta. Específica. Tuya. Que recuerdes en el momento más difícil.</div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-num">Compromiso de práctica semanal</div>
+      <p class="q-text">¿En qué momento específico de esta semana vas a necesitar esta frase ancla?</p>
+      <p class="q-hint">Anticipa el detonante. "Cuando vea que X no está haciendo Y." "Cuando me llegue un mensaje de Z pidiendo que intervenga en..."</p>
+      <textarea id="ancla-cuando" placeholder="Voy a necesitar esta frase cuando..." oninput="saveAndUpdate()" style="min-height:72px"></textarea>
+    </div>
+
+    <div class="sec-complete" id="complete-5">
+      <div class="sec-complete-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <span class="sec-complete-text">Ejercicio 5 completado — tienes tu límite y tu ancla.</span>
+    </div>
+    <div class="sec-nav">
+      <button class="nav-btn" onclick="goTo('sec-cierre')">Ver mi resumen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </section>
+
+  <!-- ── CIERRE ── -->
+  <section class="section cierre" id="sec-cierre">
+    <div class="cierre-icon">◈</div>
+    <h2 class="cierre-title">Módulo 5 completado</h2>
+    <p class="cierre-body">Liderar en Guerreros de la Luz no es una carrera para ver quién resuelve más. Es una práctica de resistencia y orden. La madurez de un equipo se mide por la capacidad de sus integrantes para sostener su lugar — incluso cuando el caos invita a desubicarse. La promesa del orden: si tú ocupas tu lugar, el sistema descansa.</p>
+
+    <div class="summary-card">
+      <div class="sum-sec">
+        <div class="sum-label">Nombre</div>
+        <div class="sum-body" id="s-nombre">—</div>
+      </div>
+      <div class="sum-sec">
+        <div class="sum-label">Lo que me correspondía reconocer sobre mi intervención</div>
+        <div class="sum-body" id="s-honesta">—</div>
+      </div>
+      <div class="sum-sec">
+        <div class="sum-label">A quién estoy rescatando y qué le está haciendo eso</div>
+        <div class="sum-body" id="s-rescate">—</div>
+      </div>
+      <div class="sum-sec">
+        <div class="sum-label">Tiendo más a</div>
+        <div class="sum-body" id="s-patron">—</div>
+      </div>
+      <div class="sum-sec">
+        <div class="sum-label">El límite que me da pavor poner</div>
+        <div class="sum-body" id="s-limite">—</div>
+      </div>
+      <div class="sum-sec">
+        <div class="sum-label">Mi frase ancla</div>
+        <div class="sum-body sum-ancla" id="s-ancla">—</div>
+      </div>
+      <div class="sum-sec">
+        <div class="sum-label">Práctica semanal</div>
+        <div class="sum-body">Mantenerse en la función propia — permitir que otros resuelvan lo suyo. Cuando aparezca la urgencia de intervenir, aplicar la frase ancla. Reportar a la madrina qué sorprendió más del módulo.</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-p" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+        Imprimir / Guardar PDF
+      </button>
+      <button class="btn-s" onclick="resetAll()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 109-9"/></svg>
+        Nuevo intento
+      </button>
+    </div>
+  </section>
+</div>
+
+<script>
+const KEY='gdl_m5_v1';
+let sensors=new Set();
+
+/* ── SENSOR CORPORAL ── */
+function toggleSensor(id){
+  const btn=document.getElementById('sb-'+id);
+  if(!btn)return;
+  if(sensors.has(id)){sensors.delete(id);btn.classList.remove('sel')}
+  else{sensors.add(id);btn.classList.add('sel')}
+  saveAndUpdate();
+}
+
+/* ── TALLY ── */
+function updateTally(v){
+  const n=parseInt(v);
+  const fill=document.getElementById('tally-fill');
+  const val=document.getElementById('tally-val');
+  if(fill)fill.style.width=(n/3*100)+'%';
+  if(val)val.textContent=n+' de 3';
+  saveAndUpdate();
+}
+
+/* ── FRASE ANCLA ── */
+function usarAncla(txt){
+  const el=document.getElementById('frase-ancla');
+  if(el){el.value=txt;saveAndUpdate()}
+}
+
+/* ── SAVE / LOAD ── */
+function getData(){
+  const d={nombre:document.getElementById('nombre')?.value||'',sensors:Array.from(sensors),tally:document.getElementById('tally-slider')?.value||'0'};
+  document.querySelectorAll('textarea[id],input[id]').forEach(el=>{
+    if(el.id&&el.id!=='nombre'&&el.id!=='tally-slider'&&!el.id.startsWith('sb-'))d[el.id]=el.value;
+  });
+  return d;
+}
+function saveAndUpdate(){
+  try{localStorage.setItem(KEY,JSON.stringify(getData()))}catch(e){}
+  updateProgress();updateSummary();
+}
+function loadSaved(){
+  try{
+    const s=JSON.parse(localStorage.getItem(KEY)||'{}');
+    Object.keys(s).forEach(k=>{
+      const el=document.getElementById(k);
+      if(el&&(el.tagName==='TEXTAREA'||el.tagName==='INPUT'))el.value=s[k];
+    });
+    if(s.sensors&&Array.isArray(s.sensors)){s.sensors.forEach(id=>{sensors.add(id);document.getElementById('sb-'+id)?.classList.add('sel')})}
+    if(s.tally){document.getElementById('tally-slider').value=s.tally;updateTally(s.tally)}
+  }catch(e){}
+}
+
+/* ── PROGRESS ── */
+function updateProgress(){
+  const ids=['d-situacion','d-honesta','a-persona','a-q1','a-q2','a-q3','r-resonancia','r-absorcion','r-patron','c1-sit','c1-desc','c-huerfano','l-limite','l-fantasma','l-verdad','frase-ancla','ancla-cuando'];
+  const filled=ids.filter(id=>{const el=document.getElementById(id);return el&&el.value.trim().length>4}).length;
+  const pct=Math.round((filled/ids.length)*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+  checkSec(1,['d-situacion','d-honesta']);
+  checkSec(2,['a-persona','a-q1','a-q2','a-q3']);
+  checkSec(3,['r-resonancia','r-absorcion','r-patron']);
+  checkSec(4,['c1-sit','c-huerfano']);
+  checkSec(5,['l-limite','l-fantasma','l-verdad','frase-ancla']);
+}
+function checkSec(n,ids){
+  const done=ids.every(id=>{const el=document.getElementById(id);return el&&el.value.trim().length>4});
+  document.getElementById('complete-'+n)?.classList.toggle('visible',done);
+}
+
+/* ── SUMMARY ── */
+function updateSummary(){
+  setText('s-nombre',document.getElementById('nombre')?.value||'—');
+  setText('s-honesta',document.getElementById('d-honesta')?.value||'—');
+  const a1=document.getElementById('a-persona')?.value;
+  const a3=document.getElementById('a-q3')?.value;
+  setText('s-rescate',[a1,a3].filter(Boolean).join(' — ')||'—');
+  setText('s-patron',document.getElementById('r-patron')?.value||'—');
+  setText('s-limite',document.getElementById('l-limite')?.value||'—');
+  setText('s-ancla',document.getElementById('frase-ancla')?.value||'—');
+}
+function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
+
+/* ── REVEAL / NAV ── */
+function revealSections(){
+  const secs=document.querySelectorAll('.section');
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');obs.unobserve(e.target)}})},{threshold:.04});
+  secs.forEach(s=>obs.observe(s));
+  setTimeout(()=>secs[0]?.classList.add('revealed'),80);
+}
+function goTo(id){
+  const el=document.getElementById(id);
+  if(el){el.classList.add('revealed');window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-80,behavior:'smooth'})}
+}
+
+/* ── START / RESET ── */
+function iniciar(){
+  const n=document.getElementById('nombre').value.trim();
+  if(!n){document.getElementById('nombre').focus();return}
+  document.getElementById('cover').style.display='none';
+  document.getElementById('main').classList.add('visible');
+  loadSaved();revealSections();saveAndUpdate();
+}
+function resetAll(){
+  if(!confirm('¿Borrar todas las respuestas?'))return;
+  try{localStorage.removeItem(KEY)}catch(e){}
+  document.querySelectorAll('textarea,input[type=text]').forEach(el=>el.value='');
+  sensors.clear();
+  document.querySelectorAll('.sensor-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('tally-slider').value=0;updateTally(0);
+  saveAndUpdate();window.scrollTo({top:0,behavior:'smooth'});
+}
+window.addEventListener('beforeunload',saveAndUpdate);
+</script>
+</body>
+</html>

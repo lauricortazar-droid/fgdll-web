@@ -1,0 +1,29 @@
+{
+  "files": [
+    "archive/centros-source.html",
+    "archive/etica-source.html",
+    "archive/experiencias-portal-2026.html",
+    "archive/image-slot.js",
+    "archive/portal-liderazgo-source.html",
+    "archive/site-source-index-20260811.html",
+    "archive/site-source-script.js",
+    "archive/site-source-styles.css",
+    "archive/universidad-source.html",
+    "universidad/dpl1-2022/css/style.css",
+    "universidad/dpl1-2022/index.html",
+    "universidad/dpl1-2022/js/data.js",
+    "universidad/dpl1-2022/js/script.js",
+    "universidad/dpl1-2025/index.html",
+    "universidad/dpl1-2026/cuadernillos/M1.html",
+    "universidad/dpl1-2026/cuadernillos/M2.html",
+    "universidad/dpl1-2026/cuadernillos/M3.html",
+    "universidad/dpl1-2026/cuadernillos/M4.html",
+    "universidad/dpl1-2026/cuadernillos/M5.html",
+    "universidad/dpl1-2026/cuadernillos/M6.html",
+    "universidad/dpl1-2026/index.html",
+    "universidad/dpl2-2025/index.html"
+  ],
+  "uncompressed_bytes": 647794,
+  "bundle_bytes": 100291,
+  "format": "brotli-compressed UTF-8 JSON mapping public-relative path to text"
+}
