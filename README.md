@@ -4,6 +4,8 @@ Repositorio maestro del portal de la **Fraternidad Guerreros de la Luz (FGDLL)**
 
 > Regla operativa: los cambios permanentes del portal deben terminar en este repositorio. ChatGPT, una computadora local o un sistema de despliegue trabajan sobre la misma rama oficial (`main`).
 
+La estrategia de unificación está documentada en [`UNIFIED_PORTAL.md`](UNIFIED_PORTAL.md): el mismo commit genera el paquete de ChatGPT Sites, el respaldo de GitHub y el ZIP operativo para Hostinger.
+
 ## 1. Cómo funciona
 
 El portal es una aplicación web estática escrita en TypeScript sin framework obligatorio. El proceso de compilación:
@@ -65,6 +67,7 @@ Comandos principales:
 ```bash
 npm run check      # valida datos, IDs, rutas y materiales esenciales
 npm run build      # genera /dist
+npm run package:release # genera ZIP fuente, ZIP Hostinger y TAR ChatGPT Sites
 npm run dev        # compila y sirve con fallback de rutas
 npm run preview    # sirve una compilación ya generada
 npm run clean      # elimina /dist

@@ -7,6 +7,7 @@
     "clean": "node scripts/clean.mjs",
     "check": "node scripts/validate.mjs",
     "build": "node scripts/build.mjs",
+    "package:release": "node scripts/package-release.mjs",
     "dev": "node scripts/dev.mjs",
     "preview": "node scripts/dev.mjs --no-build"
   }
