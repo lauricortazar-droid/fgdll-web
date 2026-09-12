@@ -1,225 +1,141 @@
-# FGDLL Web
+# Portal FGDLL
 
-Repositorio maestro del portal de la **Fraternidad Guerreros de la Luz (FGDLL)**. Este proyecto nació como una copia independiente del sitio publicado en `fgdll.org` dentro de ChatGPT Sites y está organizado para que, a partir de esta migración, **GitHub sea la fuente principal del código y del contenido versionado**.
+Fuente real del portal de la Fraternidad Guerreros de la Luz publicado en
+`https://fgdll.org`.
 
-> Regla operativa: los cambios permanentes del portal deben terminar en este repositorio. ChatGPT, una computadora local o un sistema de despliegue trabajan sobre la misma rama oficial (`main`).
+Este proyecto esta unificado para trabajar con ChatGPT Sites, GitHub y
+Hostinger desde una misma base de codigo. Consulta `UNIFIED_PORTAL.md` para el
+flujo operativo y `SITES-CONNECTION.md` para la conexion exacta de Sites.
 
-La estrategia de unificación está documentada en [`UNIFIED_PORTAL.md`](UNIFIED_PORTAL.md): el mismo commit genera el paquete de ChatGPT Sites, el respaldo de GitHub y el ZIP operativo para Hostinger.
-
-## 1. Cómo funciona
-
-El portal es una aplicación web estática escrita en TypeScript sin framework obligatorio. El proceso de compilación:
-
-1. Compila `src/**/*.ts` a JavaScript ES modules dentro de `dist/js`.
-2. Copia `src/styles` a `dist/styles`.
-3. Copia todos los archivos de `public/` a `dist/`.
-4. Genera `runtime-config.js` con las variables necesarias para los puentes a servicios externos.
-5. Conserva las rutas públicas mediante un router del lado del cliente.
-
-### Estructura
-
-```text
-/public
-  /archive                fuentes históricas recuperadas
-  /documents              documentos públicos/versionados
-  /images                 logotipos e imágenes
-  /universidad            portales HTML autónomos de Universidad
-/src
-  /components             componentes HTML reutilizables
-  /data                   directorio, centros, agenda, experiencias
-  /pages                  páginas del portal
-  /services               integraciones, incluido ChatGPT Sites
-  /styles                 identidad visual global
-/scripts                   build, limpieza y servidor local
-```
-
-### Datos respaldados en la migración inicial
-
-- Directorio público homologado: **119 grupos**.
-- Cinco zonas: Jaguar, Tiburón, Delfín, Colibrí y Águila.
-- Directorio recuperado de centros: **28 registros**.
-- Calendario de experiencias 2026 recuperado: **68 registros**.
-- Último corte de Agenda FGDLL recuperado para septiembre de 2026.
-- Universidad DPL 2026: portada y cuadernillos interactivos M1–M6.
-- Fuentes históricas recuperadas del portal, centros, Universidad, ética y scripts en `public/archive/`.
-
-Los datos personales que no formaban parte del directorio público —fechas de nacimiento, domicilios particulares, información contractual y otros datos de expedientes de líderes/sublíderes— **no se exponen en el frontend ni se incluyen como archivo bruto en el repositorio**. el directorio versionado en `src/data/groups/` contiene únicamente el corte público saneado.
-
-## 2. Cómo ejecutarlo localmente
-
-Requisitos recomendados:
-
-- Node.js 20 o superior.
-- npm 10 o superior.
+## Comandos principales
 
 ```bash
-git clone <URL-DEL-REPOSITORIO>
-cd fgdll-web
-npm install
-cp .env.example .env
-npm run dev
-```
-
-Abre `http://127.0.0.1:4173`.
-
-Comandos principales:
-
-```bash
-npm run check      # valida datos, IDs, rutas y materiales esenciales
-npm run build      # genera /dist
-npm run package:release # genera ZIP fuente, ZIP Hostinger y TAR ChatGPT Sites
-npm run dev        # compila y sirve con fallback de rutas
-npm run preview    # sirve una compilación ya generada
-npm run clean      # elimina /dist
-```
-
-## 3. Cómo hacer cambios
-
-### Contenido público
-
-- Grupos: `src/data/groups.ts` + `src/data/groups/` (cortes editables por zona)
-- Centros: `src/data/centers.ts`
-- Experiencias: `src/data/experiences.ts` + `src/data/experiences/`
-- Agenda: `src/data/agenda.ts`
-- Páginas: `src/pages/pages.ts`
-- Navegación y pie: `src/components/layout.ts`
-- Diseño: `src/styles/main.css`
-
-Después de cualquier cambio:
-
-```bash
-npm run check
+npm run install:ci
 npm run build
+npm test
 ```
 
-Para trabajo con ramas:
+## Datos publicos versionados
 
-```bash
-git checkout -b cambio/descripcion
-git add .
-git commit -m "Descripción del cambio"
-git push -u origin cambio/descripcion
+- Directorio publico: `app/public-directory-data.json`
+- Centros: `app/public-centers-data.json`
+- Agenda: `app/calendar-data.json`
+- Experiencias: `app/monthly-experiences-data.json`
+- Testimonios: `app/testimonios-data.json`
+
+Los datos privados viven en D1 y se acceden desde los stores en `app/lib/`.
+
+## Base tecnica
+
+Este portal usa Vinext, React, Cloudflare Worker, D1, R2 y Drizzle.
+
+---
+
+# Vinext Starter Notes
+
+A clean full-stack starter running on
+[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
+Drizzle support.
+
+## Prerequisites
+
+- Node.js `>=22.13.0`
+- Linux with `flock`, `curl`, and GNU `timeout`
+
+## Sites Lifecycle
+
+The Sites lifecycle CLI runs the locked dependency install before returning this checkout. Edit the source under `app/`, then checkpoint when a coherent milestone is ready to inspect or share. The remote Sites builder runs `npm run build` against the pushed commit. Do not repeat install or build as a normal pre-checkpoint step.
+
+This starter does not use `wrangler.jsonc`.
+
+`install:ci` is intentionally a single, non-retrying `npm ci`. It refuses a concurrent install for the same project, consumes a matching image-seeded npm cache with `--prefer-offline` while retaining registry fallback for a missing cache object, otherwise downloads and verifies the complete vinext tarball recorded in `package-lock.json`, limits npm to one socket, and terminates a stalled install. `build` applies a short timeout and then validates the Sites artifact. These helpers target Linux and use GNU `timeout`; they are not native macOS scripts.
+
+Scripts that need writable project-scoped home, npm, XDG, and temporary paths use `scripts/sites-env.sh`. The `dev` and `start` scripts honor the caller's runtime environment and keep Wrangler logs inside the checkout. The generated `.sites-runtime/` directory is disposable and ignored by Git.
+
+## Included Shape
+
+- edit site code under `app/`
+- `app/chatgpt-auth.ts` provides optional dispatch-owned ChatGPT sign-in helpers
+- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
+- `vite.config.ts` simulates declared bindings for local development
+- `db/index.ts` reads the D1 binding from the Cloudflare Worker environment
+- `db/schema.ts` starts intentionally empty
+- `examples/d1/` contains an optional D1 example surface
+- `drizzle.config.ts` supports local migration generation when needed
+
+## Workspace Auth Headers
+
+OpenAI workspace sites can read the current user's email from
+`oai-authenticated-user-email`.
+
+SIWC-authenticated workspace sites may also receive
+`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
+`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
+`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
+
+Treat the full name as optional and fall back to email when it is absent:
+
+```tsx
+import { headers } from "next/headers";
+
+export default async function Home() {
+  const requestHeaders = await headers();
+  const email = requestHeaders.get("oai-authenticated-user-email");
+  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
+  const fullName =
+    encodedFullName &&
+    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
+      "percent-encoded-utf-8"
+      ? decodeURIComponent(encodedFullName)
+      : null;
+
+  const displayName = fullName ?? email;
+  // ...
+}
 ```
 
-Una vez revisado, integrar a `main`.
+## Optional Dispatch-Owned ChatGPT Sign-In
 
-## 4. Cómo publicar nuevas versiones
+Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
+optional or required ChatGPT sign-in:
 
-`main` debe representar la versión oficial aprobada. El flujo recomendado es:
+- Use `getChatGPTUser()` for optional signed-in UI.
+- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
+  anonymous visitors through Sign in with ChatGPT.
+- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
+  browser links or actions.
+- Pass a same-origin relative `returnTo` path for the destination after sign-in
+  or sign-out. The helper validates and safely encodes it.
+- Mark protected pages with `export const dynamic = "force-dynamic"` because
+  they depend on per-request identity headers.
 
-```text
-ChatGPT o PC → rama de cambio → validación → main → despliegue
-```
+Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
+OAuth cookies, and identity header injection. Do not implement app routes for
+those reserved paths. Routes that do not import and call the helper remain
+anonymous-compatible.
 
-No se recomienda hacer cambios permanentes directamente en un proveedor de hosting si esos cambios no regresan al repositorio.
+SIWC establishes identity only; it does not prove workspace membership. Use the
+Sites hosting platform's access policy controls for workspace-wide restrictions,
+or enforce explicit server-side membership or allowlist checks.
 
-## 5. Servicios externos utilizados
+Use SIWC for account pages, user-specific dashboards, saved records, and write
+actions tied to the current ChatGPT user. Leave public content anonymous.
 
-El núcleo público puede compilarse y ejecutarse sin un backend propio. Algunas funciones usan o enlazan servicios externos:
+## Diagnostic Commands
 
-- **ChatGPT Sites / OpenAI**: autenticación y funciones privadas que aún permanecen en el proyecto original.
-- **WhatsApp**: enlaces de orientación y contacto.
-- **YouTube**: videos de Universidad.
-- **Jotform / formularios externos**: algunos recursos históricos de Universidad.
-- **Google Calendar**: opcional para mostrar una agenda conectada.
-- **Google Fonts/CDN**: algunos HTML históricos de Universidad aún pueden solicitar fuentes o recursos externos.
+- `npm run install:ci`: perform the one bounded lockfile install
+- `npm run dev`: start the Vite/Vinext development server
+- `npm run build`: build and validate the deployable Sites artifact
+- `npm run start`: start the built Vinext application
+- `npm test`: build, validate, and verify the rendered development-preview metadata
+- `npm run validate:artifact`: recheck an existing artifact's manifest and ESM `default.fetch` export
+- `npm run db:generate`: generate Drizzle migrations after schema changes
 
-## 6. Variables de entorno
+Use build and validation commands for targeted diagnosis after a remote failure, not as part of the normal checkpoint path.
 
-Consulta `.env.example`.
+The timeout defaults can be overridden for a controlled canary with `SITES_INSTALL_TIMEOUT`, `SITES_INSTALL_KILL_AFTER`, `SITES_BUILD_TIMEOUT`, and `SITES_BUILD_KILL_AFTER`. A timeout fails the command; the helpers never retry an unchanged install or build.
 
-### `SITES_ORIGIN`
+## Learn More
 
-Origen del proyecto de ChatGPT Sites que conserva las funciones privadas durante la transición.
-
-```env
-SITES_ORIGIN=https://fgdll.org
-```
-
-Mientras `fgdll.org` siga apuntando al proyecto actual de Sites, este valor conserva la conexión existente. **Antes de mover el dominio principal a otro hosting**, cambia `SITES_ORIGIN` al dominio directo del proyecto de ChatGPT Sites (por ejemplo el hostname `*.chatgpt.site` correspondiente) para evitar un bucle de redirección.
-
-### `GOOGLE_CALENDAR_EMBED_URL`
-
-Opcional. URL de inserción del calendario público autorizado.
-
-```env
-GOOGLE_CALENDAR_EMBED_URL=
-```
-
-No guardes tokens, contraseñas, claves API ni secretos en Git. `.env` está ignorado deliberadamente.
-
-## 7. Funciones que todavía dependen de OpenAI / ChatGPT Sites
-
-En la migración inicial, estas rutas se conservaron como **puentes explícitos** hacia el proyecto original:
-
-- `/portal`
-- `/etica`
-- `/administracion`
-- `/administracion/universidad`
-- `/centros/acceso`
-- `/envios` y `/mensajeria`
-
-La razón es que el sitio publicado delega hoy su autenticación y/o acciones privadas a infraestructura de ChatGPT Sites/OpenAI. El adaptador está en `src/services/sites.ts`.
-
-Esto permite que el frontend y el contenido público vivan en GitHub sin inventar un backend distinto ni sustituir ChatGPT Sites por Supabase u otro proveedor.
-
-## 8. Despliegue
-
-### Hostinger
-
-1. Ejecuta `npm install && npm run build`.
-2. Sube **el contenido de `dist/`** al directorio web (`public_html` o el directorio configurado).
-3. Conserva `dist/.htaccess`; contiene el fallback de rutas para Apache.
-4. Configura las variables antes de construir si necesitas un origen de Sites distinto.
-5. Prueba rutas profundas como `/centros`, `/universidad` y `/grupos/...`.
-
-Para automatizarlo, puede usarse GitHub Actions o la integración Git disponible en el plan de hosting.
-
-### Netlify
-
-El repositorio incluye `netlify.toml`.
-
-- Build command: `npm run build`
-- Publish directory: `dist`
-
-Netlify aplicará el fallback SPA incluido.
-
-### Vercel
-
-El repositorio incluye `vercel.json`.
-
-- Build command: `npm run build`
-- Output: `dist`
-
-Configura `SITES_ORIGIN` y cualquier variable opcional en Project Settings → Environment Variables.
-
-## Rutas respaldadas
-
-Consulta [`ROUTE_AUDIT.md`](ROUTE_AUDIT.md) para ver la matriz de rutas, el estado de migración y las dependencias que todavía requieren ChatGPT Sites.
-
-## Archivos históricos
-
-Los HTML/CSS/JS heredados recuperados se conservan sin pérdida dentro de `legacy/chunks/` (bundle Brotli en fragmentos Base64). El archivo `legacy/manifest.json` enumera su contenido y `npm run build` los reconstruye automáticamente dentro de `dist/` en sus rutas originales. `public/archive/README.md` documenta este mecanismo.
-
-## Seguridad
-
-Aunque el repositorio sea privado:
-
-- no versionar `.env`;
-- no subir contraseñas ni tokens;
-- separar información pública de expedientes internos;
-- revisar datos personales antes de publicar una rama o despliegue;
-- usar variables de entorno o un gestor de secretos para credenciales futuras.
-
-## Fuente maestra
-
-Desde esta migración, la arquitectura objetivo es:
-
-```text
-PC ─────────┐
-            ├── GitHub · fgdll-web · main ──→ Hosting / publicación
-ChatGPT ────┘                 │
-                              └──→ ChatGPT Sites (sólo servicios todavía dependientes)
-```
-
-Así existe una sola historia de cambios y una copia completa recuperable desde GitHub.
+- [vinext Documentation](https://github.com/cloudflare/vinext)
+- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)

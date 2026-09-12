@@ -1,2 +1,0 @@
-import {experiences_aguila} from './experiences/aguila.js';import {experiences_colibri} from './experiences/colibri.js';import {experiences_delfin} from './experiences/delfin.js';import {experiences_jaguar} from './experiences/jaguar.js';import {experiences_tiburon} from './experiences/tiburon.js';
-export const experiences = [...experiences_aguila,...experiences_colibri,...experiences_delfin,...experiences_jaguar,...experiences_tiburon];

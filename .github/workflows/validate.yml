@@ -1,4 +1,4 @@
-name: Validate unified portal
+name: Validate portal
 
 on:
   push:
@@ -13,12 +13,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22.13.0
           cache: npm
       - run: npm ci
-      - run: npm run check
       - run: npm run build
-      - uses: actions/upload-artifact@v4
-        with:
-          name: fgdll-web-dist
-          path: dist
+      - run: npm test

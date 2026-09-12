@@ -1,80 +1,35 @@
 # Portal unificado FGDLL
 
-Este repositorio es la fuente unica del portal FGDLL para tres destinos:
+Este repositorio contiene la fuente real del portal publicado en `fgdll.org`.
 
-- GitHub: conserva el codigo, historial, revisiones y respaldos.
-- ChatGPT Sites: publica el mismo build estatico mediante `.openai/hosting.json`.
-- Hostinger: recibe el ZIP generado desde `dist/`.
+La regla operativa es:
 
-## Regla principal
+1. GitHub conserva el codigo fuente, el historial y las revisiones.
+2. ChatGPT Sites publica la aplicacion completa con Worker, D1 y R2.
+3. Hostinger puede recibir la aplicacion JavaScript desde el mismo archivo fuente, pero las funciones que dependen de D1/R2 deben validarse ahi despues del build.
 
-Todo cambio permanente debe entrar primero al repositorio y pasar por el mismo build:
+## Fuente actual
 
-```bash
-npm install
-npm run check
-npm run build
-```
+- Proyecto Sites: `appgprj_6a7ac128b0608191bb9000c3172d677a`
+- Version base sincronizada: `b3dcddc Actualizar agenda vigente al 12 de septiembre`
+- Dominio activo en Sites: `https://fgdll.org`
 
-El resultado oficial siempre es `dist/`. No se editan archivos directamente en Hostinger ni en ChatGPT Sites si ese cambio no regresa a GitHub.
+## Datos incluidos
 
-## ChatGPT Sites
+El corte actual contiene:
 
-La copia local queda vinculada al proyecto Sites existente:
+- 119 grupos publicos en `app/public-directory-data.json`
+- 28 centros publicados en `app/public-centers-data.json`
+- 32 eventos de agenda en `app/calendar-data.json`
+- 67 experiencias/unidades en `app/monthly-experiences-data.json`
+- 157 testimonios en `app/testimonios-data.json`
 
-```text
-appgprj_6a7ac128b0608191bb9000c3172d677a
-```
+Los registros privados y administrativos siguen en D1 y no deben exportarse al frontend estatico ni a archivos publicos sin revision.
 
-El archivo `.openai/hosting.json` declara un sitio estatico con `dist/` como salida. El proyecto Sites actual tambien conserva funciones privadas, variables secretas y datos vivos que no forman parte del build estatico de esta copia.
+## Publicacion
 
-Variables secretas detectadas en Sites:
+Para Sites, publicar desde la rama `main` del repositorio fuente vinculado al proyecto y guardar/desplegar una version.
 
-- `FGDLL_ADMIN_EMAILS`
-- `FGDLL_LEADER_EMAILS`
-- `FGDLL_NOTIFICATION_EMAIL`
+Para Hostinger, usar el paquete de fuente sin `node_modules`, sin `dist`, sin `.next`, sin `.wrangler` y sin `.sites-runtime`. Hostinger debe ejecutar el build de Node.js.
 
-Dominios activos en Sites:
-
-- `fgdll.org`
-- `www.fgdll.org`
-
-## GitHub
-
-GitHub debe contener el codigo fuente, la documentacion, los datos publicos saneados, configuraciones de despliegue y el historial. El repositorio remoto esperado es:
-
-```text
-https://github.com/lauricortazar-droid/fgdll-web
-```
-
-Cuando Git local tenga credenciales, publicar:
-
-```bash
-git push -u origin main
-```
-
-## Hostinger
-
-Hostinger debe recibir solo el ZIP generado desde `dist/`, no el proyecto fuente completo. Para preparar el paquete:
-
-```bash
-npm run package:release
-```
-
-El archivo `release/fgdll-web-hostinger-dist_*.zip` se puede subir a `public_html` o al directorio configurado en Hostinger.
-
-## Paquetes de salida
-
-`npm run package:release` genera tres artefactos desde el mismo commit:
-
-- `fgdll-web-source_*.zip`: respaldo del codigo fuente.
-- `fgdll-web-hostinger-dist_*.zip`: archivos estaticos listos para Hostinger.
-- `fgdll-web-chatgpt-sites_*.tar.gz`: paquete compatible con ChatGPT Sites.
-
-Los tres paquetes provienen del mismo `HEAD`, por lo que GitHub, Sites y Hostinger pueden quedar sincronizados.
-
-## Dependencias que no se duplican
-
-Las funciones privadas del proyecto original de Sites no se copian como frontend estatico ni se inventan en Hostinger. Las rutas privadas del portal siguen usando puentes explicitos desde `src/services/sites.ts` hacia `SITES_ORIGIN`.
-
-Si en el futuro se reemplazan esas funciones por un backend propio, debe hacerse como una migracion separada y versionada.
+Si Hostinger no provee bindings equivalentes a D1/R2, sus rutas privadas pueden no funcionar alli. En ese caso Hostinger sirve como respaldo/copia de la aplicacion y Sites queda como produccion completa.
