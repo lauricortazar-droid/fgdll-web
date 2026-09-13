@@ -8,6 +8,8 @@ const SUPPORT = new Set(["Orientación", "Protección inmediata", "Revisión ins
 const CONTACT_METHODS = new Set(["none", "whatsapp", "phone", "email"]);
 const STATUSES = new Set(["received", "screening", "investigation", "resolution", "closed"]);
 const SEVERITIES = new Set(["unclassified", "low", "medium", "high", "critical"]);
+const TRACKING_KEY_LENGTH = 12;
+const LEGACY_TRACKING_KEY_LENGTH = 48;
 
 function database() {
   const value = getRuntimeEnv().DB;
@@ -29,12 +31,6 @@ function randomDigits(length: number) {
   const bytes = new Uint8Array(length);
   crypto.getRandomValues(bytes);
   return Array.from(bytes, (byte) => String(byte % 10)).join("");
-}
-
-function randomSecret() {
-  const bytes = new Uint8Array(24);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 async function sha256(value: string) {
@@ -68,7 +64,7 @@ export async function submitEthicsReport(input: Record<string, unknown>) {
   if (!consent) throw new PortalError("Debes aceptar el tratamiento de la información para enviar el reporte.");
 
   const publicFolio = randomDigits(16);
-  const trackingKey = randomSecret();
+  const trackingKey = randomDigits(TRACKING_KEY_LENGTH);
   const trackingSecretHash = await sha256(trackingKey);
   const db = database();
   await db.batch([
@@ -87,8 +83,14 @@ export async function submitEthicsReport(input: Record<string, unknown>) {
 
 export async function trackEthicsReport(input: Record<string, unknown>) {
   const publicFolio = clean(input.publicFolio, 32).replace(/\D/g, "");
-  const trackingKey = clean(input.trackingKey, 80).toLowerCase();
-  if (publicFolio.length !== 16 || trackingKey.length !== 48) {
+  const trackingKeyInput = clean(input.trackingKey, 80).toLowerCase();
+  const trackingKey = /^[\d\s-]+$/.test(trackingKeyInput)
+    ? trackingKeyInput.replace(/\D/g, "")
+    : trackingKeyInput;
+  if (
+    publicFolio.length !== 16 ||
+    (trackingKey.length !== TRACKING_KEY_LENGTH && trackingKey.length !== LEGACY_TRACKING_KEY_LENGTH)
+  ) {
     throw new PortalError("El folio o la clave de seguimiento no son válidos.", 404);
   }
   const hash = await sha256(trackingKey);
