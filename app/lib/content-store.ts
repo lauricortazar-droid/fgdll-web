@@ -3,6 +3,7 @@ import "server-only";
 import testimonyCatalog from "../testimonios-data.json";
 import { PortalError, type PortalProfile } from "./directory-store";
 import { getRuntimeEnv, type D1StatementLike } from "./runtime-env";
+import { activePortalRecipients, announcementHtml, notifyRecipients } from "./notification-store";
 
 type UploadKind = "testimony" | "material";
 
@@ -13,7 +14,7 @@ const TESTIMONY_EXTENSIONS = new Set(["pdf", "doc", "docx", "txt", "md", "rtf", 
 const MATERIAL_EXTENSIONS = new Set(["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "md", "rtf", "jpg", "jpeg", "png"]);
 const MATERIAL_CATEGORIES = new Set(["protocolos", "responsivas", "reglamentos", "formatos", "experiencias", "otros"]);
 const ANNOUNCEMENT_PRIORITIES = new Set(["info", "important", "urgent"]);
-const ANNOUNCEMENT_AUDIENCES = new Set(["all", "leader", "osg", "delegate", "council"]);
+const ANNOUNCEMENT_AUDIENCES = new Set(["all", "member", "leader", "osg", "delegate", "council"]);
 const CONTENT_STATUSES = new Set(["draft", "published", "archived"]);
 
 const initialMaterials = [
@@ -431,6 +432,16 @@ export async function saveAnnouncement(profile: PortalProfile, input: ContentInp
     profile.email, status,
   ).run();
   await audit(profile.email, existing ? "announcement_updated" : "announcement_created", "announcement", id, { title, priority, audience, status });
+  if (status === "published") {
+    const recipients = await activePortalRecipients(db(), audience);
+    const delivery = await notifyRecipients(
+      recipients,
+      title,
+      announcementHtml(title, safeText(input.summary, 600), body),
+      `FGDLL: ${title}. ${safeText(input.summary, 240) || "Tienes un nuevo aviso en el portal."} https://fgdll.org/portal#avisos`,
+    );
+    await audit(profile.email, "announcement_notifications_queued", "announcement", id, delivery);
+  }
   return { id, status };
 }
 

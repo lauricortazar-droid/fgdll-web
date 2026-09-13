@@ -19,7 +19,7 @@ export async function GET() {
 
     return Response.json({
       identity: user,
-      profile: profile ? { ...profile, roleLabel: roleLabel(profile.role) } : null,
+      profile: profile ? { ...profile, roleLabel: profile.roleLabel || roleLabel(profile.role) } : null,
       groups,
       stats,
       adminContact: ADMIN_CONTACT_EMAIL,

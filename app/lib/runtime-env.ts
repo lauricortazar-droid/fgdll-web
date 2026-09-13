@@ -34,6 +34,10 @@ export interface FgdllRuntimeEnv {
   FGDLL_NOTIFICATION_EMAIL?: string;
   RESEND_API_KEY?: string;
   FGDLL_EMAIL_FROM?: string;
+  TWILIO_ACCOUNT_SID?: string;
+  TWILIO_AUTH_TOKEN?: string;
+  TWILIO_MESSAGING_SERVICE_SID?: string;
+  TWILIO_FROM_PHONE?: string;
 }
 
 const runtimeGlobal = globalThis as typeof globalThis & {

@@ -45,7 +45,7 @@ const categoryLabels: Record<string, string> = {
 };
 const statusLabels: Record<string, string> = { published: "Publicado", draft: "Borrador", archived: "Archivado" };
 const audienceLabels: Record<string, string> = {
-  all: "Todos los usuarios", leader: "Líderes", osg: "OSG", delegate: "Delegados", council: "Consejo",
+  all: "Todos los usuarios", member: "Miembros generales", leader: "Líderes", osg: "OSG", delegate: "Delegados", council: "Consejo",
 };
 const requestStatusLabels: Record<string, string> = {
   pending: "Pendiente", in_review: "En revisión", changes_requested: "Esperando corrección", new: "Nueva",
@@ -74,7 +74,11 @@ export default function ContentAdminPage() {
   const [materials, setMaterials] = useState<Material[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [inbox, setInbox] = useState<InboxData>({ items: [], summary: { total: 0, urgent: 0, byArea: {} } });
-  const [tab, setTab] = useState<"topics" | "materials" | "announcements">("topics");
+  const [tab, setTab] = useState<"topics" | "materials" | "announcements">(() => (
+    typeof window !== "undefined" && new URLSearchParams(window.location.search).get("tab") === "announcements"
+      ? "announcements"
+      : "topics"
+  ));
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -113,7 +117,6 @@ export default function ContentAdminPage() {
 
   useEffect(() => {
     const task = window.setTimeout(() => { void load(); }, 0);
-    if (new URLSearchParams(window.location.search).get("tab") === "announcements") setTab("announcements");
     return () => window.clearTimeout(task);
   }, []);
 

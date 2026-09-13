@@ -31,7 +31,7 @@ export async function ProtectedAccess({
     <>
       <div className="private-access-bar">
         <div className="shell private-access-inner">
-          <span className="private-access-status"><b aria-hidden="true">●</b> Zona privada FGDLL{profile ? ` · ${profile.role === "admin" ? "Administración" : "Liderazgo"}` : ""}</span>
+          <span className="private-access-status"><b aria-hidden="true">●</b> Zona privada FGDLL{profile ? ` · ${profile.roleLabel}` : ""}</span>
           <NotificationCenter />
           {profile && <a className="messaging-nav-link" href="https://fgdll.org/envios">Mensajería</a>}
           <span className="private-access-user">

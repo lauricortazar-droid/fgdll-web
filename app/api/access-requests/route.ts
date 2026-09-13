@@ -42,6 +42,7 @@ function serializeRequest(row: Record<string, unknown>, events: ReturnType<typeo
     requesterName: String(row.requester_name ?? ""),
     phone: String(row.phone ?? ""),
     requestedRole: String(row.requested_role ?? ""),
+    requestedRoleLabel: String(row.requested_role_label ?? ""),
     zone: row.zone ? String(row.zone) : null,
     groupId: row.group_id == null ? null : Number(row.group_id),
     groupName: String(row.directory_group_name ?? row.group_name ?? ""),
@@ -58,10 +59,14 @@ function serializeRequest(row: Record<string, unknown>, events: ReturnType<typeo
 
 async function accessPayload(body: Record<string, unknown>) {
   const requestedRole = String(body.requestedRole ?? "");
+  const requestedRoleLabel = String(body.requestedRoleLabel ?? "").trim();
   const groupId = body.groupId ? Number(body.groupId) : null;
   const zone = String(body.zone ?? "").trim();
   const name = String(body.name ?? "").trim();
   if (!name) throw new PortalError("Escribe tu nombre completo.");
+  if (requestedRole === "member" && !requestedRoleLabel) {
+    throw new PortalError("Escribe tu función en Otro.");
+  }
   if ((requestedRole === "leader" || requestedRole === "osg") && !groupId) {
     throw new PortalError("Selecciona el grupo al que perteneces.");
   }
@@ -73,6 +78,7 @@ async function accessPayload(body: Record<string, unknown>) {
     name,
     phone: String(body.phone ?? ""),
     requestedRole,
+    requestedRoleLabel,
     zone: group?.zone || zone || undefined,
     groupId,
     groupName: group?.name,

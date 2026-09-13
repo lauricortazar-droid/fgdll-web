@@ -12,6 +12,7 @@ type Material = {
 type Announcement = {
   id: string; title: string; summary: string; body: string; priority: string; publishedAt: string | null;
 };
+type Profile = { role: string; roleLabel: string } | null;
 
 const tools = [
   { n: "01", title: "Avisos", text: "Comunicados importantes para preparar y coordinar el servicio.", tag: "Actualidad", href: "#avisos" },
@@ -52,7 +53,7 @@ function friendlyDate(value: string | null) {
 export default function PortalPage() {
   const [materials, setMaterials] = useState<Material[]>(initialMaterials);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [profile, setProfile] = useState<Profile>(null);
 
   useEffect(() => {
     let active = true;
@@ -64,10 +65,16 @@ export default function PortalPage() {
       if (!active) return;
       if (Array.isArray(materialData.materials)) setMaterials(materialData.materials);
       if (Array.isArray(announcementData.announcements)) setAnnouncements(announcementData.announcements);
-      setIsAdmin(me.profile?.role === "admin");
+      setProfile(me.profile ?? null);
     }).catch(() => undefined);
     return () => { active = false; };
   }, []);
+  const isAdmin = profile?.role === "admin";
+  const isMember = profile?.role === "member";
+  const portalTools = useMemo(() => tools.map((tool) => {
+    if (tool.n !== "09" || !isMember) return tool;
+    return { ...tool, title: "Correcciones del directorio", text: "Envía propuestas para actualizar información publicada.", href: "/directorio/gestion" };
+  }), [isMember]);
 
   const materialGroups = useMemo(() => {
     const categories = Array.from(new Set(materials.map((item) => item.category)));
@@ -80,11 +87,11 @@ export default function PortalPage() {
 
   return <><SubHeader label="Liderazgo" /><main className="subpage">
     <MessagingAccess />
-    <section className="subhero portal-subhero"><div className="shell subhero-grid"><div><span className="eyebrow light">Portal del Guerrero</span><h1>Servir con orden.<br /><em>Actuar con claridad.</em></h1><p>Avisos, grupo, agenda, documentos, formación y solicitudes reunidos para quienes tienen una responsabilidad de servicio.</p>{isAdmin && <Link className="button button-gold" href="/administracion/contenidos">Administrar contenidos →</Link>}</div><div className="quick-panel"><span>ACCESO RÁPIDO</span><Link href="/directorio/gestion"><b>Mi Grupo</b><i>→</i></Link><a href="#avisos"><b>Noticias y avisos</b><i>↓</i></a><a href="#materiales"><b>Documentos y manuales</b><i>↓</i></a><Link href="/universidad"><b>Universidad FGDLL</b><i>→</i></Link><Link href="/administracion"><b>Solicitudes y administración</b><i>→</i></Link></div></div></section>
+    <section className="subhero portal-subhero"><div className="shell subhero-grid"><div><span className="eyebrow light">Portal del Guerrero</span><h1>Servir con orden.<br /><em>Actuar con claridad.</em></h1><p>Avisos, grupo, agenda, documentos, formación y solicitudes reunidos para quienes tienen una responsabilidad de servicio.</p>{isAdmin && <Link className="button button-gold" href="/administracion/contenidos">Administrar contenidos →</Link>}</div><div className="quick-panel"><span>ACCESO RÁPIDO</span><Link href="/directorio/gestion"><b>{isMember ? "Correcciones del directorio" : "Mi Grupo"}</b><i>→</i></Link><a href="#avisos"><b>Noticias y avisos</b><i>↓</i></a><a href="#materiales"><b>Documentos y manuales</b><i>↓</i></a><Link href="/universidad"><b>Universidad FGDLL</b><i>→</i></Link>{!isMember && <Link href="/administracion"><b>Solicitudes y administración</b><i>→</i></Link>}</div></div></section>
 
     {announcements.length > 0 && <section className="portal-announcements" id="avisos"><div className="shell"><div className="portal-announcement-head"><div><span className="eyebrow">Noticias y avisos</span><h2>Información que acompaña tu servicio.</h2></div><p>Los comunicados urgentes e importantes también aparecen en la campana superior hasta que los marques como leídos.</p></div><div className="portal-announcement-grid">{announcements.slice(0, 3).map((item) => <article key={item.id} className={`priority-${item.priority}`}><div><span>{item.priority === "urgent" ? "URGENTE" : item.priority === "important" ? "IMPORTANTE" : "AVISO"}</span><small>{friendlyDate(item.publishedAt)}</small></div><h3>{item.title}</h3><p>{item.summary || item.body}</p>{(item.summary || item.body.length > 180) && <details><summary>Leer aviso completo</summary><p>{item.body}</p></details>}</article>)}</div></div></section>}
 
-    <section className="section portal-tools"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow">Ruta de servicio</span><h2>Lo que cada líder necesita.</h2></div><p>El portal está organizado por intención de uso: saber qué hacer, encontrar cómo hacerlo y dar seguimiento con responsabilidad.</p></div><div className="tool-catalog">{tools.map((tool) => <article key={tool.n}><span>{tool.n}</span><small>{tool.tag}</small><h3>{tool.title}</h3><p>{tool.text}</p><Link href={tool.href}>Abrir sección →</Link></article>)}</div></div></section>
+    <section className="section portal-tools"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow">Ruta de servicio</span><h2>Lo que cada líder necesita.</h2></div><p>El portal está organizado por intención de uso: saber qué hacer, encontrar cómo hacerlo y dar seguimiento con responsabilidad.</p></div><div className="tool-catalog">{portalTools.map((tool) => <article key={tool.n}><span>{tool.n}</span><small>{tool.tag}</small><h3>{tool.title}</h3><p>{tool.text}</p><Link href={tool.href}>Abrir sección →</Link></article>)}</div></div></section>
 
     <section className="section leader-materials" id="materiales"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow light">Materiales para líderes</span><h2>Documentos para conducir y cuidar.</h2></div><p>Consulta siempre la versión publicada antes de utilizar un protocolo, formato o reglamento.</p></div>
       {materialGroups.map((group, index) => <div className="dynamic-material-group" key={group.category}><div className="material-group-heading"><div><span>{String(index + 1).padStart(2, "0")}</span><h3>{categoryMeta[group.category]?.title || group.category}</h3></div><p>{categoryMeta[group.category]?.text || "Materiales institucionales para el servicio."}</p></div><div className="material-grid">{group.materials.map((item) => <article className="material-card" key={item.id}><div className={`material-preview ${item.previewUrl ? "" : "generic-file"}`}>{item.previewUrl ? <img src={item.previewUrl} alt={`Vista previa de ${item.title}`} /> : <div><span>{item.fileName.split(".").pop()?.toUpperCase() || "DOC"}</span><small>FGDLL</small></div>}</div><div className="material-content"><div className="material-meta"><span>{categoryMeta[item.category]?.title || item.category}</span><small>{item.versionLabel || item.fileName}</small></div><h3>{item.title}</h3><p>{item.description || "Documento institucional para consulta de líderes."}</p><div className="material-actions">{item.fileUrl && <a className="button button-gold" href={item.fileUrl} target="_blank" rel="noreferrer">Abrir documento</a>}</div></div></article>)}</div></div>)}

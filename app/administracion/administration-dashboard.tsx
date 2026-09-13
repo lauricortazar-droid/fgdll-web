@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { SubFooter, SubHeader } from "../section-shell";
 import { MessagingAccess } from "../messaging-access";
 
-type Profile = { email: string; name: string; role: "leader" | "osg" | "delegate" | "director" | "council" | "admin"; roleLabel: string; zone: string | null; groupId: number | null; centerId: number | null };
+type Profile = { email: string; name: string; role: "member" | "leader" | "osg" | "delegate" | "director" | "council" | "admin"; roleLabel: string; zone: string | null; groupId: number | null; centerId: number | null };
 type PendingRequest = {
   id: string; itemKey: string; area: string; title: string; contactName: string;
   status: string; createdAt: string; updatedAt: string; href: string; priority: string; unread: boolean;
@@ -30,6 +30,7 @@ function friendlyDate(value: string) {
 }
 
 const roleScope = {
+  member: { title: "Guerrero de la Luz", text: "Puede entrar al portal, consultar avisos y enviar propuestas de corrección al directorio para revisión." },
   leader: { title: "Líder", text: "Puede registrar su grupo, consultar el expediente y enviar correcciones o propuestas de actualización." },
   osg: { title: "OSG", text: "Puede apoyar la actualización del grupo asignado y enviar propuestas que requieran revisión." },
   delegate: { title: "Delegado", text: "Puede administrar los grupos de su zona y revisar propuestas dentro de su alcance territorial." },
@@ -63,10 +64,11 @@ export function AdministrationDashboard() {
   if (loading) return <><SubHeader label="Administración" /><main className="administration-hub"><div className="shell panel-loading full-page">Preparando tus facultades de administración…</div></main><SubFooter /></>;
   if (!profile) return <><SubHeader label="Administración" /><main className="administration-hub"><section className="section"><div className="shell"><div className="access-needed"><span>Perfil requerido</span><h1>Tu cuenta todavía no tiene funciones administrativas asignadas.</h1><p>Solicita el perfil que corresponda a tu servicio para continuar.</p><Link className="button button-gold" href="/solicitar-acceso">Solicitar acceso</Link></div></div></section></main><SubFooter /></>;
 
-  const scope = roleScope[profile.role];
+  const scope = profile.role === "member" ? { ...roleScope.member, title: profile.roleLabel || roleScope.member.title } : roleScope[profile.role];
   const canReview = ["delegate", "council", "admin"].includes(profile.role);
   const canReviewAccess = ["council", "admin"].includes(profile.role);
   const isAdmin = profile.role === "admin";
+  const canRegisterGroup = profile.role !== "member";
   const filteredPending = pendingFilter === "Todas" ? inbox.items : inbox.items.filter((item) => item.area === pendingFilter);
   return <><SubHeader label="Administración" /><main className="administration-hub">
     {isAdmin && <section className="admin-pending-overview"><div className="shell">
@@ -79,8 +81,8 @@ export function AdministrationDashboard() {
     <MessagingAccess />
     <section className="administration-scope"><div className="shell"><span>LO QUE PUEDES HACER</span><h2>{scope.title}</h2><p>{scope.text}</p></div></section>
     <section className="section administration-actions"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow">Centro de gestión</span><h2>Elige la acción que necesitas.</h2></div><p>Las modificaciones sensibles conservan folio, autor, fecha y estado de revisión.</p></div><div className="administration-card-grid">
-      <Link href="/directorio/gestion"><span>01</span><small>DIRECTORIO</small><h3>{canReview ? "Administrar grupos y propuestas" : "Actualizar datos de mi grupo"}</h3><p>{canReview ? "Revisa grupos bajo tu alcance, cambios pendientes y expedientes." : "Corrige datos operativos o envía cambios sensibles a aprobación."}</p><b>Abrir gestión →</b></Link>
-      <Link href="/administracion/registrar-grupo"><span>02</span><small>ALTA INSTITUCIONAL</small><h3>Registrar un grupo por primera vez</h3><p>Captura ubicación, responsables, contactos, horarios y canales oficiales.</p><b>Iniciar registro →</b></Link>
+      <Link href="/directorio/gestion"><span>01</span><small>DIRECTORIO</small><h3>{canReview ? "Administrar grupos y propuestas" : profile.role === "member" ? "Enviar una corrección al directorio" : "Actualizar datos de mi grupo"}</h3><p>{canReview ? "Revisa grupos bajo tu alcance, cambios pendientes y expedientes." : profile.role === "member" ? "Propón ajustes a grupos publicados; administración los revisa antes de aplicar." : "Corrige datos operativos o envía cambios sensibles a aprobación."}</p><b>Abrir gestión →</b></Link>
+      {canRegisterGroup && <Link href="/administracion/registrar-grupo"><span>02</span><small>ALTA INSTITUCIONAL</small><h3>Registrar un grupo por primera vez</h3><p>Captura ubicación, responsables, contactos, horarios y canales oficiales.</p><b>Iniciar registro →</b></Link>}
       {canReview && <Link href="/administracion/registrar-grupo#revision"><span>03</span><small>REVISIÓN</small><h3>Solicitudes de nuevos grupos</h3><p>Solicita correcciones, aprueba o rechaza registros dentro de tus facultades.</p><b>Revisar solicitudes →</b></Link>}
       {canReviewAccess && <Link href="/directorio/gestion"><span>04</span><small>ACCESOS</small><h3>Solicitudes y usuarios</h3><p>Consulta expedientes de acceso, correcciones y resoluciones del portal.</p><b>Abrir expedientes →</b></Link>}
       {isAdmin && <Link href="/administracion/contenidos"><span>05</span><small>CONTENIDOS</small><h3>Noticias, materiales y testimonios</h3><p>Publica, edita, archiva o elimina contenido institucional.</p><b>Administrar contenido →</b></Link>}
