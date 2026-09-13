@@ -9,7 +9,6 @@ const CONTACT_METHODS = new Set(["none", "whatsapp", "phone", "email"]);
 const STATUSES = new Set(["received", "screening", "investigation", "resolution", "closed"]);
 const SEVERITIES = new Set(["unclassified", "low", "medium", "high", "critical"]);
 const TRACKING_KEY_LENGTH = 12;
-const LEGACY_TRACKING_KEY_LENGTH = 48;
 
 function database() {
   const value = getRuntimeEnv().DB;
@@ -83,14 +82,8 @@ export async function submitEthicsReport(input: Record<string, unknown>) {
 
 export async function trackEthicsReport(input: Record<string, unknown>) {
   const publicFolio = clean(input.publicFolio, 32).replace(/\D/g, "");
-  const trackingKeyInput = clean(input.trackingKey, 80).toLowerCase();
-  const trackingKey = /^[\d\s-]+$/.test(trackingKeyInput)
-    ? trackingKeyInput.replace(/\D/g, "")
-    : trackingKeyInput;
-  if (
-    publicFolio.length !== 16 ||
-    (trackingKey.length !== TRACKING_KEY_LENGTH && trackingKey.length !== LEGACY_TRACKING_KEY_LENGTH)
-  ) {
+  const trackingKey = clean(input.trackingKey, 32).replace(/\D/g, "");
+  if (publicFolio.length !== 16 || trackingKey.length !== TRACKING_KEY_LENGTH) {
     throw new PortalError("El folio o la clave de seguimiento no son válidos.", 404);
   }
   const hash = await sha256(trackingKey);
