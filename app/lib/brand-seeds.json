@@ -1,0 +1,122 @@
+[
+  {
+    "id": "brand-logo-1",
+    "name": "Zona Tiburón",
+    "kind": "logo",
+    "static_url": "/marca/logo-1.png",
+    "file_type": "image/png",
+    "file_name": "logo-1.png",
+    "file_size": 39775,
+    "file_key": null,
+    "deleted": 0,
+    "revision": 1
+  },
+  {
+    "id": "brand-logo-2",
+    "name": "Zona Colibrí",
+    "kind": "logo",
+    "static_url": "/marca/logo-2.png",
+    "file_type": "image/png",
+    "file_name": "logo-2.png",
+    "file_size": 32219,
+    "file_key": null,
+    "deleted": 0,
+    "revision": 1
+  },
+  {
+    "id": "brand-logo-3",
+    "name": "Zona Águila",
+    "kind": "logo",
+    "static_url": "/marca/logo-3.png",
+    "file_type": "image/png",
+    "file_name": "logo-3.png",
+    "file_size": 33841,
+    "file_key": null,
+    "deleted": 0,
+    "revision": 1
+  },
+  {
+    "id": "brand-logo-4",
+    "name": "General blanco",
+    "kind": "logo",
+    "static_url": "/marca/logo-4.png",
+    "file_type": "image/png",
+    "file_name": "logo-4.png",
+    "file_size": 31168,
+    "file_key": null,
+    "deleted": 0,
+    "revision": 1
+  },
+  {
+    "id": "brand-logo-5",
+    "name": "Zona Delfín",
+    "kind": "logo",
+    "static_url": "/marca/logo-5.png",
+    "file_type": "image/png",
+    "file_name": "logo-5.png",
+    "file_size": 37584,
+    "file_key": null,
+    "deleted": 0,
+    "revision": 1
+  },
+  {
+    "id": "brand-logo-6",
+    "name": "Zona Jaguar",
+    "kind": "logo",
+    "static_url": "/marca/logo-6.png",
+    "file_type": "image/png",
+    "file_name": "logo-6.png",
+    "file_size": 32621,
+    "file_key": null,
+    "deleted": 0,
+    "revision": 1
+  },
+  {
+    "id": "brand-logo-7",
+    "name": "General negro",
+    "kind": "logo",
+    "static_url": "/marca/logo-7.png",
+    "file_type": "image/png",
+    "file_name": "logo-7.png",
+    "file_size": 43482,
+    "file_key": null,
+    "deleted": 0,
+    "revision": 1
+  },
+  {
+    "id": "brand-logo-8",
+    "name": "Escudo FGDLL",
+    "kind": "logo",
+    "static_url": "/marca/logo-8.png",
+    "file_type": "image/png",
+    "file_name": "logo-8.png",
+    "file_size": 14042,
+    "file_key": null,
+    "deleted": 0,
+    "revision": 1
+  },
+  {
+    "id": "brand-logo-9",
+    "name": "Escudo con estrellas",
+    "kind": "logo",
+    "static_url": "/marca/logo-9.png",
+    "file_type": "image/png",
+    "file_name": "logo-9.png",
+    "file_size": 98993,
+    "file_key": null,
+    "deleted": 0,
+    "revision": 1
+  },
+  {
+    "id": "brand-ringbearer",
+    "name": "Ringbearer",
+    "kind": "font",
+    "static_url": "/marca/ringbearer.ttf",
+    "file_type": "font/ttf",
+    "file_name": "ringbearer.ttf",
+    "file_size": 107280,
+    "file_key": null,
+    "deleted": 0,
+    "revision": 1
+  }
+]

@@ -134,6 +134,13 @@
       "when": 1789291946000,
       "tag": "0018_general_portal_members",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1789334741644,
+      "tag": "0019_slimy_arclight",
+      "breakpoints": true
     }
   ]
 }

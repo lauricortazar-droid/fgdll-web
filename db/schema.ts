@@ -683,3 +683,19 @@ export const distributionWorkspaces = sqliteTable("distribution_workspaces", {
   revision: integer("revision").notNull().default(1),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+// Overrides for bundled brand resources and metadata for administrator uploads.
+export const brandResources = sqliteTable("brand_resources", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  kind: text("kind").notNull(),
+  staticUrl: text("static_url"),
+  fileKey: text("file_key"),
+  fileName: text("file_name").notNull(),
+  fileType: text("file_type").notNull(),
+  fileSize: integer("file_size").notNull(),
+  deleted: integer("deleted").notNull().default(0),
+  revision: integer("revision").notNull().default(1),
+  updatedBy: text("updated_by").notNull(),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
