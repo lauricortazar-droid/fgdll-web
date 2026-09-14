@@ -1,5 +1,7 @@
 import {
+  archiveDirectoryChange,
   dashboardStats,
+  deleteDirectoryChange,
   groupsForProfile,
   listDirectoryChanges,
   PortalError,
@@ -37,15 +39,17 @@ function serializeChange(row: Record<string, unknown>) {
     reviewNote: String(row.review_note ?? ""),
     createdAt: String(row.created_at ?? ""),
     reviewedAt: row.reviewed_at ? String(row.reviewed_at) : null,
+    archivedAt: row.archived_at ? String(row.archived_at) : null,
   };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const { profile } = await requireApiProfile();
+    const includeArchived = new URL(request.url).searchParams.get("archived") === "1";
     const [groups, rows, stats] = await Promise.all([
       groupsForProfile(profile),
-      listDirectoryChanges(profile),
+      listDirectoryChanges(profile, includeArchived),
       dashboardStats(profile),
     ]);
     return Response.json({ groups, changes: rows.map(serializeChange), stats }, { headers: { "cache-control": "private, no-store" } });
@@ -74,12 +78,29 @@ export async function PATCH(request: Request) {
   try {
     const { profile } = await requireApiProfile();
     const body = await readJson(request);
+    const action = String(body.action ?? "");
+    if (action === "archive" || action === "unarchive") {
+      return Response.json(await archiveDirectoryChange(profile, { id: String(body.id ?? ""), archived: action === "archive" }));
+    }
     const result = await reviewDirectoryChange(profile, {
       id: String(body.id ?? ""),
-      action: String(body.action ?? ""),
+      action,
       note: String(body.note ?? ""),
     });
     return Response.json(result);
+  } catch (error) {
+    return apiError(error);
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { profile } = await requireApiProfile();
+    const body = await readJson(request);
+    return Response.json(await deleteDirectoryChange(profile, {
+      id: String(body.id ?? ""),
+      confirmation: String(body.confirmation ?? ""),
+    }));
   } catch (error) {
     return apiError(error);
   }

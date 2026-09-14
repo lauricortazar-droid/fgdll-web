@@ -84,6 +84,34 @@ export function NotificationCenter() {
     }
   }
 
+  async function hideAdminItem(itemKey: string, sourceUpdatedAt: string, method: "PATCH" | "DELETE") {
+    const previous = adminAlerts;
+    setAdminAlerts((current) => current.filter((item) => item.itemKey !== itemKey));
+    try {
+      await fetch("/api/admin/inbox", {
+        method,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ itemKey, sourceUpdatedAt }),
+      }).then(jsonResponse);
+    } catch {
+      setAdminAlerts(previous);
+    }
+  }
+
+  async function hideAnnouncement(id: string, action: "archive" | "delete") {
+    const previous = announcements;
+    setAnnouncements((current) => current.filter((item) => item.id !== id));
+    try {
+      await fetch("/api/announcements", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id, action }),
+      }).then(jsonResponse);
+    } catch {
+      setAnnouncements(previous);
+    }
+  }
+
   return <div className="notification-center">
     <button className="notification-trigger" type="button" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
       <span aria-hidden="true">●</span> Avisos {unread > 0 && <b>{unread}</b>}
@@ -96,14 +124,14 @@ export function NotificationCenter() {
           <div><span>{item.priority === "urgent" ? "ATENCIÓN URGENTE" : item.area.toUpperCase()}</span><small>{friendlyDate(item.createdAt)}</small></div>
           <h3>{item.title}</h3>
           <p>{item.contactName || "Solicitud recibida"} · Estado: {item.status}</p>
-          <div className="notification-actions"><a href={item.href}>Abrir y atender</a>{item.unread && <button type="button" onClick={() => void markAdminRead(item.itemKey, item.updatedAt)}>Marcar como leído</button>}</div>
+          <div className="notification-actions"><a href={item.href}>Abrir y atender</a>{item.unread && <button type="button" onClick={() => void markAdminRead(item.itemKey, item.updatedAt)}>Marcar como leído</button>}<button type="button" onClick={() => void hideAdminItem(item.itemKey, item.updatedAt, "PATCH")}>Archivar</button><button type="button" onClick={() => void hideAdminItem(item.itemKey, item.updatedAt, "DELETE")}>Eliminar</button></div>
         </article>)}
         {announcements.slice(0, 8).map((item) => <article key={item.id} className={`${item.unread ? "unread" : ""} priority-${item.priority}`}>
           <div><span>{item.priority === "urgent" ? "URGENTE" : item.priority === "important" ? "IMPORTANTE" : "AVISO"}</span><small>{friendlyDate(item.publishedAt)}</small></div>
           <h3>{item.title}</h3>
           <p>{item.summary || item.body}</p>
           {(item.summary || item.body.length > 180) && <details><summary>Leer aviso completo</summary><p>{item.body}</p></details>}
-          {item.unread && <button type="button" onClick={() => void markRead(item.id)}>Marcar como leído</button>}
+          <div className="notification-actions">{item.unread && <button type="button" onClick={() => void markRead(item.id)}>Marcar como leído</button>}<button type="button" onClick={() => void hideAnnouncement(item.id, "archive")}>Archivar</button><button type="button" onClick={() => void hideAnnouncement(item.id, "delete")}>Eliminar</button></div>
         </article>)}
         {!adminAlerts.length && !announcements.length && !error && <div className="notification-empty"><span>✓</span><p>No hay avisos pendientes por el momento.</p></div>}
       </div>

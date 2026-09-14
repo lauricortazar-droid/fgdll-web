@@ -223,6 +223,7 @@ export const accessRequests = sqliteTable("access_requests", {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
   reviewedAt: text("reviewed_at"),
+  archivedAt: text("archived_at"),
 });
 
 export const accessRequestEvents = sqliteTable(
@@ -272,6 +273,7 @@ export const directoryChangeRequests = sqliteTable(
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     reviewedAt: text("reviewed_at"),
+    archivedAt: text("archived_at"),
   },
 );
 
@@ -395,6 +397,7 @@ export const announcementReads = sqliteTable(
     readAt: text("read_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
+    archivedAt: text("archived_at"),
   },
   (table) => [
     uniqueIndex("announcement_reads_user_idx").on(
@@ -414,6 +417,7 @@ export const adminInboxReads = sqliteTable(
     readAt: text("read_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
+    archivedAt: text("archived_at"),
   },
   (table) => [
     uniqueIndex("admin_inbox_reads_item_user_idx").on(
@@ -531,6 +535,32 @@ export const ethicsReportEvents = sqliteTable(
   },
   (table) => [
     index("ethics_report_events_report_idx").on(table.reportId, table.createdAt),
+  ],
+);
+
+export const leaderReports = sqliteTable(
+  "leader_reports",
+  {
+    id: text("id").primaryKey(),
+    reporterEmail: text("reporter_email").notNull(),
+    reporterName: text("reporter_name").notNull().default(""),
+    reporterRole: text("reporter_role").notNull().default(""),
+    phone: text("phone").notNull().default(""),
+    category: text("category").notNull(),
+    groupZone: text("group_zone").notNull().default(""),
+    approximateDate: text("approximate_date").notNull().default(""),
+    narrative: text("narrative").notNull(),
+    peopleOrWitnesses: text("people_or_witnesses").notNull().default(""),
+    supportNeeded: text("support_needed").notNull(),
+    status: text("status").notNull().default("received"),
+    adminNotes: text("admin_notes").notNull().default(""),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    archivedAt: text("archived_at"),
+  },
+  (table) => [
+    index("leader_reports_status_created_idx").on(table.status, table.createdAt),
+    index("leader_reports_reporter_idx").on(table.reporterEmail, table.createdAt),
   ],
 );
 

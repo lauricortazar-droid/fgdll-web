@@ -395,9 +395,9 @@ export async function listAnnouncements(profile: PortalProfile, adminView = fals
   }
   const result = await db().prepare(
     `SELECT a.*, COALESCE(ar.revision, 0) AS read_revision
-     FROM announcements a
-     LEFT JOIN announcement_reads ar ON ar.announcement_id = a.id AND ar.user_email = ?
-     WHERE a.status = 'published' AND (a.audience = 'all' OR a.audience = ?)
+	     FROM announcements a
+	     LEFT JOIN announcement_reads ar ON ar.announcement_id = a.id AND ar.user_email = ?
+	     WHERE a.status = 'published' AND (a.audience = 'all' OR a.audience = ?) AND ar.archived_at IS NULL
      ORDER BY CASE a.priority WHEN 'urgent' THEN 0 WHEN 'important' THEN 1 ELSE 2 END,
        a.published_at DESC, a.created_at DESC`
   ).bind(profile.email, profile.role).all<Record<string, unknown>>();
@@ -456,6 +456,20 @@ export async function markAnnouncementRead(profile: PortalProfile, id: string) {
      ON CONFLICT(announcement_id, user_email) DO UPDATE SET revision = excluded.revision, read_at = CURRENT_TIMESTAMP`
   ).bind(id, profile.email, announcement.revision).run();
   return { id, read: true };
+}
+
+export async function archiveAnnouncementRead(profile: PortalProfile, id: string) {
+  const announcement = await db().prepare(
+    "SELECT id, revision FROM announcements WHERE id = ? AND status = 'published' AND (audience = 'all' OR audience = ?)"
+  ).bind(id, profile.role).first<{ id: string; revision: number }>();
+  if (!announcement) throw new PortalError("El aviso ya no está disponible.", 404);
+  await db().prepare(
+    `INSERT INTO announcement_reads (announcement_id, user_email, revision, archived_at)
+     VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+     ON CONFLICT(announcement_id, user_email) DO UPDATE SET revision = excluded.revision,
+       archived_at = CURRENT_TIMESTAMP, read_at = CURRENT_TIMESTAMP`
+  ).bind(id, profile.email, announcement.revision).run();
+  return { id, archived: true };
 }
 
 export async function deleteAnnouncement(profile: PortalProfile, id: string, confirmation: string) {

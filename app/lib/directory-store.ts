@@ -308,27 +308,28 @@ export async function createAccessRequest(input: {
   return { id, status: "pending", contactEmail: ADMIN_CONTACT_EMAIL };
 }
 
-export async function listAccessRequests(profile: PortalProfile, requesterEmail?: string) {
+export async function listAccessRequests(profile: PortalProfile, requesterEmail?: string, includeArchived = false) {
   const database = d1();
   if (profile.role === "admin" || profile.role === "council") {
     const result = await database.prepare(
       `SELECT ar.*, dg.name AS directory_group_name FROM access_requests ar
        LEFT JOIN directory_groups dg ON dg.id = ar.group_id
-       ORDER BY CASE ar.status WHEN 'pending' THEN 0 WHEN 'in_review' THEN 1 ELSE 2 END, ar.created_at DESC`
+       WHERE ${includeArchived ? "1 = 1" : "ar.archived_at IS NULL"}
+       ORDER BY ar.archived_at IS NOT NULL, CASE ar.status WHEN 'pending' THEN 0 WHEN 'in_review' THEN 1 ELSE 2 END, ar.created_at DESC`
     ).all<Record<string, unknown>>();
     return result.results ?? [];
   }
   const result = await database.prepare(
-    "SELECT * FROM access_requests WHERE requester_email = ? ORDER BY created_at DESC"
+    `SELECT * FROM access_requests WHERE requester_email = ? ${includeArchived ? "" : "AND archived_at IS NULL"} ORDER BY archived_at IS NOT NULL, created_at DESC`
   ).bind((requesterEmail ?? profile.email).toLowerCase()).all<Record<string, unknown>>();
   return result.results ?? [];
 }
 
-export async function listOwnAccessRequests(requesterEmail: string) {
+export async function listOwnAccessRequests(requesterEmail: string, includeArchived = false) {
   const result = await d1().prepare(
     `SELECT ar.*, dg.name AS directory_group_name FROM access_requests ar
      LEFT JOIN directory_groups dg ON dg.id = ar.group_id
-     WHERE ar.requester_email = ? ORDER BY ar.created_at DESC`
+     WHERE ar.requester_email = ? ${includeArchived ? "" : "AND ar.archived_at IS NULL"} ORDER BY ar.archived_at IS NOT NULL, ar.created_at DESC`
   ).bind(requesterEmail.trim().toLowerCase()).all<Record<string, unknown>>();
   return result.results ?? [];
 }
@@ -464,6 +465,29 @@ export async function reviewAccessRequest(profile: PortalProfile, input: { id: s
   }
   await audit(profile.email, `access_${status}`, "access_request", input.id, { note: input.note });
   return { id: input.id, status };
+}
+
+export async function archiveAccessRequest(profile: PortalProfile, input: { id: string; archived: boolean }) {
+  if (!["admin", "council"].includes(profile.role)) throw new PortalError("No tienes permiso para archivar accesos.", 403);
+  const request = await d1().prepare("SELECT id FROM access_requests WHERE id = ?").bind(input.id).first<Record<string, unknown>>();
+  if (!request) throw new PortalError("Solicitud no encontrada.", 404);
+  await d1().prepare(`UPDATE access_requests SET archived_at = ${input.archived ? "CURRENT_TIMESTAMP" : "NULL"}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`)
+    .bind(input.id).run();
+  await audit(profile.email, input.archived ? "access_archived" : "access_unarchived", "access_request", input.id, {});
+  return { id: input.id, archived: input.archived };
+}
+
+export async function deleteAccessRequest(profile: PortalProfile, input: { id: string; confirmation: string }) {
+  if (profile.role !== "admin") throw new PortalError("Solo administración puede eliminar solicitudes.", 403);
+  const request = await d1().prepare("SELECT id, requester_name FROM access_requests WHERE id = ?").bind(input.id).first<Record<string, unknown>>();
+  if (!request) throw new PortalError("Solicitud no encontrada.", 404);
+  if (input.confirmation !== input.id) throw new PortalError("Escribe el folio exacto para eliminar.");
+  await d1().batch([
+    d1().prepare("DELETE FROM access_request_events WHERE request_id = ?").bind(input.id),
+    d1().prepare("DELETE FROM access_requests WHERE id = ?").bind(input.id),
+  ]);
+  await audit(profile.email, "access_deleted", "access_request", input.id, { requesterName: request.requester_name });
+  return { id: input.id, deleted: true };
 }
 
 function requireAdministrator(profile: PortalProfile) {
@@ -671,16 +695,17 @@ export async function submitDirectoryChange(profile: PortalProfile, input: {
   return { id, status, changed, requiresApproval: !direct, contactEmail: ADMIN_CONTACT_EMAIL };
 }
 
-export async function listDirectoryChanges(profile: PortalProfile) {
+export async function listDirectoryChanges(profile: PortalProfile, includeArchived = false) {
   let where = "1 = 1";
   const values: unknown[] = [];
   if (profile.role === "delegate") { where = "dg.zone = ?"; values.push(profile.zone); }
   else if (profile.role === "leader" || profile.role === "osg" || profile.role === "member") { where = "dcr.requester_email = ?"; values.push(profile.email); }
+  if (!includeArchived) where = `(${where}) AND dcr.archived_at IS NULL`;
   const result = await d1().prepare(
     `SELECT dcr.*, dg.name AS group_name, dg.zone AS group_zone
      FROM directory_change_requests dcr JOIN directory_groups dg ON dg.id = dcr.group_id
      WHERE ${where}
-     ORDER BY CASE dcr.status WHEN 'pending' THEN 0 WHEN 'in_review' THEN 1 ELSE 2 END, dcr.created_at DESC`
+     ORDER BY dcr.archived_at IS NOT NULL, CASE dcr.status WHEN 'pending' THEN 0 WHEN 'in_review' THEN 1 ELSE 2 END, dcr.created_at DESC`
   ).bind(...values).all<Record<string, unknown>>();
   return result.results ?? [];
 }
@@ -712,6 +737,30 @@ export async function reviewDirectoryChange(profile: PortalProfile, input: { id:
   ).bind(status, profile.email, safeText(input.note, 1000), input.id).run();
   await audit(profile.email, `directory_change_${status}`, "directory_change_request", input.id, { note: input.note });
   return { id: input.id, status };
+}
+
+export async function archiveDirectoryChange(profile: PortalProfile, input: { id: string; archived: boolean }) {
+  if (!["admin", "council", "delegate"].includes(profile.role)) throw new PortalError("No tienes permiso para archivar cambios.", 403);
+  const request = await d1().prepare(
+    `SELECT dcr.id, dg.zone AS group_zone FROM directory_change_requests dcr
+     JOIN directory_groups dg ON dg.id = dcr.group_id WHERE dcr.id = ?`
+  ).bind(input.id).first<Record<string, unknown>>();
+  if (!request) throw new PortalError("Solicitud no encontrada.", 404);
+  if (profile.role === "delegate" && profile.zone !== request.group_zone) throw new PortalError("Esta solicitud pertenece a otra zona.", 403);
+  await d1().prepare(`UPDATE directory_change_requests SET archived_at = ${input.archived ? "CURRENT_TIMESTAMP" : "NULL"}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`)
+    .bind(input.id).run();
+  await audit(profile.email, input.archived ? "directory_change_archived" : "directory_change_unarchived", "directory_change_request", input.id, {});
+  return { id: input.id, archived: input.archived };
+}
+
+export async function deleteDirectoryChange(profile: PortalProfile, input: { id: string; confirmation: string }) {
+  if (profile.role !== "admin") throw new PortalError("Solo administración puede eliminar solicitudes.", 403);
+  const request = await d1().prepare("SELECT id FROM directory_change_requests WHERE id = ?").bind(input.id).first<Record<string, unknown>>();
+  if (!request) throw new PortalError("Solicitud no encontrada.", 404);
+  if (input.confirmation !== input.id) throw new PortalError("Escribe el folio exacto para eliminar.");
+  await d1().prepare("DELETE FROM directory_change_requests WHERE id = ?").bind(input.id).run();
+  await audit(profile.email, "directory_change_deleted", "directory_change_request", input.id, {});
+  return { id: input.id, deleted: true };
 }
 
 export async function dashboardStats(profile: PortalProfile) {

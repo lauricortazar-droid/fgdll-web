@@ -1,5 +1,7 @@
 import {
+  archiveAccessRequest,
   createAccessRequest,
+  deleteAccessRequest,
   getDirectoryGroup,
   getPortalProfile,
   listAccessRequestEvents,
@@ -53,6 +55,7 @@ function serializeRequest(row: Record<string, unknown>, events: ReturnType<typeo
     createdAt: String(row.created_at ?? ""),
     updatedAt: String(row.updated_at ?? ""),
     reviewedAt: row.reviewed_at ? String(row.reviewed_at) : null,
+    archivedAt: row.archived_at ? String(row.archived_at) : null,
     events,
   };
 }
@@ -87,11 +90,12 @@ async function accessPayload(body: Record<string, unknown>) {
   };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const user = await requireApiUser();
+    const includeArchived = new URL(request.url).searchParams.get("archived") === "1";
     const profile = await getPortalProfile(user.email, user.displayName);
-    const rows = profile ? await listAccessRequests(profile, user.email) : await listOwnAccessRequests(user.email);
+    const rows = profile ? await listAccessRequests(profile, user.email, includeArchived) : await listOwnAccessRequests(user.email, includeArchived);
     if (!profile && rows.length) {
       const ownRequest = rows.find((row) => String(row.requester_email ?? "").toLowerCase() === user.email.toLowerCase()) ?? rows[0];
       await grantUniversityAccessFromPortalRequest({
@@ -156,12 +160,29 @@ export async function PATCH(request: Request) {
   try {
     const { profile } = await requireApiProfile();
     const body = await readJson(request);
+    const action = String(body.action ?? "");
+    if (action === "archive" || action === "unarchive") {
+      return Response.json(await archiveAccessRequest(profile, { id: String(body.id ?? ""), archived: action === "archive" }));
+    }
     const result = await reviewAccessRequest(profile, {
       id: String(body.id ?? ""),
-      action: String(body.action ?? ""),
+      action,
       note: String(body.note ?? ""),
     });
     return Response.json(result);
+  } catch (error) {
+    return apiError(error);
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { profile } = await requireApiProfile();
+    const body = await readJson(request);
+    return Response.json(await deleteAccessRequest(profile, {
+      id: String(body.id ?? ""),
+      confirmation: String(body.confirmation ?? ""),
+    }));
   } catch (error) {
     return apiError(error);
   }

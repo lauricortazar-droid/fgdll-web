@@ -1,4 +1,5 @@
 import {
+  archiveAnnouncementRead,
   deleteAnnouncement,
   listAnnouncements,
   markAnnouncementRead,
@@ -70,6 +71,10 @@ export async function PUT(request: Request) {
     requireSameOrigin(request);
     const { profile } = await requireApiProfile();
     const body = await readJson(request);
+    const action = String(body.action ?? "");
+    if (action === "archive" || action === "delete") {
+      return Response.json(await archiveAnnouncementRead(profile, String(body.id ?? "")));
+    }
     const result = await markAnnouncementRead(profile, String(body.id ?? ""));
     return Response.json(result);
   } catch (error) {

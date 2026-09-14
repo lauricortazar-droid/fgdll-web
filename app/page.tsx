@@ -131,7 +131,7 @@ function Header() {
           <Link href="/universidad" onClick={() => setOpen(false)}>
             Universidad
           </Link>
-          <Link href="/portal" onClick={() => setOpen(false)}>
+          <Link href="/lider" onClick={() => setOpen(false)}>
             Acceso de liderazgo
           </Link>
           <Link

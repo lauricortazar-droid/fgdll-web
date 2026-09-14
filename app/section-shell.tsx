@@ -51,7 +51,7 @@ export function SubHeader({ label }: { label: string }) {
           </Link>
           <Link
             className="button button-gold button-small"
-            href="/portal"
+            href="/lider"
             onClick={() => setOpen(false)}
           >
             Acceso de liderazgo
@@ -85,7 +85,7 @@ export function SubFooter() {
           <Link href="/#directorio">Directorio</Link>
           <Link href="/centros">Centros</Link>
           <Link href="/etica">Ética</Link>
-          <Link href="/portal">Liderazgo</Link>
+          <Link href="/lider">Liderazgo</Link>
         </div>
         <p>
           © 2026 FGDLL

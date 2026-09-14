@@ -1,4 +1,4 @@
-import { listAdminInbox, markAdminInboxRead } from "../../../lib/admin-inbox-store";
+import { archiveAdminInboxItem, deleteAdminInboxItem, listAdminInbox, markAdminInboxRead } from "../../../lib/admin-inbox-store";
 import { apiError, readJson, requireApiProfile, requireSameOrigin } from "../../../lib/portal-api";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +18,28 @@ export async function PUT(request: Request) {
     const { profile } = await requireApiProfile();
     const body = await readJson(request);
     return Response.json(await markAdminInboxRead(profile, String(body.itemKey ?? ""), String(body.sourceUpdatedAt ?? "")));
+  } catch (error) {
+    return apiError(error);
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    requireSameOrigin(request);
+    const { profile } = await requireApiProfile();
+    const body = await readJson(request);
+    return Response.json(await archiveAdminInboxItem(profile, String(body.itemKey ?? ""), String(body.sourceUpdatedAt ?? "")));
+  } catch (error) {
+    return apiError(error);
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    requireSameOrigin(request);
+    const { profile } = await requireApiProfile();
+    const body = await readJson(request);
+    return Response.json(await deleteAdminInboxItem(profile, String(body.itemKey ?? ""), String(body.sourceUpdatedAt ?? "")));
   } catch (error) {
     return apiError(error);
   }
