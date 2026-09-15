@@ -41,7 +41,7 @@ export function SubHeader({ label }: { label: string }) {
             Encuentra un grupo
           </Link>
           <Link href="/centros" onClick={() => setOpen(false)}>
-            Centros
+            Centros aliados
           </Link>
           <Link href="/#agenda" onClick={() => setOpen(false)}>
             Agenda
@@ -83,7 +83,7 @@ export function SubFooter() {
         <div className="footer-links">
           <Link href="/ayuda-adicciones-merida">Necesito ayuda</Link>
           <Link href="/#directorio">Directorio</Link>
-          <Link href="/centros">Centros</Link>
+          <Link href="/centros">Centros aliados</Link>
           <Link href="/etica">Ética</Link>
           <Link href="/lider">Liderazgo</Link>
         </div>

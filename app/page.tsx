@@ -120,7 +120,7 @@ function Header() {
             Encuentra un grupo
           </a>
           <Link href="/centros" onClick={() => setOpen(false)}>
-            Centros
+            Centros aliados
           </Link>
           <Link href="/experiencias" onClick={() => setOpen(false)}>
             Experiencias
@@ -128,11 +128,8 @@ function Header() {
           <a href="#agenda" onClick={() => setOpen(false)}>
             Agenda
           </a>
-          <Link href="/formacion" onClick={() => setOpen(false)}>
-            Formación
-          </Link>
-          <Link href="/lider" onClick={() => setOpen(false)}>
-            Portal del Líder
+          <Link href="/etica" onClick={() => setOpen(false)}>
+            Ética
           </Link>
           <Link
             className="button button-small nav-report-link"
@@ -490,6 +487,43 @@ function CalendarAgenda() {
   );
 }
 
+const publicResources = [
+  ["IPE", "Instituto Punto Evolutivo: preparatoria, universidad y formación aliada.", "/ipe"],
+  ["Consejería", "Acompañamiento y orientación en adicciones para familias y grupos.", "/consejero"],
+  ["Psicología TRASCENDE", "Atención psicológica integral como recurso aliado.", "/psic"],
+  ["Ética", "Canal institucional para conocer principios y levantar reportes.", "/etica"],
+  ["Edúcate", "Información básica para comprender la adicción y pedir ayuda.", "/ayuda-adicciones-merida#faq"],
+  ["Modelos de intervención", "Rutas de apoyo sin prometer soluciones mágicas.", "/ayuda-adicciones-merida#modelos"],
+];
+
+function PublicResources() {
+  return (
+    <section className="section public-resource-section" id="recursos-publicos">
+      <div className="shell">
+        <div className="section-heading split-heading">
+          <div>
+            <span className="eyebrow">Recursos públicos</span>
+            <h2>Orientación, educación y canales institucionales.</h2>
+          </div>
+          <p>
+            La parte pública se concentra en ayuda rápida, directorios y recursos
+            aliados para decidir el siguiente paso.
+          </p>
+        </div>
+        <div className="public-resource-grid">
+          {publicResources.map(([title, text, href]) => (
+            <Link href={href} key={title}>
+              <h3>{title}</h3>
+              <p>{text}</p>
+              <b>Abrir →</b>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
     <footer className="footer">
@@ -504,9 +538,9 @@ function Footer() {
         <div className="footer-links">
           <Link href="/ayuda-adicciones-merida">Necesito ayuda</Link>
           <a href="#directorio">Directorio</a>
-          <Link href="/centros">Centros</Link>
+          <Link href="/centros">Centros aliados</Link>
           <Link href="/etica">Ética</Link>
-          <Link href="/lider">Liderazgo</Link>
+          <Link href="/ipe">IPE</Link>
         </div>
         <p>
           © 2026 FGDLL
@@ -642,6 +676,7 @@ export default function Home() {
         </section>
 
         <Finder groups={groups} />
+        <PublicResources />
 
         <section className="section network-map" id="mapa">
           <div className="shell">
@@ -716,8 +751,8 @@ export default function Home() {
               <a className="button button-gold" href="#directorio">
                 Encontrar un grupo
               </a>
-                <Link className="button button-ghost" href="/lider">
-                Acceso de liderazgo
+                <Link className="button button-ghost" href="/ayuda-adicciones-merida#orientacion">
+                Contáctenme
               </Link>
             </div>
           </div>
