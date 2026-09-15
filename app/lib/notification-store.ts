@@ -38,6 +38,13 @@ function normalizePhone(value: unknown) {
   return digits.length === 10 ? `+52${digits}` : digits.startsWith("52") ? `+${digits}` : `+${digits}`;
 }
 
+function configuredAdminRecipients() {
+  const env = getRuntimeEnv();
+  const configured = env.FGDLL_NOTIFICATION_EMAIL || env.FGDLL_ADMIN_EMAILS ||
+    "admin@fgdll.org,jaguarcortazar@gmail.com,laurcortazar@gmail.com,yoltyp@gmail.com";
+  return configured.split(",").map((email) => ({ email: email.trim().toLowerCase() })).filter((item) => item.email);
+}
+
 async function sendEmail(to: string, subject: string, html: string) {
   const env = getRuntimeEnv();
   if (!env.RESEND_API_KEY) return false;
@@ -102,6 +109,10 @@ export async function notifyRecipients(
   return delivery;
 }
 
+export async function notifyAdmins(subject: string, html: string, smsText = "") {
+  return notifyRecipients(configuredAdminRecipients(), subject, html, smsText || subject);
+}
+
 export async function activePortalRecipients(database: D1DatabaseLike, audience = "all") {
   const result = audience === "all"
     ? await database.prepare("SELECT email, name, phone FROM portal_users WHERE active = 1 AND email != ''").all<Record<string, unknown>>()
@@ -112,4 +123,3 @@ export async function activePortalRecipients(database: D1DatabaseLike, audience 
     phone: String(row.phone ?? ""),
   }));
 }
-

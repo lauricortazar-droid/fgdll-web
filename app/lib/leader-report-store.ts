@@ -2,6 +2,7 @@ import "server-only";
 
 import { getRuntimeEnv } from "./runtime-env";
 import { PortalError, type PortalProfile } from "./directory-store";
+import { notifyAdmins } from "./notification-store";
 
 const CATEGORIES = new Set(["operacion", "integridad", "finanzas", "seguridad", "acompanamiento"]);
 const SUPPORT = new Set(["Orientación", "Protección inmediata", "Revisión institucional", "Seguimiento operativo"]);
@@ -45,5 +46,10 @@ export async function submitLeaderReport(profile: PortalProfile, input: Record<s
     database().prepare("INSERT INTO audit_log (actor_email, action, target_type, target_id, details_json) VALUES (?, 'leader_report_created', 'leader_report', ?, ?)")
       .bind(profile.email, id, JSON.stringify({ category, supportNeeded })),
   ]);
+  await notifyAdmins(
+    `Nuevo reporte de liderazgo ${id}`,
+    `<h2>Nuevo reporte identificado de liderazgo</h2><p><strong>Folio:</strong> ${id}</p><p><strong>Reporta:</strong> ${clean(profile.name, 160)} (${profile.email})</p><p><strong>Categoría:</strong> ${category}</p><p><strong>Grupo/Zona:</strong> ${groupZone || "No indicado"}</p><p><strong>Seguimiento:</strong> ${supportNeeded}</p><p>Revísalo en <a href="https://fgdll.org/admin/contenidos?tab=announcements">fgdll.org/admin</a>.</p>`,
+    `FGDLL: nuevo reporte de liderazgo ${id}`,
+  );
   return { ok: true, id };
 }

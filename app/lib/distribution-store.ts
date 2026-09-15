@@ -17,6 +17,22 @@ const LIMITS = {
   campaigns: 1_500,
   recipientsPerCampaign: 10_000,
 };
+const EMPTY_STATE = {
+  contacts: [],
+  lists: [],
+  templates: [
+    {
+      id: "tpl-bienvenida",
+      title: "Bienvenida al portal",
+      body: "Hola {nombre}, tu acceso al Portal FGDLL ya fue activado. Bienvenido.",
+      category: "Accesos",
+      createdAt: new Date(0).toISOString(),
+      updatedAt: new Date(0).toISOString(),
+    },
+  ],
+  campaigns: [],
+  settings: { defaultCountryCode: "52" },
+};
 
 function d1() {
   const database = getRuntimeEnv().DB;
@@ -146,4 +162,75 @@ export async function saveDistributionWorkspace(email: string, input: unknown, e
 
 export async function deleteDistributionWorkspace(email: string) {
   await d1().prepare("DELETE FROM distribution_workspaces WHERE owner_email = ?").bind(owner(email)).run();
+}
+
+export async function addPendingDistributionContact(ownerEmail: string, input: {
+  email: string;
+  name: string;
+  phone?: string;
+  group?: string;
+  zone?: string;
+  notes?: string;
+}) {
+  const normalizedOwner = owner(ownerEmail);
+  const row = await d1().prepare(
+    "SELECT payload_json, revision FROM distribution_workspaces WHERE owner_email = ?"
+  ).bind(normalizedOwner).first<Record<string, unknown>>();
+  const state = row?.payload_json
+    ? JSON.parse(String(row.payload_json)) as Record<string, unknown>
+    : structuredClone(EMPTY_STATE) as Record<string, unknown>;
+  const current = sanitizeWorkspaceState(state).normalized;
+  const now = new Date().toISOString();
+  const email = input.email.trim().toLowerCase();
+  const phone = String(input.phone ?? "").replace(/[^\d+]/g, "").slice(0, 18);
+  const [firstName, ...lastParts] = (input.name.trim() || email).split(/\s+/);
+  const contactId = `portal-${email.replace(/[^a-z0-9]/g, "-") || crypto.randomUUID()}`;
+  const contacts = current.contacts as Record<string, unknown>[];
+  const existing = contacts.find((contact) =>
+    String(contact.id) === contactId ||
+    (email && String(contact.notes ?? "").toLowerCase().includes(email)) ||
+    (phone && String(contact.phone ?? "").replace(/\D/g, "").endsWith(phone.replace(/\D/g, "").slice(-10)))
+  );
+  const contact = {
+    id: existing?.id ?? contactId,
+    firstName,
+    lastName: lastParts.join(" "),
+    phone,
+    countryCode: "52",
+    organization: "Portal FGDLL",
+    group: input.group ?? "",
+    zone: input.zone ?? "",
+    tags: ["pendiente", "registro-aprobado"],
+    notes: [input.notes || "Acceso aprobado en Portal FGDLL", email ? `Correo: ${email}` : ""].filter(Boolean).join("\n"),
+    status: "active",
+    archived: false,
+    createdAt: String(existing?.createdAt ?? now),
+    updatedAt: now,
+    lastMessageAt: null,
+  };
+  if (existing) Object.assign(existing, contact);
+  else contacts.unshift(contact);
+
+  const lists = current.lists as Record<string, unknown>[];
+  let pendingList = lists.find((list) => String(list.id) === "lista-registros-pendientes");
+  if (!pendingList) {
+    pendingList = { id: "lista-registros-pendientes", name: "Pendientes de registro", contactIds: [], createdAt: now, updatedAt: now };
+    lists.unshift(pendingList);
+  }
+  const contactIds = Array.isArray(pendingList.contactIds) ? pendingList.contactIds as string[] : [];
+  if (!contactIds.includes(String(contact.id))) contactIds.unshift(String(contact.id));
+  pendingList.contactIds = contactIds;
+  pendingList.updatedAt = now;
+
+  const serialized = JSON.stringify(current);
+  if (row) {
+    await d1().prepare(
+      `UPDATE distribution_workspaces SET payload_json = ?, revision = revision + 1, updated_at = CURRENT_TIMESTAMP WHERE owner_email = ?`
+    ).bind(serialized, normalizedOwner).run();
+  } else {
+    await d1().prepare(
+      `INSERT INTO distribution_workspaces (owner_email, payload_json, revision, updated_at) VALUES (?, ?, 1, CURRENT_TIMESTAMP)`
+    ).bind(normalizedOwner, serialized).run();
+  }
+  return { ok: true, ownerEmail: normalizedOwner, contactId: String(contact.id) };
 }

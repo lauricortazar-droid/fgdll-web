@@ -2,6 +2,7 @@ import "server-only";
 
 import { getRuntimeEnv } from "./runtime-env";
 import { isAdminEmail, PortalError, type PortalProfile } from "./directory-store";
+import { notifyAdmins } from "./notification-store";
 
 const CATEGORIES = new Set(["autoridad", "integridad", "finanzas", "anonimato", "limites"]);
 const SUPPORT = new Set(["Orientación", "Protección inmediata", "Revisión institucional", "Mediación"]);
@@ -77,6 +78,11 @@ export async function submitEthicsReport(input: Record<string, unknown>) {
       FROM ethics_reports WHERE public_folio = ?`)
       .bind(publicFolio),
   ]);
+  await notifyAdmins(
+    `Nuevo reporte de ética ${publicFolio}`,
+    `<h2>Nuevo reporte de ética</h2><p><strong>Folio:</strong> ${publicFolio}</p><p><strong>Categoría:</strong> ${category}</p><p><strong>Grupo/Zona:</strong> ${groupZone || "No indicado"}</p><p><strong>Apoyo solicitado:</strong> ${supportNeeded}</p><p>Revísalo en <a href="https://fgdll.org/admin/etica">fgdll.org/admin/etica</a>.</p>`,
+    `FGDLL: nuevo reporte de ética ${publicFolio}`,
+  );
   return { ok: true, publicFolio, trackingKey };
 }
 

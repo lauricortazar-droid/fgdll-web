@@ -6,6 +6,7 @@ import {
   PortalError,
   type PortalProfile,
 } from "./directory-store";
+import { notifyAdmins as notifyConfiguredAdmins } from "./notification-store";
 
 const STATUSES = new Set([
   "new",
@@ -66,25 +67,12 @@ async function notifyAdmins(
   city: string,
   danger: string,
 ) {
-  const env = getRuntimeEnv();
-  if (!env.RESEND_API_KEY)
-    return { sent: false, reason: "email_not_configured" };
   try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${env.RESEND_API_KEY}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        from: env.FGDLL_EMAIL_FROM || "Portal FGDLL <notificaciones@fgdll.org>",
-        to: ["admin@fgdll.org", "jaguarcortazar@gmail.com"],
-        subject: `Nueva solicitud de orientación ${id}`,
-        html: `<h2>Nueva solicitud de orientación</h2><p><strong>Folio:</strong> ${escapeHtml(id)}</p><p><strong>Solicita:</strong> ${escapeHtml(name)}</p><p><strong>Ciudad:</strong> ${escapeHtml(city || "No indicada")}</p><p><strong>Peligro inmediato:</strong> ${escapeHtml(danger)}</p><p>Consulta los datos protegidos dentro de Administración del Portal FGDLL.</p>`,
-      }),
-    });
-    if (!response.ok) throw new Error(`Resend ${response.status}`);
-    return { sent: true };
+    return await notifyConfiguredAdmins(
+      `Nueva solicitud de orientación ${id}`,
+      `<h2>Nueva solicitud de orientación</h2><p><strong>Folio:</strong> ${escapeHtml(id)}</p><p><strong>Solicita:</strong> ${escapeHtml(name)}</p><p><strong>Ciudad:</strong> ${escapeHtml(city || "No indicada")}</p><p><strong>Peligro inmediato:</strong> ${escapeHtml(danger)}</p><p>Consulta los datos protegidos dentro de Administración del Portal FGDLL.</p>`,
+      `FGDLL: nueva solicitud de orientación ${id}`,
+    );
   } catch (error) {
     console.error(
       "No fue posible enviar la notificación de orientación",

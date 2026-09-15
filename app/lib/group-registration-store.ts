@@ -2,6 +2,7 @@ import "server-only";
 
 import { ensureDirectorySeeded, PortalError, sanitizeProposal, type PortalProfile } from "./directory-store";
 import { getRuntimeEnv } from "./runtime-env";
+import { notifyAdmins, notifyRecipients } from "./notification-store";
 
 function db() {
   const database = getRuntimeEnv().DB;
@@ -63,6 +64,11 @@ export async function submitGroupRegistration(profile: PortalProfile, payload: R
     db().prepare("INSERT INTO audit_log (actor_email, action, target_type, target_id, details_json) VALUES (?, 'group_registration_submitted', 'group_registration', ?, ?)")
       .bind(profile.email, id, JSON.stringify({ zone: proposal.zone, name: proposal.name })),
   ]);
+  await notifyAdmins(
+    `Nuevo registro de grupo ${id}`,
+    `<h2>Nuevo registro de grupo</h2><p><strong>Folio:</strong> ${id}</p><p><strong>Grupo:</strong> ${proposal.name}</p><p><strong>Zona:</strong> ${proposal.zone}</p><p><strong>Solicita:</strong> ${profile.name} (${profile.email})</p><p>Revísalo en <a href="https://fgdll.org/admin/registrar-grupo#revision">fgdll.org/admin</a>.</p>`,
+    `FGDLL: nuevo registro de grupo ${id}`,
+  );
   return { ok: true, id };
 }
 
@@ -124,5 +130,11 @@ export async function reviewGroupRegistration(profile: PortalProfile, id: string
     db().prepare("INSERT INTO audit_log (actor_email, action, target_type, target_id, details_json) VALUES (?, 'group_registration_approved', 'directory_group', ?, ?)")
       .bind(profile.email, String(group.id), JSON.stringify({ requestId: id, requesterEmail })),
   ]);
+  await notifyRecipients(
+    [{ email: requesterEmail, name: String(row.requester_name ?? ""), phone: "" }],
+    "Tu grupo fue aprobado en FGDLL",
+    `<h2>Grupo aprobado</h2><p>Tu solicitud de grupo <strong>${proposal.name}</strong> fue aprobada y agregada al directorio.</p><p>Entra al portal: <a href="https://fgdll.org/portal">fgdll.org/portal</a>.</p>`,
+    `FGDLL: tu grupo ${proposal.name} fue aprobado.`,
+  );
   return { ok: true, status: 'approved', groupId: group.id };
 }

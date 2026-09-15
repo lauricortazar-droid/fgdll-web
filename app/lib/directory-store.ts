@@ -2,7 +2,7 @@ import "server-only";
 
 import directoryData from "../directory-data.json";
 import { getRuntimeEnv } from "./runtime-env";
-import { notifyRecipients } from "./notification-store";
+import { notifyAdmins, notifyRecipients } from "./notification-store";
 
 export const ADMIN_CONTACT_EMAIL = "admin@fgdll.org";
 export const PORTAL_ROLES = ["member", "leader", "osg", "delegate", "director", "council", "admin"] as const;
@@ -93,6 +93,10 @@ export function isAdminEmail(email: string) {
 
 export function configuredAdminEmails() {
   return Array.from(adminEmails());
+}
+
+function primaryAdminEmail() {
+  return configuredAdminEmails()[0] || ADMIN_CONTACT_EMAIL;
 }
 
 export function roleLabel(role: PortalRole) { return ROLE_LABELS[role]; }
@@ -288,6 +292,11 @@ export async function createAccessRequest(input: {
        updated_at = CURRENT_TIMESTAMP`
     ).bind(email, safeText(input.name, 160), safeText(input.phone, 30), requestedRoleLabel, safeText(input.reason, 1200), email).run();
     await audit(email, "portal_member_registered", "portal_user", email, { roleLabel: requestedRoleLabel });
+    await notifyAdmins(
+      "Nuevo registro automático en Portal FGDLL",
+      `<h2>Nuevo registro automático</h2><p><strong>Nombre:</strong> ${safeText(input.name, 160)}</p><p><strong>Correo:</strong> ${email}</p><p><strong>Rol:</strong> ${requestedRoleLabel}</p><p>Este acceso quedó activo automáticamente.</p>`,
+      `FGDLL: nuevo registro automático ${email}`,
+    );
     return { id: "", status: "approved", contactEmail: ADMIN_CONTACT_EMAIL, autoApproved: true };
   }
   const existing = await d1().prepare(
@@ -305,6 +314,11 @@ export async function createAccessRequest(input: {
     safeText(input.zone, 60) || null, input.groupId || null, safeText(input.groupName, 160), safeText(input.reason, 1200),
   ), accessEventStatement(id, email, "submitted", "Solicitud enviada", snapshot)]);
   await audit(email, "access_requested", "access_request", id, { role: input.requestedRole, zone: input.zone, groupId: input.groupId });
+  await notifyAdmins(
+    `Nueva solicitud de acceso ${id}`,
+    `<h2>Nueva solicitud de acceso</h2><p><strong>Folio:</strong> ${id}</p><p><strong>Nombre:</strong> ${safeText(input.name, 160)}</p><p><strong>Correo:</strong> ${email}</p><p><strong>Rol solicitado:</strong> ${requestedRoleLabel}</p><p>Revísala en <a href="https://fgdll.org/admin">fgdll.org/admin</a>.</p>`,
+    `FGDLL: nueva solicitud de acceso ${id}`,
+  );
   return { id, status: "pending", contactEmail: ADMIN_CONTACT_EMAIL };
 }
 
@@ -462,6 +476,15 @@ export async function reviewAccessRequest(profile: PortalProfile, input: { id: s
       `<h2>Acceso activado</h2><p>Hola ${safeText(request.requester_name, 160) || "Guerrero de la Luz"}, tu perfil del Portal FGDLL ya fue activado.</p><p>Entra a <a href="https://fgdll.org/portal">fgdll.org/portal</a>.</p>`,
       "FGDLL: tu acceso al Portal FGDLL fue activado. Entra a https://fgdll.org/portal",
     );
+    const { addPendingDistributionContact } = await import("./distribution-store");
+    await addPendingDistributionContact(primaryAdminEmail(), {
+      email: String(request.requester_email ?? ""),
+      name: String(request.requester_name ?? ""),
+      phone: String(request.phone ?? ""),
+      group: String(request.group_name ?? ""),
+      zone: request.zone ? String(request.zone) : "",
+      notes: `Solicitud aprobada: ${input.id}`,
+    });
   }
   await audit(profile.email, `access_${status}`, "access_request", input.id, { note: input.note });
   return { id: input.id, status };
