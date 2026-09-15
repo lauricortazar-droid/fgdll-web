@@ -639,3 +639,51 @@ input,select,textarea,.search-field,.finder-search,.form-field{border-radius:4px
 @media(max-width:900px){.leader-hero-grid,.leader-form-grid,.leader-request-grid{grid-template-columns:1fr}.leader-option-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:900px){.leader-section-grid,.admin-master-grid,.public-resource-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.leader-hero{padding:58px 0}.leader-option-grid,.leader-mini-grid,.admin-master-grid,.public-resource-grid{grid-template-columns:1fr}.leader-option-grid>a{min-height:0}.request-maintenance{justify-content:flex-start;flex-wrap:wrap}.recognition-design-panel header{align-items:flex-start;flex-direction:column}}
+
+/* Renovación pública 2026: portada y móvil con lenguaje public_html */
+.public-hero.family-entry-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#021a39 0%,#042f66 58%,#073d83 100%);color:#fff}
+.public-hero.family-entry-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(242,173,0,.14) 0 1px,transparent 1px),linear-gradient(rgba(255,255,255,.055) 0 1px,transparent 1px);background-size:74px 74px;opacity:.45}
+.public-hero.family-entry-hero .public-hero-grid{position:relative;z-index:1;align-items:center}
+.public-hero.family-entry-hero .eyebrow.light{border:1px solid rgba(242,173,0,.36);border-radius:999px;background:rgba(242,173,0,.12);padding:8px 12px;color:#ffe7a3}
+.family-entry-hero .public-hero-copy h1{max-width:880px;color:#fff;text-shadow:0 2px 22px rgba(0,0,0,.18)}
+.family-entry-hero .public-hero-copy>p,.family-entry-hero .hero-boundary{color:#d8e4f1}
+.hero-direct-contact{display:grid;grid-template-columns:auto auto auto;align-items:center;gap:8px;margin-top:22px;border:1px solid rgba(255,255,255,.16);border-left:4px solid var(--gold);border-radius:6px;background:rgba(255,255,255,.075);padding:13px}
+.hero-direct-contact span{color:#dbe7f4;font-size:.78rem;font-weight:850}
+.hero-direct-contact a{border-radius:4px;background:#fff;color:var(--navy-deep);padding:10px 12px;font-size:.78rem;font-weight:900;text-align:center}
+.hero-direct-contact a:first-of-type{background:var(--gold);color:#1d1d1b}
+.first-time-card.emergency-first-card{border:1px solid rgba(255,255,255,.16);border-top:5px solid var(--gold);border-radius:10px;background:rgba(255,255,255,.96);box-shadow:0 24px 60px rgba(0,0,0,.22);color:var(--navy-deep)}
+.help-paths{background:#fff;border-bottom:1px solid var(--line)}
+.help-path-grid>a{border-radius:8px;border:1px solid #dbe3ec;background:#f8fafc;box-shadow:none}
+.help-path-grid>a:hover,.public-resource-grid>a:hover{border-color:var(--gold);background:#fffdf5}
+.finder-panel{border-radius:8px;box-shadow:none;border:1px solid var(--line)}
+.public-resource-section{background:linear-gradient(180deg,#fff 0%,#f8fafc 100%)}
+.public-resource-grid>a{border-top:4px solid var(--gold);background:#fff;box-shadow:0 10px 24px rgba(4,47,102,.06)}
+
+@media(max-width:960px){
+  .topbar{height:76px}
+  .brand-shield{width:46px;height:54px}
+  .brand strong{font-size:1.05rem;color:var(--navy)}
+  .brand small{font-size:.72rem}
+  .menu-button{display:grid;width:46px;height:46px;place-items:center;border:1px solid #d5dfeb;border-radius:8px;background:#fff}
+  .menu-button span{width:24px;height:3px;margin:0;background:var(--navy)}
+  .main-nav,.sub-nav{top:76px;left:14px;right:14px;z-index:90;display:none;align-items:stretch;gap:7px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:#021f45;padding:12px;box-shadow:0 18px 45px rgba(2,26,58,.28)}
+  .main-nav.open,.sub-nav.open{display:grid}
+  .main-nav>a:not(.button),.sub-nav>a:not(.button){border:0;border-radius:7px;background:rgba(255,255,255,.08);padding:13px 14px;color:#fff;font-size:.94rem;font-weight:850}
+  .main-nav>a:not(.button):first-child,.sub-nav>a:not(.button):first-child{background:var(--gold);color:#1d1d1b}
+  .main-nav .button,.sub-nav .button{width:100%;border-radius:7px;margin-top:4px;padding:14px 16px}
+}
+
+@media(max-width:680px){
+  .public-hero.family-entry-hero{padding:54px 0 42px}
+  .public-hero-copy h1,.family-entry-hero .public-hero-copy h1{font-size:clamp(2.85rem,13vw,4rem);line-height:.94;letter-spacing:-.055em}
+  .public-hero-copy>p{font-size:1rem}
+  .hero-actions{align-items:stretch;display:grid;grid-template-columns:1fr;gap:10px}
+  .hero-actions .button,.hero-emergency-button{width:100%;min-height:52px}
+  .hero-direct-contact{grid-template-columns:1fr}
+  .public-trust{grid-template-columns:repeat(3,1fr);gap:8px}
+  .public-trust span{border:1px solid rgba(255,255,255,.15);border-radius:6px;background:rgba(255,255,255,.07);padding:10px;text-align:center}
+  .first-time-card.emergency-first-card{margin-top:22px}
+  .closing.public-closing{text-align:left}
+  .closing.public-closing .hero-actions{grid-template-columns:1fr}
+  .footer{padding:34px 0}.footer-brand{align-items:flex-start}.footer-links{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+}
