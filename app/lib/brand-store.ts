@@ -6,6 +6,18 @@ import { PortalError, type PortalProfile } from "./directory-store";
 export type BrandRow = { id: string; name: string; kind: string; static_url: string | null; file_key: string | null; file_name: string; file_type: string; file_size: number; deleted: number; revision: number };
 function db() { const d = getRuntimeEnv().DB; if (!d) throw new PortalError("La galería no está disponible. Inténtalo de nuevo.",503); return d; }
 function bucket() { const b = getRuntimeEnv().BUCKET; if (!b) throw new PortalError("El almacenamiento no está disponible.",503); return b; }
+function pngHasTransparency(bytes: Uint8Array, view: DataView) {
+  const colorType = bytes[25];
+  if (colorType === 4 || colorType === 6) return true;
+  for (let pos = 8; pos + 12 <= bytes.length;) {
+    const length = view.getUint32(pos);
+    if (pos + 12 + length > bytes.length) return false;
+    const type = String.fromCharCode(bytes[pos+4],bytes[pos+5],bytes[pos+6],bytes[pos+7]);
+    if (type === "tRNS") return true;
+    pos += 12 + length;
+  }
+  return false;
+}
 export function requireBrandAdmin(profile: PortalProfile) { if (profile.role !== "admin") throw new PortalError("Solo administración puede modificar la galería.",403); }
 export async function brandRow(id: string): Promise<BrandRow | null> {
   return await db().prepare("SELECT * FROM brand_resources WHERE id = ?").bind(id).first<BrandRow>() ?? seeds.find(x=>x.id===id) ?? null;
@@ -28,6 +40,7 @@ export async function validateBrandFile(file: File, kind: string) {
     if(bytes.length<24) throw new PortalError('PNG incompleto.');
     const v=new DataView(bytes.buffer); const w=v.getUint32(16), h=v.getUint32(20);
     if(!w || !h || w*h>40000000) throw new PortalError('El PNG debe tener como máximo 40 megapíxeles.');
+    if(!pngHasTransparency(bytes,v)) throw new PortalError('El logotipo debe ser PNG sin fondo, con transparencia.');
   }
   return {bytes, contentType:kind==='logo'?'image/png':`font/${ext}`, filename:file.name.replace(/[^a-zA-Z0-9._-]/g,'-').slice(-180)};
 }

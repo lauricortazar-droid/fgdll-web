@@ -11,8 +11,12 @@ const options = [
   { title: "Avisos", text: "Leer comunicados publicados.", href: "/portal#avisos" },
   { title: "Materiales", text: "Abrir documentos y manuales.", href: "/portal#materiales" },
   { title: "Testimonios", text: "Consultar la lista de testimonios.", href: "/testimonios" },
+  { title: "Reportes", text: "Levantar un reporte identificado.", href: "/lider#reportes" },
+  { title: "Solicitud de lonas", text: "Pedir lonas para tu grupo o zona.", href: "/lider#lonas" },
   { title: "Actualizar datos de mi grupo", text: "Enviar cambios del directorio.", href: "/directorio/gestion" },
   { title: "Mi grupo", text: "Revisar ficha pública y datos de contacto.", href: "/directorio/gestion" },
+  { title: "Padrinos y coordinadores", text: "Registrar el equipo operativo de mi grupo.", href: "/lider#equipo" },
+  { title: "Afiliación", text: "Espacio reservado para grupo oficial.", href: "/lider#afiliacion" },
 ];
 
 async function jsonResponse(response: Response) {
@@ -91,15 +95,15 @@ export default function LiderPage() {
       </div></section>
 
       <section className="section leader-requests"><div className="shell leader-request-grid">
-        <form className="report-form" onSubmit={(event) => submit(event, "lona", (data) => ({ category: "operacion", supportNeeded: "Seguimiento operativo", phone: data.phone, groupZone: data.groupZone, narrative: `Solicitud de lonas. Medida/cantidad: ${data.size}. Uso: ${data.use}. Dirección o entrega: ${data.delivery}`, peopleOrWitnesses: "" }))}>
+        <form id="lonas" className="report-form" onSubmit={(event) => submit(event, "lona", (data) => ({ category: "operacion", supportNeeded: "Seguimiento operativo", phone: data.phone, groupZone: data.groupZone, narrative: `Solicitud de lonas. Medida/cantidad: ${data.size}. Uso: ${data.use}. Dirección o entrega: ${data.delivery}`, peopleOrWitnesses: "" }))}>
           <h3>Solicitud de lonas</h3><label>Grupo o zona<input name="groupZone" required /></label><label>Medida y cantidad<input name="size" required placeholder="Ej. 2 lonas de 2 x 1 m" /></label><label>Uso<textarea name="use" required rows={3} /></label><label>Entrega o dirección<textarea name="delivery" rows={3} /></label><label>Teléfono / WhatsApp<input name="phone" type="tel" inputMode="tel" /></label><button className="button button-gold" disabled={busy === "lona"}>{busy === "lona" ? "Enviando…" : "Solicitar lona"}</button>
         </form>
-        <form className="report-form" onSubmit={(event) => submit(event, "equipo", (data) => ({ category: "acompanamiento", supportNeeded: "Seguimiento operativo", phone: data.phone, groupZone: data.groupZone, narrative: `Registro de padrinos y coordinadores. Padrinos: ${data.sponsors}. Coordinadores: ${data.coordinators}. Notas: ${data.notes}`, peopleOrWitnesses: `${data.sponsors}\n${data.coordinators}` }))}>
+        <form id="equipo" className="report-form" onSubmit={(event) => submit(event, "equipo", (data) => ({ category: "acompanamiento", supportNeeded: "Seguimiento operativo", phone: data.phone, groupZone: data.groupZone, narrative: `Registro de padrinos y coordinadores. Padrinos: ${data.sponsors}. Coordinadores: ${data.coordinators}. Notas: ${data.notes}`, peopleOrWitnesses: `${data.sponsors}\n${data.coordinators}` }))}>
           <h3>Padrinos y coordinadores</h3><label>Grupo<input name="groupZone" required /></label><label>Padrinos<textarea name="sponsors" rows={4} placeholder="Un nombre por línea" /></label><label>Coordinadores<textarea name="coordinators" rows={4} placeholder="Un nombre por línea" /></label><label>Notas<textarea name="notes" rows={3} /></label><label>Teléfono / WhatsApp<input name="phone" type="tel" inputMode="tel" /></label><button className="button button-gold" disabled={busy === "equipo"}>{busy === "equipo" ? "Enviando…" : "Registrar equipo"}</button>
         </form>
       </div></section>
 
-      <section className="leader-affiliation"><div className="shell"><span>AFILIACIÓN</span><h2>Grupo oficial de Guerreros de la Luz.</h2><p>Este espacio queda reservado para el registro formal de datos y dirección de afiliación.</p></div></section>
+      <section className="leader-affiliation" id="afiliacion"><div className="shell"><span>AFILIACIÓN</span><h2>Grupo oficial de Guerreros de la Luz.</h2><p>Este espacio queda reservado para el registro formal de datos y dirección de afiliación.</p></div></section>
     </main>
     <SubFooter />
   </>;
