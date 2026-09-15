@@ -42,19 +42,19 @@ const inboxQueries = [
     requester_name AS contact_name, requester_email AS email, requester_phone AS phone,
     status, created_at, updated_at, '/administracion/centros' AS href, 'normal' AS priority
   FROM center_requests WHERE status IN ('pending', 'changes_requested')`,
-  `SELECT CAST(id AS TEXT) AS id, 'university_user' AS kind, 'Universidad' AS area, 'Registro de participante' AS title,
+  `SELECT CAST(id AS TEXT) AS id, 'university_user' AS kind, 'Formación' AS area, 'Registro de participante' AS title,
     full_name AS contact_name, email, mobile_phone AS phone,
     status, created_at, updated_at, '/administracion/universidad' AS href, 'normal' AS priority
   FROM university_users WHERE status IN ('pending', 'active')`,
-  `SELECT id, 'university_center' AS kind, 'Universidad' AS area, 'Registro colectivo · ' || center_name AS title,
+  `SELECT id, 'university_center' AS kind, 'Formación' AS area, 'Registro colectivo · ' || center_name AS title,
     center_name AS contact_name, director_email AS email, mobile_phone AS phone,
     status, created_at, updated_at, '/administracion/universidad' AS href, 'normal' AS priority
   FROM university_center_batches WHERE status IN ('received', 'in_review', 'changes_requested')`,
-  `SELECT id, 'certificate' AS kind, 'Universidad' AS area, 'Solicitud de reconocimiento' AS title,
+  `SELECT id, 'certificate' AS kind, 'Formación' AS area, 'Solicitud de reconocimiento' AS title,
     full_name AS contact_name, email, mobile_phone AS phone,
     status, created_at, updated_at, '/administracion/universidad' AS href, 'normal' AS priority
   FROM university_certificate_requests WHERE status IN ('pending_validation', 'in_review', 'approved', 'ready')`,
-  `SELECT CAST(id AS TEXT) AS id, 'issued_recognition' AS kind, 'Universidad' AS area,
+  `SELECT CAST(id AS TEXT) AS id, 'issued_recognition' AS kind, 'Formación' AS area,
     'Reconocimiento por concluir · ' || full_name AS title, full_name AS contact_name, '' AS email, '' AS phone,
     CASE WHEN printed_at IS NULL THEN 'pending_print' WHEN sent_at IS NULL THEN 'pending_send' ELSE 'ready_delivery' END AS status,
     created_at, updated_at, '/administracion/universidad/reconocimientos' AS href, 'normal' AS priority

@@ -357,12 +357,12 @@ export function RecognitionDashboard() {
 
   return (
     <>
-      <SubHeader label="Universidad · Reconocimientos" />
+      <SubHeader label="Formación · Reconocimientos" />
       <main className="recognition-admin-page">
         <section className="recognition-admin-bar">
           <div className="shell">
-            <div><span>UNIVERSIDAD FGDLL</span><h1>Reconocimientos</h1></div>
-            <div><Link href="/administracion/universidad">← Volver a Universidad</Link><strong>{data.summary.total}</strong><small>emitidos</small></div>
+            <div><span>FORMACIÓN FGDLL</span><h1>Reconocimientos</h1></div>
+            <div><Link href="/administracion/universidad">← Volver a Formación</Link><strong>{data.summary.total}</strong><small>emitidos</small></div>
           </div>
         </section>
 
@@ -439,6 +439,12 @@ export function RecognitionDashboard() {
                   </>
                 )}
               </div>
+            </section>
+
+            <section className="recognition-design-panel">
+              <header><div><span>DISEÑOS</span><h2>Diseños para cursos, talleres y capacitaciones</h2></div><Link href="/administracion/contenidos">Subir diseño como material</Link></header>
+              <p>Además de DPL1 y DPL2, Administración puede preparar nuevos diseños de reconocimiento para otras formaciones. Sube la plantilla en contenidos y después se conecta al expedidor.</p>
+              <div><span>DPL1</span><span>DPL2</span><span>Curso</span><span>Taller</span><span>Capacitación</span></div>
             </section>
 
             <section className="recognition-table-panel">

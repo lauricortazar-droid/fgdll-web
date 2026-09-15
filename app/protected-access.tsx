@@ -24,7 +24,7 @@ export async function ProtectedAccess({
     redirect(`/solicitar-acceso?return_to=${encodeURIComponent(returnTo)}`);
   }
   if (profile && allowedRoles?.length && !allowedRoles.includes(profile.role)) {
-    redirect("/portal?access=denied");
+    redirect("/lider?access=denied");
   }
 
   return (

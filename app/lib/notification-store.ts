@@ -79,7 +79,7 @@ async function sendSms(to: string, body: string) {
 }
 
 export function announcementHtml(title: string, summary: string, body: string) {
-  return `<h2>${escapeHtml(title)}</h2>${summary ? `<p><strong>${escapeHtml(summary)}</strong></p>` : ""}<p>${escapeHtml(body).replace(/\n/g, "<br>")}</p><p><a href="https://fgdll.org/portal#avisos">Abrir Portal FGDLL</a></p>`;
+  return `<h2>${escapeHtml(title)}</h2>${summary ? `<p><strong>${escapeHtml(summary)}</strong></p>` : ""}<p>${escapeHtml(body).replace(/\n/g, "<br>")}</p><p><a href="https://fgdll.org/lider#avisos">Abrir Portal del Líder</a></p>`;
 }
 
 export async function notifyRecipients(

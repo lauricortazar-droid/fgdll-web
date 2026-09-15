@@ -473,8 +473,8 @@ export async function reviewAccessRequest(profile: PortalProfile, input: { id: s
     await notifyRecipients(
       [{ email: String(request.requester_email ?? ""), name: String(request.requester_name ?? ""), phone: String(request.phone ?? "") }],
       "Tu acceso al Portal FGDLL fue activado",
-      `<h2>Acceso activado</h2><p>Hola ${safeText(request.requester_name, 160) || "Guerrero de la Luz"}, tu perfil del Portal FGDLL ya fue activado.</p><p>Entra a <a href="https://fgdll.org/portal">fgdll.org/portal</a>.</p>`,
-      "FGDLL: tu acceso al Portal FGDLL fue activado. Entra a https://fgdll.org/portal",
+      `<h2>Acceso activado</h2><p>Hola ${safeText(request.requester_name, 160) || "Guerrero de la Luz"}, tu perfil del Portal del Líder ya fue activado.</p><p>Entra a <a href="https://fgdll.org/lider">fgdll.org/lider</a>.</p>`,
+      "FGDLL: tu acceso al Portal del Líder fue activado. Entra a https://fgdll.org/lider",
     );
     const { addPendingDistributionContact } = await import("./distribution-store");
     await addPendingDistributionContact(primaryAdminEmail(), {
@@ -619,8 +619,8 @@ export async function savePortalUser(profile: PortalProfile, input: PortalUserIn
     await notifyRecipients(
       [{ email, name, phone }],
       "Tu acceso al Portal FGDLL fue activado",
-      `<h2>Acceso activado</h2><p>${name || email}, tu acceso al Portal FGDLL ya está activo.</p><p>Entra a <a href="https://fgdll.org/portal">fgdll.org/portal</a>.</p>`,
-      "FGDLL: tu acceso al Portal FGDLL fue activado. Entra a https://fgdll.org/portal",
+      `<h2>Acceso activado</h2><p>${name || email}, tu acceso al Portal del Líder ya está activo.</p><p>Entra a <a href="https://fgdll.org/lider">fgdll.org/lider</a>.</p>`,
+      "FGDLL: tu acceso al Portal del Líder fue activado. Entra a https://fgdll.org/lider",
     );
   }
   return { email, role, zone, groupId, centerId, active };

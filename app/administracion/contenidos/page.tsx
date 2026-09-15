@@ -247,7 +247,7 @@ export default function ContentAdminPage() {
   }
 
   if (loading) return <><SubHeader label="Administración de contenidos" /><main className="content-admin"><div className="shell panel-loading full-page">Preparando las bibliotecas institucionales…</div></main><SubFooter /></>;
-  if (!isAdmin) return <><SubHeader label="Administración de contenidos" /><main className="content-admin"><section className="section"><div className="shell"><div className="access-needed"><span>Acceso administrativo</span><h1>Esta sección está reservada para administración.</h1><p>Tu sesión sigue activa, pero tu perfil no tiene permiso para publicar o borrar contenido institucional.</p><Link className="button button-gold" href="/portal">Volver al portal</Link></div></div></section></main><SubFooter /></>;
+  if (!isAdmin) return <><SubHeader label="Administración de contenidos" /><main className="content-admin"><section className="section"><div className="shell"><div className="access-needed"><span>Acceso administrativo</span><h1>Esta sección está reservada para administración.</h1><p>Tu sesión sigue activa, pero tu perfil no tiene permiso para publicar o borrar contenido institucional.</p><Link className="button button-gold" href="/lider">Volver al portal</Link></div></div></section></main><SubFooter /></>;
 
   return <>
     <SubHeader label="Administración de contenidos" />

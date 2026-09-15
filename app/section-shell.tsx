@@ -46,15 +46,15 @@ export function SubHeader({ label }: { label: string }) {
           <Link href="/#agenda" onClick={() => setOpen(false)}>
             Agenda
           </Link>
-          <Link href="/universidad" onClick={() => setOpen(false)}>
-            Universidad
+          <Link href="/formacion" onClick={() => setOpen(false)}>
+            Formación
           </Link>
           <Link
             className="button button-gold button-small"
             href="/lider"
             onClick={() => setOpen(false)}
           >
-            Acceso de liderazgo
+            Portal del Líder
           </Link>
           <Link
             className="button button-small nav-report-link"

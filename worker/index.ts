@@ -16,7 +16,7 @@ interface Env extends FgdllRuntimeEnv {
 
 const AUTHENTICATED_EMAIL_HEADER = "oai-authenticated-user-email";
 const SIGN_IN_ONLY_PREFIXES = ["/solicitar-acceso", "/centros/acceso"];
-const ACTIVE_ACCESS_PREFIXES = ["/portal", "/lider", "/testimonios", "/materiales", "/directorio/gestion"];
+const ACTIVE_ACCESS_PREFIXES = ["/portal", "/lider", "/materiales", "/directorio/gestion"];
 const ADMIN_ONLY_PREFIXES = ["/admin", "/administracion", "/envios", "/oraculo"];
 
 function matchesPrefix(pathname: string, prefixes: string[]) {

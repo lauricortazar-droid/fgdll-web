@@ -128,11 +128,11 @@ function Header() {
           <a href="#agenda" onClick={() => setOpen(false)}>
             Agenda
           </a>
-          <Link href="/universidad" onClick={() => setOpen(false)}>
-            Universidad
+          <Link href="/formacion" onClick={() => setOpen(false)}>
+            Formación
           </Link>
           <Link href="/lider" onClick={() => setOpen(false)}>
-            Acceso de liderazgo
+            Portal del Líder
           </Link>
           <Link
             className="button button-small nav-report-link"
@@ -506,7 +506,7 @@ function Footer() {
           <a href="#directorio">Directorio</a>
           <Link href="/centros">Centros</Link>
           <Link href="/etica">Ética</Link>
-          <Link href="/portal">Liderazgo</Link>
+          <Link href="/lider">Liderazgo</Link>
         </div>
         <p>
           © 2026 FGDLL
@@ -716,7 +716,7 @@ export default function Home() {
               <a className="button button-gold" href="#directorio">
                 Encontrar un grupo
               </a>
-              <Link className="button button-ghost" href="/portal">
+                <Link className="button button-ghost" href="/lider">
                 Acceso de liderazgo
               </Link>
             </div>

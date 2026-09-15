@@ -438,7 +438,7 @@ export async function saveAnnouncement(profile: PortalProfile, input: ContentInp
       recipients,
       title,
       announcementHtml(title, safeText(input.summary, 600), body),
-      `FGDLL: ${title}. ${safeText(input.summary, 240) || "Tienes un nuevo aviso en el portal."} https://fgdll.org/portal#avisos`,
+      `FGDLL: ${title}. ${safeText(input.summary, 240) || "Tienes un nuevo aviso en el portal."} https://fgdll.org/lider#avisos`,
     );
     await audit(profile.email, "announcement_notifications_queued", "announcement", id, delivery);
   }

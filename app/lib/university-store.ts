@@ -57,7 +57,7 @@ const dpl2026Materials = [
 
 function db() {
   const value = getRuntimeEnv().DB;
-  if (!value) throw new PortalError("Universidad FGDLL no está disponible en este momento.", 503);
+  if (!value) throw new PortalError("Formación FGDLL no está disponible en este momento.", 503);
   return value;
 }
 
@@ -78,7 +78,7 @@ function phone(value: unknown) {
 }
 
 function requireAdmin(profile: PortalProfile) {
-  if (profile.role !== "admin") throw new PortalError("Solo Administración puede gestionar Universidad FGDLL.", 403);
+  if (profile.role !== "admin") throw new PortalError("Solo Administración puede gestionar Formación FGDLL.", 403);
 }
 
 function version(value: unknown) {

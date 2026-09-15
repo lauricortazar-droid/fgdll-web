@@ -58,6 +58,10 @@ export default function CentersPage() {
       description?: string;
       services?: string;
       mapsUrl?: string;
+      facebookUrl?: string;
+      population?: string;
+      includes?: string;
+      generalInfo?: string;
       verifiedAt?: string | null;
     }>,
   );
@@ -71,9 +75,10 @@ export default function CentersPage() {
   }, []);
   const families = [
     "Todos",
+    "Despertares",
     ...Array.from(
       new Set(centers.map((c) => c.network || c.familia || "Red FGDLL")),
-    ),
+    ).filter((item) => item !== "Despertares"),
   ];
   const filtered = useMemo(
     () =>
@@ -97,9 +102,7 @@ export default function CentersPage() {
         <section className="subhero centers-hero">
           <div className="shell subhero-grid">
             <div>
-              <span className="eyebrow light">
-                Centros con relación de trabajo
-              </span>
+                <span className="eyebrow light">Centros aliados</span>
               <h1>
                 Información clara
                 <br />
@@ -114,6 +117,12 @@ export default function CentersPage() {
               <div className="hero-actions">
                 <a className="button button-gold" href="#directorio-centros">
                   Buscar un centro
+                </a>
+                <a className="button button-ghost" href="tel:+529995481194">
+                  Llamar · 999 548 1194
+                </a>
+                <a className="button button-ghost" href="https://wa.me/529995481194?text=Hola%2C%20necesito%20orientaci%C3%B3n%20sobre%20un%20centro%20aliado" target="_blank" rel="noreferrer">
+                  WhatsApp
                 </a>
                 <Link className="button button-ghost" href="/centros/acceso">
                   Registrar o administrar mi centro
@@ -201,6 +210,13 @@ export default function CentersPage() {
                 <Link href="/centros/acceso">Soy director de un centro →</Link>
               </div>
             </div>
+            <div className="allied-network-strip" aria-label="Redes aliadas">
+              {["Gladiadores", "Despertares", "La Legión", "Amazonas", "Familia Fénix"].map((ally) => (
+                <button key={ally} className={family === ally ? "active" : ""} onClick={() => setFamily(ally)}>
+                  {ally}
+                </button>
+              ))}
+            </div>
             <div className="directory-tools">
               <label className="search-field">
                 <span>⌕</span>
@@ -265,8 +281,21 @@ export default function CentersPage() {
                           <dd>{c.services}</dd>
                         </div>
                       )}
+                      {c.population && (
+                        <div>
+                          <dt>Población</dt>
+                          <dd>{c.population}</dd>
+                        </div>
+                      )}
+                      {c.includes && (
+                        <div>
+                          <dt>Incluye</dt>
+                          <dd>{c.includes}</dd>
+                        </div>
+                      )}
                     </dl>
                     {c.description && <p>{c.description}</p>}
+                    {c.generalInfo && <details className="center-info"><summary>Info del centro</summary><p>{c.generalInfo}</p></details>}
                     <p className="center-pending-data">
                       <strong>Información por confirmar:</strong> población y
                       edades admitidas, tipo y duración de estancia, modelo de
@@ -291,6 +320,11 @@ export default function CentersPage() {
                       {c.mapsUrl && (
                         <a href={c.mapsUrl} target="_blank" rel="noreferrer">
                           Mapa
+                        </a>
+                      )}
+                      {c.facebookUrl && (
+                        <a href={c.facebookUrl} target="_blank" rel="noreferrer">
+                          Facebook
                         </a>
                       )}
                     </div>

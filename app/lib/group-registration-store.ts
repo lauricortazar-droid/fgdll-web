@@ -133,7 +133,7 @@ export async function reviewGroupRegistration(profile: PortalProfile, id: string
   await notifyRecipients(
     [{ email: requesterEmail, name: String(row.requester_name ?? ""), phone: "" }],
     "Tu grupo fue aprobado en FGDLL",
-    `<h2>Grupo aprobado</h2><p>Tu solicitud de grupo <strong>${proposal.name}</strong> fue aprobada y agregada al directorio.</p><p>Entra al portal: <a href="https://fgdll.org/portal">fgdll.org/portal</a>.</p>`,
+    `<h2>Grupo aprobado</h2><p>Tu solicitud de grupo <strong>${proposal.name}</strong> fue aprobada y agregada al directorio.</p><p>Entra al portal: <a href="https://fgdll.org/lider">fgdll.org/lider</a>.</p>`,
     `FGDLL: tu grupo ${proposal.name} fue aprobado.`,
   );
   return { ok: true, status: 'approved', groupId: group.id };

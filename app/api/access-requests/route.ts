@@ -136,7 +136,7 @@ export async function POST(request: Request) {
       organization: payload.groupName || payload.zone || "",
       requestNotes: `Solicitud general ${result.id}`,
     });
-    return Response.json({ ...result, accessGranted: true, universityUrl: "/universidad#aula" }, { status: 201 });
+    return Response.json({ ...result, accessGranted: true, universityUrl: "/formacion#aula" }, { status: 201 });
   } catch (error) {
     return apiError(error);
   }

@@ -39,6 +39,21 @@ const roleScope = {
   admin: { title: "Administración", text: "Puede gestionar directorio, usuarios, contenidos, experiencias y registros institucionales." },
 };
 
+const adminSections = [
+  ["01", "Público", "Portada, ayuda, FAQ, educación, modelos y enlaces públicos.", "/administracion/contenidos"],
+  ["02", "Líder", "Portal del Líder, propuestas, solicitudes y direcciones FGDLL.", "/lider"],
+  ["03", "Formación", "Aula, programas, inscripciones y contenidos formativos.", "/administracion/universidad"],
+  ["04", "Herramientas", "Marca de imágenes, testimonios y propuestas de edición.", "/administracion/marca"],
+  ["05", "Direcciones", "Afiliación, recursos humanos, normatividad y hacienda.", "/administracion/contenidos"],
+  ["06", "Centros aliados", "Altas, cambios, mapas, WhatsApp, Facebook e información general.", "/administracion/centros"],
+  ["07", "Calendario", "Agenda general y eventos conectados a Google Calendar.", "/administracion/experiencias"],
+  ["08", "Experiencias", "Experiencias por zona, escrituras y programación mensual.", "/administracion/experiencias"],
+  ["09", "Materiales", "Biblioteca, manuales, formatos, reglamentos y documentos.", "/administracion/contenidos"],
+  ["10", "Testimonios", "Temas, preguntas guía y biblioteca de testimonios.", "/administracion/contenidos"],
+  ["11", "Grupos", "Directorio, zonas, cambios y registro de grupos.", "/directorio/gestion"],
+  ["12", "Agenda", "Agenda operativa, avisos y actividades institucionales.", "/administracion/contenidos?tab=announcements"],
+];
+
 export function AdministrationDashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [inbox, setInbox] = useState<PendingInbox>(emptyInbox);
@@ -92,13 +107,20 @@ export function AdministrationDashboard() {
       {isAdmin && <Link href="/oraculo"><span>08</span><small>HERRAMIENTA PRIVADA</small><h3>El Oráculo</h3><p>Genera lecturas de tarot y horóscopo dentro del acceso exclusivo de Administración.</p><b>Abrir Oráculo →</b></Link>}
       {isAdmin && <Link href="/administracion/orientacion"><span>09</span><small>ORIENTACIÓN</small><h3>Solicitudes de familias</h3><p>Contacta, orienta, canaliza y registra notas privadas de seguimiento.</p><b>Abrir solicitudes →</b></Link>}
       {isAdmin && <Link href="/administracion/etica"><span>10</span><small>ÉTICA</small><h3>Reportes confidenciales</h3><p>Clasifica expedientes, documenta notas privadas y publica avances de seguimiento.</p><b>Gestionar reportes →</b></Link>}
-      {isAdmin && <Link href="/administracion/universidad"><span>11</span><small>UNIVERSIDAD</small><h3>Usuarios y reconocimientos</h3><p>Agrega usuarios por correo y revisa inscripciones, centros y solicitudes.</p><b>Administrar Universidad →</b></Link>}
+      {isAdmin && <Link href="/administracion/universidad"><span>11</span><small>FORMACIÓN</small><h3>Usuarios y reconocimientos</h3><p>Agrega usuarios por correo y revisa inscripciones, centros y solicitudes.</p><b>Administrar Formación →</b></Link>}
       {isAdmin && <Link href="/administracion/contenidos?tab=announcements"><span>12</span><small>AVISOS Y SOLICITUDES</small><h3>Bandeja general de pendientes</h3><p>Reúne solicitudes, contactos externos y asuntos que necesitan resolución.</p><b>Abrir bandeja →</b></Link>}
+      {isAdmin && <Link href="/administracion/contenidos?tab=announcements"><span>MS</span><small>MENSAJERÍA</small><h3>Mensajería</h3><p>Contactos pendientes para escribir por correo o WhatsApp.</p><b>Abrir mensajería →</b></Link>}
+      {isAdmin && <Link href="/administracion/contenidos?tab=announcements"><span>AV</span><small>AVISOS</small><h3>Avisos institucionales</h3><p>Publica, edita, archiva o elimina comunicados del portal.</p><b>Gestionar avisos →</b></Link>}
+      {isAdmin && <Link href="/reconoadmin"><span>RC</span><small>RECONOCIMIENTOS</small><h3>Expedir reconocimientos</h3><p>Agrega participantes y nuevos diseños de cursos, talleres o capacitaciones.</p><b>Abrir reconocimientos →</b></Link>}
     </div></div></section>
+    {isAdmin && <section className="section admin-master-sections"><div className="shell">
+      <div className="section-heading split-heading"><div><span className="eyebrow">Admin total</span><h2>Editar, eliminar y agregar en todo el portal.</h2></div><p>Estas son las 12 áreas que Administración debe poder gobernar desde un solo mapa de control.</p></div>
+      <div className="admin-master-grid">{adminSections.map(([number, title, text, href]) => <Link href={href} key={title}><span>{number}</span><h3>{title}</h3><p>{text}</p><b>Administrar →</b></Link>)}</div>
+    </div></section>}
     {isAdmin && <section className="section operations-center"><div className="shell"><div className="section-heading split-heading"><div><span className="eyebrow light">FGDLL — Sistema Institucional</span><h2>El centro de operaciones, organizado por responsabilidad.</h2></div><p>Esta vista reúne la estructura que después puede mantenerse desde ChatGPT Work sin mezclarla con la experiencia pública.</p></div><div className="operations-grid">
       <article><span>01</span><h3>Dirección y Consejo</h3><p>Gobernanza, decisiones, organigrama y políticas.</p></article>
       <Link href="/directorio/gestion"><span>02</span><h3>Directorio Nacional</h3><p>Grupos, zonas, verificaciones y cambios.</p></Link>
-      <Link href="/portal"><span>03</span><h3>Liderazgo</h3><p>Manuales, avisos, Universidad y recursos.</p></Link>
+      <Link href="/lider"><span>03</span><h3>Liderazgo</h3><p>Manuales, avisos, Formación y recursos.</p></Link>
       <Link href="/#agenda"><span>04</span><h3>Agenda Nacional</h3><p>Experiencias, aniversarios y actividades.</p></Link>
       <Link href="/centros"><span>05</span><h3>Centros</h3><p>Directorio y atención residencial.</p></Link>
       <Link href="/etica"><span>06</span><h3>Ética y Educación</h3><p>Derechos, protocolos y formación ética.</p></Link>

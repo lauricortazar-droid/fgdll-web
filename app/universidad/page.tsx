@@ -1,12 +1,5 @@
-import type { Metadata } from "next";
-import { UniversityPortal } from "./university-portal";
-
-export const metadata: Metadata = {
-  title: "Universidad FGDLL",
-  description: "Inscripciones, actividades, solicitudes y reconocimientos de Universidad FGDLL.",
-  alternates: { canonical: "https://fgdll.org/universidad" },
-};
+import { redirect } from "next/navigation";
 
 export default function UniversidadPage() {
-  return <UniversityPortal />;
+  redirect("/formacion");
 }

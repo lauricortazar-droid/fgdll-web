@@ -140,15 +140,15 @@ export default function AccessRequestPage() {
         body: JSON.stringify({ id: editingRequestId, name, phone, requestedRole: role, requestedRoleLabel: customRole, zone, groupId: groupId || null, reason, responseNote }),
       }).then(jsonResponse);
       if (result.autoApproved) {
-        setMessage({ kind: "ok", text: "Tu registro quedó activo. Ya puedes entrar al Portal FGDLL." });
-        window.location.href = "/portal";
+        setMessage({ kind: "ok", text: "Tu registro quedó activo. Ya puedes entrar al Portal del Líder." });
+        window.location.href = "/lider";
         return;
       }
       setMessage({
         kind: "ok",
         text: editingRequestId
-          ? "Tus datos fueron corregidos. Tu perfil de liderazgo volvió a revisión y Universidad continúa abierta para ti."
-          : "Tu solicitud ya está en el panel de administración. Universidad FGDLL quedó abierta para ti de inmediato.",
+          ? "Tus datos fueron corregidos. Tu perfil de liderazgo volvió a revisión y Formación continúa abierta para ti."
+          : "Tu solicitud ya está en el panel de administración. Formación FGDLL quedó abierta para ti de inmediato.",
         folio: result.id,
       });
       setEditingRequestId(null);
@@ -182,7 +182,7 @@ export default function AccessRequestPage() {
             {loading && <div className="panel-loading">Preparando tu solicitud…</div>}
             {!loading && profile && <div className="panel-success"><span>✓</span><div><h3>Tu acceso ya está activo</h3><p>Tienes un perfil de <strong>{profile.roleLabel}</strong>. Puedes entrar directamente a la gestión del directorio.</p><Link className="button button-gold" href="/directorio/gestion">Abrir panel</Link></div></div>}
             {!loading && !profile && correctionRequest && !editingRequestId && <div className="correction-callout"><span>!</span><div><small>ACCIÓN NECESARIA</small><h3>Administración necesita que corrijas información</h3><p>{correctionRequest.reviewNote || "Revisa los datos de tu solicitud y envíalos nuevamente."}</p><strong>Folio {correctionRequest.id}</strong><button className="button button-gold" onClick={() => startCorrection(correctionRequest)}>Corregir y reenviar</button></div></div>}
-            {!loading && !profile && activeRequest && !editingRequestId && <div className="request-in-review"><span>◎</span><div><small>FOLIO {activeRequest.id}</small><h3>Tu perfil de liderazgo está en revisión</h3><p>No necesitas enviar otra solicitud. La revisión corresponde únicamente a las funciones internas del Portal; tu acceso a Universidad FGDLL ya está abierto.</p><div className="pending-access-actions"><Link className="button button-gold" href="/universidad#aula">Ver videos y materiales →</Link><span className={`status-pill status-${activeRequest.status}`}>{statusLabels[activeRequest.status]}</span></div></div></div>}
+            {!loading && !profile && activeRequest && !editingRequestId && <div className="request-in-review"><span>◎</span><div><small>FOLIO {activeRequest.id}</small><h3>Tu perfil de liderazgo está en revisión</h3><p>No necesitas enviar otra solicitud. La revisión corresponde únicamente a las funciones internas del Portal; tu acceso a Formación FGDLL ya está abierto.</p><div className="pending-access-actions"><Link className="button button-gold" href="/formacion#aula">Ver videos y materiales →</Link><span className={`status-pill status-${activeRequest.status}`}>{statusLabels[activeRequest.status]}</span></div></div></div>}
             {showForm && <form className="modern-form" onSubmit={submit}>
               <fieldset><legend>1. ¿Cuál es tu función?</legend><div className="role-options">{roles.map((item) => <label key={item.value} className={role === item.value ? "selected" : ""}><input type="radio" name="role" value={item.value} checked={role === item.value} onChange={() => { setRole(item.value); setGroupId(""); setZone(""); }} /><span><b>{item.label}</b><small>{item.text}</small></span></label>)}</div>{isGeneralMember && <label><span>Otro: escribe tu función</span><input value={customRole} onChange={(event) => setCustomRole(event.target.value)} required maxLength={80} placeholder="Conciencia, Militante, Servidor, etc." /></label>}</fieldset>
               <fieldset><legend>2. Identificación</legend><div className="form-grid"><label><span>Nombre completo</span><input value={name} onChange={(event) => setName(event.target.value)} required maxLength={160} /></label><label><span>Teléfono / WhatsApp</span><input value={phone} onChange={(event) => setPhone(event.target.value)} inputMode="tel" placeholder="999 000 0000" maxLength={30} /></label></div></fieldset>
@@ -193,7 +193,7 @@ export default function AccessRequestPage() {
               <div className="form-submit-row">{editingRequestId && <button type="button" className="button button-outline" onClick={cancelCorrection}>Cancelar</button>}<button className="button button-gold form-submit" disabled={sending}>{sending ? "Enviando…" : editingRequestId ? "Guardar correcciones y reenviar" : isGeneralMember ? "Registrarme y entrar" : "Enviar solicitud al panel"}</button></div>
               <p className="form-footnote">Tu correo de inicio de sesión identifica la solicitud. No compartas contraseñas ni datos sensibles.</p>
             </form>}
-            {!showForm && message && <div className={`form-message standalone ${message.kind}`}>{message.text}{message.folio && <strong>Folio: {message.folio}</strong>}{message.kind === "ok" && <Link className="button button-gold" href="/universidad#aula">Entrar a Universidad →</Link>}</div>}
+            {!showForm && message && <div className={`form-message standalone ${message.kind}`}>{message.text}{message.folio && <strong>Folio: {message.folio}</strong>}{message.kind === "ok" && <Link className="button button-gold" href="/formacion#aula">Entrar a Formación →</Link>}</div>}
           </div>
 
           <aside className="request-history">

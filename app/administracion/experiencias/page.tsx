@@ -91,7 +91,7 @@ export default function ExperienceAdminPage() {
   }
 
   if (loading) return <><SubHeader label="Experiencias del mes" /><main className="content-admin"><div className="shell panel-loading full-page">Preparando el calendario de experiencias…</div></main><SubFooter /></>;
-  if (!isAdmin) return <><SubHeader label="Experiencias del mes" /><main className="content-admin"><section className="section"><div className="shell"><div className="access-needed"><span>Acceso administrativo</span><h1>Esta sección está reservada para administración.</h1><Link className="button button-gold" href="/portal">Volver al portal</Link></div></div></section></main><SubFooter /></>;
+  if (!isAdmin) return <><SubHeader label="Experiencias del mes" /><main className="content-admin"><section className="section"><div className="shell"><div className="access-needed"><span>Acceso administrativo</span><h1>Esta sección está reservada para administración.</h1><Link className="button button-gold" href="/lider">Volver al portal</Link></div></div></section></main><SubFooter /></>;
 
   return <>
     <SubHeader label="Experiencias del mes" />
