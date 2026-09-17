@@ -1,10 +1,9 @@
 import {
   archiveAnnouncementRead,
   deleteAnnouncement,
-  listAnnouncements,
-  markAnnouncementRead,
   saveAnnouncement,
 } from "../../lib/content-store";
+import { listAnnouncementsWithRevision, markAnnouncementReadCurrent } from "../../lib/announcement-read-store";
 import { apiError, readJson, requireApiProfile, requireSameOrigin } from "../../lib/portal-api";
 
 export const dynamic = "force-dynamic";
@@ -33,7 +32,7 @@ export async function GET(request: Request) {
   try {
     const { profile } = await requireApiProfile();
     const adminView = new URL(request.url).searchParams.get("admin") === "1";
-    const rows = await listAnnouncements(profile, adminView);
+    const rows = await listAnnouncementsWithRevision(profile, adminView);
     return Response.json({ announcements: rows.map(serialize) }, { headers: { "cache-control": "private, no-store" } });
   } catch (error) {
     return apiError(error);
@@ -75,7 +74,7 @@ export async function PUT(request: Request) {
     if (action === "archive" || action === "delete") {
       return Response.json(await archiveAnnouncementRead(profile, String(body.id ?? "")));
     }
-    const result = await markAnnouncementRead(profile, String(body.id ?? ""));
+    const result = await markAnnouncementReadCurrent(profile, String(body.id ?? ""));
     return Response.json(result);
   } catch (error) {
     return apiError(error);
