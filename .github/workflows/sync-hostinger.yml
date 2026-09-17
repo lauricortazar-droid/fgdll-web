@@ -44,17 +44,16 @@ jobs:
         run: |
           set -eu
           mkdir -p "$HOME/.ssh"
-          # Accept both normal multiline secrets and secrets pasted with literal \n.
           printf '%b\n' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r' > "$HOME/.ssh/hostinger_fgdll"
           chmod 600 "$HOME/.ssh/hostinger_fgdll"
 
           if ! grep -q '^-----BEGIN OPENSSH PRIVATE KEY-----$' "$HOME/.ssh/hostinger_fgdll"; then
-            echo "::error::HOSTINGER_SSH_PRIVATE_KEY does not contain an OpenSSH private key. Paste the private file, not the .pub key."
+            echo "::error::HOSTINGER_SSH_PRIVATE_KEY does not contain an OpenSSH private key."
             exit 1
           fi
 
           if ! ssh-keygen -y -P '' -f "$HOME/.ssh/hostinger_fgdll" >/dev/null 2>&1; then
-            echo "::error::The Hostinger SSH private key could not be parsed or it has a passphrase. Re-save the complete unencrypted OpenSSH private key in HOSTINGER_SSH_PRIVATE_KEY."
+            echo "::error::The Hostinger SSH private key could not be parsed or it has a passphrase."
             exit 1
           fi
 
@@ -65,31 +64,46 @@ jobs:
         if: steps.hostinger.outputs.ready == 'true'
         shell: bash
         run: |
-          ssh \
-            -i "$HOME/.ssh/hostinger_fgdll" \
-            -p "$HOSTINGER_PORT" \
-            -o BatchMode=yes \
-            "$HOSTINGER_USER@$HOSTINGER_HOST" \
-            'printf "Hostinger SSH OK\n"'
+          ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" 'printf "Hostinger SSH OK\n"'
+
+      - name: Inspect portal.fgdll.org document root
+        if: steps.hostinger.outputs.ready == 'true'
+        id: portalroot
+        shell: bash
+        run: |
+          ROOT=$(ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" '
+              set -eu
+              for d in \
+                "$HOME/domains/portal.fgdll.org/public_html" \
+                "$HOME/domains/fgdll.org/public_html/portal" \
+                "$HOME/domains/fgdll.org/public_html/portal.fgdll.org" \
+                "$HOME/public_html/portal"; do
+                if [ -d "$d" ]; then
+                  printf "%s\n" "$d"
+                  exit 0
+                fi
+              done
+              find "$HOME" -maxdepth 4 -type d \( -name public_html -o -name portal.fgdll.org \) 2>/dev/null | head -20
+            ' | head -1)
+          if [ -z "$ROOT" ]; then
+            echo "::error::Could not detect a document root for portal.fgdll.org"
+            exit 1
+          fi
+          echo "root=$ROOT" >> "$GITHUB_OUTPUT"
+          echo "Detected portal root: $ROOT"
+          ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" "printf 'Contents of portal root:\n'; ls -la '$ROOT' | head -40"
 
       - name: Sync repository mirror
         if: steps.hostinger.outputs.ready == 'true'
         shell: bash
         run: |
-          tar \
-            --exclude='.git' \
-            --exclude='node_modules' \
-            --exclude='dist' \
-            --exclude='.next' \
-            --exclude='.wrangler' \
-            --exclude='.sites-runtime' \
-            -czf - . | \
-          ssh \
-            -i "$HOME/.ssh/hostinger_fgdll" \
-            -p "$HOSTINGER_PORT" \
-            -o BatchMode=yes \
-            "$HOSTINGER_USER@$HOSTINGER_HOST" \
-            'set -eu
+          tar --exclude='.git' --exclude='node_modules' --exclude='dist' --exclude='.next' --exclude='.wrangler' --exclude='.sites-runtime' -czf - . | \
+          ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" '
+             set -eu
              DEST="$HOME/fgdll-web"
              NEXT="$HOME/.fgdll-web-next"
              PREV="$HOME/.fgdll-web-prev"
@@ -105,9 +119,5 @@ jobs:
         if: steps.hostinger.outputs.ready == 'true'
         shell: bash
         run: |
-          printf '%s\n' "$GITHUB_SHA" | ssh \
-            -i "$HOME/.ssh/hostinger_fgdll" \
-            -p "$HOSTINGER_PORT" \
-            -o BatchMode=yes \
-            "$HOSTINGER_USER@$HOSTINGER_HOST" \
-            'cat > "$HOME/fgdll-web/.github-synced-sha"'
+          printf '%s\n' "$GITHUB_SHA" | ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" 'cat > "$HOME/fgdll-web/.github-synced-sha"'
