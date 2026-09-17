@@ -20,14 +20,14 @@ const inboxQueries = [
     status, created_at, updated_at, '/administracion/etica' AS href,
     CASE WHEN severity IN ('critical', 'high') THEN 'urgent' ELSE 'normal' END AS priority
   FROM ethics_reports WHERE status != 'closed'`,
-	  `SELECT id, 'access' AS kind, 'Accesos' AS area, 'Solicitud de acceso al portal' AS title,
-	    requester_name AS contact_name, requester_email AS email, phone,
-	    status, created_at, updated_at, '/directorio/gestion' AS href, 'normal' AS priority
-	  FROM access_requests WHERE status IN ('pending', 'in_review', 'changes_requested') AND archived_at IS NULL`,
-	  `SELECT id, 'directory' AS kind, 'Directorio' AS area, 'Solicitud de cambio en directorio' AS title,
-	    requester_name AS contact_name, requester_email AS email, '' AS phone,
-	    status, created_at, updated_at, '/directorio/gestion' AS href, 'normal' AS priority
-	  FROM directory_change_requests WHERE status IN ('pending', 'in_review', 'changes_requested') AND archived_at IS NULL`,
+  `SELECT id, 'access' AS kind, 'Accesos' AS area, 'Solicitud de acceso al portal' AS title,
+    requester_name AS contact_name, requester_email AS email, phone,
+    status, created_at, updated_at, '/directorio/gestion' AS href, 'normal' AS priority
+  FROM access_requests WHERE status IN ('pending', 'in_review', 'changes_requested') AND archived_at IS NULL`,
+  `SELECT id, 'directory' AS kind, 'Directorio' AS area, 'Solicitud de cambio en directorio' AS title,
+    requester_name AS contact_name, requester_email AS email, '' AS phone,
+    status, created_at, updated_at, '/directorio/gestion' AS href, 'normal' AS priority
+  FROM directory_change_requests WHERE status IN ('pending', 'in_review', 'changes_requested') AND archived_at IS NULL`,
   `SELECT id, 'leader_report' AS kind, 'Líderes' AS area, 'Reporte identificado de liderazgo' AS title,
     reporter_name AS contact_name, reporter_email AS email, phone,
     status, created_at, updated_at, '/administracion/contenidos' AS href,
@@ -81,8 +81,11 @@ export async function listAdminInbox(profile: PortalProfile) {
   categoryResults.forEach((result, index) => {
     if (result.status === "rejected") console.error(`No fue posible cargar la categoría ${index + 1} de la bandeja administrativa.`, result.reason);
   });
-  const readRevisions = new Map((readResult.results ?? []).map((row) => [String(row.item_key), String(row.source_updated_at)]));
-  const archivedKeys = new Set((readResult.results ?? []).filter((row) => row.archived_at).map((row) => String(row.item_key)));
+
+  const readState = new Map((readResult.results ?? []).map((row) => [String(row.item_key), {
+    sourceUpdatedAt: String(row.source_updated_at),
+    archived: Boolean(row.archived_at),
+  }]));
   const rows = availableCategories.flatMap((result) => result.results ?? []);
 
   const items: AdminInboxItem[] = rows.map((row) => {
@@ -90,14 +93,19 @@ export async function listAdminInbox(profile: PortalProfile) {
     const kind = String(row.kind);
     const itemKey = `${kind}:${id}`;
     const updatedAt = String(row.updated_at);
+    const state = readState.get(itemKey);
     return {
       id, kind, itemKey, updatedAt,
       area: String(row.area), title: String(row.title),
       contactName: String(row.contact_name ?? ""), email: String(row.email ?? ""), phone: String(row.phone ?? ""),
       status: String(row.status), createdAt: String(row.created_at),
-      href: String(row.href), priority: String(row.priority ?? "normal"), unread: readRevisions.get(itemKey) !== updatedAt,
+      href: String(row.href), priority: String(row.priority ?? "normal"), unread: state?.sourceUpdatedAt !== updatedAt,
     };
-  }).filter((item) => !archivedKeys.has(item.itemKey)).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 250);
+  }).filter((item) => {
+    const state = readState.get(item.itemKey);
+    return !(state?.archived && state.sourceUpdatedAt === item.updatedAt);
+  }).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 250);
+
   const byArea = items.reduce<Record<string, number>>((summary, item) => ({ ...summary, [item.area]: (summary[item.area] || 0) + 1 }), {});
   return { items, summary: { total: items.length, unread: items.filter((item) => item.unread).length, urgent: items.filter((item) => item.priority === "urgent").length, byArea } };
 }
@@ -120,9 +128,10 @@ export async function deleteAdminInboxItem(profile: PortalProfile, itemKey: stri
 export async function markAdminInboxRead(profile: PortalProfile, itemKey: string, sourceUpdatedAt: string) {
   if (profile.role !== "admin" && !isAdminEmail(profile.email)) throw new PortalError("Solo administración puede gestionar estos avisos.", 403);
   if (!/^[a-z_]+:.{1,80}$/.test(itemKey) || !sourceUpdatedAt.trim()) throw new PortalError("El aviso no es válido.");
-  await db().prepare(`INSERT INTO admin_inbox_reads (item_key, user_email, source_updated_at)
-    VALUES (?, ?, ?)
-    ON CONFLICT(item_key, user_email) DO UPDATE SET source_updated_at = excluded.source_updated_at, read_at = CURRENT_TIMESTAMP`)
+  await db().prepare(`INSERT INTO admin_inbox_reads (item_key, user_email, source_updated_at, archived_at)
+    VALUES (?, ?, ?, NULL)
+    ON CONFLICT(item_key, user_email) DO UPDATE SET source_updated_at = excluded.source_updated_at,
+      read_at = CURRENT_TIMESTAMP, archived_at = NULL`)
     .bind(itemKey, profile.email.toLowerCase(), sourceUpdatedAt.slice(0, 40)).run();
   return { itemKey, read: true };
 }
