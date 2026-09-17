@@ -13,7 +13,8 @@
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
     "validate:artifact": "bash scripts/validate-artifact.sh",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate"
+    "db:prepare-meta": "node scripts/ensure-0020-snapshot.mjs",
+    "db:generate": "npm run db:prepare-meta && bash scripts/sites-env.sh -- drizzle-kit generate"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
