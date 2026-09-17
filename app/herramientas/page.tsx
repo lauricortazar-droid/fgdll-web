@@ -19,6 +19,12 @@ export default function HerramientasPage() {
             <div><span style={{display:"block",color:"#c79b46",fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",marginBottom:7}}>Imagen institucional</span><strong style={{display:"block",fontSize:22,marginBottom:6}}>Marca de imágenes</strong><span style={{color:"#9c968a",fontSize:13,lineHeight:1.5}}>Coloca el escudo u otro logotipo, ajusta posición, tamaño y opacidad, y descarga el resultado.</span></div>
           </div>
         </Link>
+        <Link href="/herramientas/marca-videos" style={{display:"block",textDecoration:"none",color:"inherit",border:"1px solid #343027",borderRadius:20,padding:24,background:"#12110f",marginTop:16}}>
+          <div style={{display:"flex",alignItems:"center",gap:18}}>
+            <img src="/logo-gdll.png" alt="" style={{width:64,height:76,objectFit:"contain"}} />
+            <div><span style={{display:"block",color:"#c79b46",fontSize:10,fontWeight:800,letterSpacing:".14em",textTransform:"uppercase",marginBottom:7}}>Imagen institucional</span><strong style={{display:"block",fontSize:22,marginBottom:6}}>Marca de videos</strong><span style={{color:"#9c968a",fontSize:13,lineHeight:1.5}}>Sube un video, coloca hasta dos logotipos y texto, y descárgalo con la marca aplicada.</span></div>
+          </div>
+        </Link>
       </div>
     </main>
   );
