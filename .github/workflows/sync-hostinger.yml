@@ -1,0 +1,100 @@
+name: Sync Hostinger mirror
+
+on:
+  workflow_run:
+    workflows:
+      - Validate portal
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  sync:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    env:
+      HOSTINGER_HOST: 145.223.104.153
+      HOSTINGER_PORT: '65002'
+      HOSTINGER_USER: u697333779
+      HOSTINGER_SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
+
+    steps:
+      - name: Check Hostinger SSH configuration
+        id: hostinger
+        shell: bash
+        run: |
+          if [ -z "$HOSTINGER_SSH_PRIVATE_KEY" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Hostinger sync is prepared but HOSTINGER_SSH_PRIVATE_KEY is not configured yet."
+            exit 0
+          fi
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout validated main
+        if: steps.hostinger.outputs.ready == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Configure SSH
+        if: steps.hostinger.outputs.ready == 'true'
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "$HOSTINGER_SSH_PRIVATE_KEY" > "$HOME/.ssh/hostinger_fgdll"
+          chmod 600 "$HOME/.ssh/hostinger_fgdll"
+          ssh-keyscan -p "$HOSTINGER_PORT" "$HOSTINGER_HOST" >> "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+      - name: Verify Hostinger connection
+        if: steps.hostinger.outputs.ready == 'true'
+        shell: bash
+        run: |
+          ssh \
+            -i "$HOME/.ssh/hostinger_fgdll" \
+            -p "$HOSTINGER_PORT" \
+            -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" \
+            'printf "Hostinger SSH OK\n"'
+
+      - name: Sync repository mirror
+        if: steps.hostinger.outputs.ready == 'true'
+        shell: bash
+        run: |
+          tar \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='dist' \
+            --exclude='.next' \
+            --exclude='.wrangler' \
+            --exclude='.sites-runtime' \
+            -czf - . | \
+          ssh \
+            -i "$HOME/.ssh/hostinger_fgdll" \
+            -p "$HOSTINGER_PORT" \
+            -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" \
+            'set -eu
+             DEST="$HOME/fgdll-web"
+             NEXT="$HOME/.fgdll-web-next"
+             PREV="$HOME/.fgdll-web-prev"
+             rm -rf "$NEXT"
+             mkdir -p "$NEXT"
+             tar -xzf - -C "$NEXT"
+             rm -rf "$PREV"
+             if [ -d "$DEST" ]; then mv "$DEST" "$PREV"; fi
+             mv "$NEXT" "$DEST"
+             rm -rf "$PREV"'
+
+      - name: Record synced revision
+        if: steps.hostinger.outputs.ready == 'true'
+        shell: bash
+        run: |
+          printf '%s\n' "$GITHUB_SHA" | ssh \
+            -i "$HOME/.ssh/hostinger_fgdll" \
+            -p "$HOSTINGER_PORT" \
+            -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" \
+            'cat > "$HOME/fgdll-web/.github-synced-sha"'
