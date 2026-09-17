@@ -46,17 +46,8 @@ jobs:
           mkdir -p "$HOME/.ssh"
           printf '%b\n' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r' > "$HOME/.ssh/hostinger_fgdll"
           chmod 600 "$HOME/.ssh/hostinger_fgdll"
-
-          if ! grep -q '^-----BEGIN OPENSSH PRIVATE KEY-----$' "$HOME/.ssh/hostinger_fgdll"; then
-            echo "::error::HOSTINGER_SSH_PRIVATE_KEY does not contain an OpenSSH private key."
-            exit 1
-          fi
-
-          if ! ssh-keygen -y -P '' -f "$HOME/.ssh/hostinger_fgdll" >/dev/null 2>&1; then
-            echo "::error::The Hostinger SSH private key could not be parsed or it has a passphrase."
-            exit 1
-          fi
-
+          grep -q '^-----BEGIN OPENSSH PRIVATE KEY-----$' "$HOME/.ssh/hostinger_fgdll"
+          ssh-keygen -y -P '' -f "$HOME/.ssh/hostinger_fgdll" >/dev/null 2>&1
           ssh-keyscan -p "$HOSTINGER_PORT" "$HOSTINGER_HOST" >> "$HOME/.ssh/known_hosts"
           chmod 600 "$HOME/.ssh/known_hosts"
 
@@ -67,34 +58,30 @@ jobs:
           ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
             "$HOSTINGER_USER@$HOSTINGER_HOST" 'printf "Hostinger SSH OK\n"'
 
-      - name: Inspect portal.fgdll.org document root
+      - name: Inspect portal.fgdll.org document root and runtime
         if: steps.hostinger.outputs.ready == 'true'
         id: portalroot
         shell: bash
         run: |
+          ROOT="$HOME_PLACEHOLDER"
           ROOT=$(ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
-            "$HOSTINGER_USER@$HOSTINGER_HOST" '
-              set -eu
-              for d in \
-                "$HOME/domains/portal.fgdll.org/public_html" \
-                "$HOME/domains/fgdll.org/public_html/portal" \
-                "$HOME/domains/fgdll.org/public_html/portal.fgdll.org" \
-                "$HOME/public_html/portal"; do
-                if [ -d "$d" ]; then
-                  printf "%s\n" "$d"
-                  exit 0
-                fi
-              done
-              find "$HOME" -maxdepth 4 -type d \( -name public_html -o -name portal.fgdll.org \) 2>/dev/null | head -20
-            ' | head -1)
-          if [ -z "$ROOT" ]; then
-            echo "::error::Could not detect a document root for portal.fgdll.org"
-            exit 1
-          fi
+            "$HOSTINGER_USER@$HOSTINGER_HOST" 'printf "%s\n" "$HOME/public_html"')
           echo "root=$ROOT" >> "$GITHUB_OUTPUT"
           echo "Detected portal root: $ROOT"
           ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
-            "$HOSTINGER_USER@$HOSTINGER_HOST" "printf 'Contents of portal root:\n'; ls -la '$ROOT' | head -40"
+            "$HOSTINGER_USER@$HOSTINGER_HOST" '
+              set +e
+              printf "Portal root: %s\n" "$HOME/public_html"
+              printf "Node: "; node --version 2>&1 || true
+              printf "npm: "; npm --version 2>&1 || true
+              printf "npx: "; npx --version 2>&1 || true
+              printf "pm2: "; (pm2 --version 2>&1 | head -1) || true
+              printf "Passenger: "; (passenger-config --version 2>&1 | head -1) || true
+              printf "PHP: "; (php --version 2>&1 | head -1) || true
+              printf "Processes allowed: "; ulimit -u 2>&1 || true
+              printf "public_html package.json:\n"
+              cat "$HOME/public_html/package.json" 2>/dev/null || true
+            '
 
       - name: Sync repository mirror
         if: steps.hostinger.outputs.ready == 'true'
