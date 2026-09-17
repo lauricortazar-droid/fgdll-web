@@ -42,9 +42,22 @@ jobs:
         if: steps.hostinger.outputs.ready == 'true'
         shell: bash
         run: |
+          set -eu
           mkdir -p "$HOME/.ssh"
-          printf '%s\n' "$HOSTINGER_SSH_PRIVATE_KEY" > "$HOME/.ssh/hostinger_fgdll"
+          # Accept both normal multiline secrets and secrets pasted with literal \n.
+          printf '%b\n' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r' > "$HOME/.ssh/hostinger_fgdll"
           chmod 600 "$HOME/.ssh/hostinger_fgdll"
+
+          if ! grep -q '^-----BEGIN OPENSSH PRIVATE KEY-----$' "$HOME/.ssh/hostinger_fgdll"; then
+            echo "::error::HOSTINGER_SSH_PRIVATE_KEY does not contain an OpenSSH private key. Paste the private file, not the .pub key."
+            exit 1
+          fi
+
+          if ! ssh-keygen -y -P '' -f "$HOME/.ssh/hostinger_fgdll" >/dev/null 2>&1; then
+            echo "::error::The Hostinger SSH private key could not be parsed or it has a passphrase. Re-save the complete unencrypted OpenSSH private key in HOSTINGER_SSH_PRIVATE_KEY."
+            exit 1
+          fi
+
           ssh-keyscan -p "$HOSTINGER_PORT" "$HOSTINGER_HOST" >> "$HOME/.ssh/known_hosts"
           chmod 600 "$HOME/.ssh/known_hosts"
 
