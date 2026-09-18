@@ -1,4 +1,4 @@
-name: Sync Hostinger mirror
+name: Sync Hostinger mirror and tools
 
 on:
   workflow_run:
@@ -108,3 +108,54 @@ jobs:
         run: |
           printf '%s\n' "$GITHUB_SHA" | ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
             "$HOSTINGER_USER@$HOSTINGER_HOST" 'cat > "$HOME/fgdll-web/.github-synced-sha"'
+
+      - name: Prepare standalone tools for Hostinger
+        if: steps.hostinger.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -eu
+          rm -rf .hostinger-publish
+          mkdir -p .hostinger-publish/herramientas/marca-videos .hostinger-publish/marca
+          cp hostinger-static/herramientas/marca-videos/index.html \
+            .hostinger-publish/herramientas/marca-videos/index.html
+          cp -R public/marca/. .hostinger-publish/marca/
+          printf '%s\n' "$GITHUB_SHA" > .hostinger-publish/herramientas/marca-videos/.github-deployed-sha
+
+      - name: Deploy Marca de Videos to Hostinger public_html
+        if: steps.hostinger.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -eu
+          tar -C .hostinger-publish -czf - . | \
+          ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" '
+              set -eu
+              ROOT="$HOME/public_html"
+              NEXT="$HOME/.fgdll-tools-next"
+              DEST="$ROOT/herramientas/marca-videos"
+              PREV="$HOME/.fgdll-marca-videos-prev"
+              rm -rf "$NEXT"
+              mkdir -p "$NEXT"
+              tar -xzf - -C "$NEXT"
+              mkdir -p "$ROOT/herramientas" "$ROOT/marca"
+              rm -rf "$PREV"
+              if [ -d "$DEST" ]; then mv "$DEST" "$PREV"; fi
+              mv "$NEXT/herramientas/marca-videos" "$DEST"
+              cp -R "$NEXT/marca/." "$ROOT/marca/"
+              rm -rf "$NEXT" "$PREV"
+              test -f "$DEST/index.html"
+              test -f "$DEST/.github-deployed-sha"
+              test -f "$ROOT/marca/ringbearer.ttf"
+              test -f "$ROOT/marca/logo-1.png"
+              printf "Hostinger tool deployed: %s\n" "$DEST"
+            '
+
+      - name: Verify Hostinger deployed revision
+        if: steps.hostinger.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -eu
+          REMOTE_SHA=$(ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" 'cat "$HOME/public_html/herramientas/marca-videos/.github-deployed-sha"')
+          test "$REMOTE_SHA" = "$GITHUB_SHA"
+          echo "Hostinger public_html is on $REMOTE_SHA"
