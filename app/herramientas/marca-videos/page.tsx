@@ -25,7 +25,7 @@ export default function VideoEditor(){
  const [resources,setResources]=useState<BrandResource[]>([]),[catalogLoading,setCatalogLoading]=useState(true),[catalogError,setCatalogError]=useState(''),[admin,setAdmin]=useState(false);
  const [videoInfo,setVideoInfo]=useState<VideoInfo|null>(null),[scrub,setScrub]=useState(0);
  const [logo,setLogo]=useState<Picture|null>(null),[logoId,setLogoId]=useState(''),[showLogo,setShowLogo]=useState(true);
- const [logo2,setLogo2]=useState<Picture|null>(null),[logo2Id,setLogo2Id]=useState(''),[showLogo2,setShowLogo2]=useState(true),[secondEnabled,setSecondEnabled]=useState(true);
+ const [logo2,setLogo2]=useState<Picture|null>(null),[logo2Id,setLogo2Id]=useState(''),[showLogo2,setShowLogo2]=useState(true),[secondEnabled,setSecondEnabled]=useState(false);
  const [text,setText]=useState(''),[color,setColor]=useState('#ffffff'),[fontId,setFontId]=useState(''),[family,setFamily]=useState(''),[fontBusy,setFontBusy]=useState(false),[fontError,setFontError]=useState('');
  const [target,setTarget]=useState<Target>('logo'),[transforms,setTransforms]=useState({logo:initialLogo,logo2:initialLogo2,text:initialText});
  const [busy,setBusy]=useState(false),[progress,setProgress]=useState<number|null>(null),[status,setStatus]=useState('Sube un video para comenzar.'),[recordError,setRecordError]=useState('');
@@ -136,10 +136,71 @@ export default function VideoEditor(){
  }
 
  const t=transforms[target];
- return <main className="brand-app"><header className="brand-header"><Link href="/herramientas">← Herramientas FGDLL</Link>{admin&&<Link href="/administracion/marca">Administrar recursos</Link>}</header><div className="brand-container"><h1>Tu video, con identidad.</h1><p>Sube un video, agrega hasta dos logos y texto en Ringbearer, ajusta la posición y descárgalo con la marca aplicada.</p><div className="brand-editor-layout"><section className="brand-workspace"><label className="brand-upload">{videoInfo?'Cambiar video':'Subir video'}<input type="file" accept="video/*" onChange={e=>{uploadVideo(e.target.files?.[0]);e.target.value=''}}/></label><div className="brand-canvas-wrap" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();uploadVideo(e.dataTransfer.files[0])}}>{!videoInfo?<div className="brand-empty"><strong>Tu video aparecerá aquí</strong><span>Selecciona un archivo de video para comenzar.</span></div>:<canvas ref={canvasRef} aria-label="Video con logo y texto" onPointerDown={down} onPointerMove={move} onPointerUp={()=>{drag.current=null}} onPointerCancel={()=>{drag.current=null}}/>}<video ref={videoRef} playsInline onSeeked={()=>redraw()} onLoadedData={()=>redraw()} style={{position:'absolute',width:1,height:1,opacity:0,pointerEvents:'none'}}/></div>{videoInfo&&<><p className="brand-hint">{videoInfo.width} × {videoInfo.height} px · {Number.isFinite(videoInfo.duration)?`${Math.round(videoInfo.duration)} s`:'duración no disponible'} · Se exporta hasta {MAX_DIMENSION}px en su lado mayor.</p><label>Vista previa en el segundo {scrub.toFixed(1)}<input type="range" min={0} max={Number.isFinite(videoInfo.duration)?Math.max(videoInfo.duration-.1,0):0} step={.1} value={scrub} onChange={e=>scrubTo(Number(e.target.value))} disabled={busy}/></label></>}<p className="brand-status" role="status">{status}</p>{recordError&&<p role="alert" className="brand-error">{recordError}</p>}</section>
- <aside className="brand-controls"><section className="brand-card"><h2>1. Elige tu logo</h2>{catalogLoading&&<p>Cargando galería…</p>}{catalogError&&<p role="alert" className="brand-error">{catalogError} <button onClick={()=>void refresh()}>Reintentar</button></p>}<div className="brand-logo-gallery">{resources.filter(r=>r.kind==='logo').map(r=><button key={r.id} className={logoId===r.id?'selected':''} aria-pressed={logoId===r.id} onClick={()=>void chooseLogo(r)}><img src={r.url} alt=""/><span>{r.name}</span></button>)}</div><label className="brand-upload secondary">Subir mi propio logo<input type="file" accept="image/png" onChange={e=>{void uploadLogo(e.target.files?.[0],'logo');e.target.value=''}}/></label><label className="brand-check"><input type="checkbox" checked={showLogo} onChange={e=>setShowLogo(e.target.checked)}/>Mostrar logo</label></section>
- <section className="brand-card"><h2>Segundo logotipo</h2>{!secondEnabled?<button className="brand-primary" onClick={()=>{setSecondEnabled(true);setTarget('logo2')}}>Añadir un logotipo más</button>:<><p className="brand-hint">Elige otro logo de la galería o súbelo desde tu dispositivo.</p><div className="brand-logo-gallery">{resources.filter(r=>r.kind==='logo').map(r=><button key={r.id} className={logo2Id===r.id?'selected':''} aria-pressed={logo2Id===r.id} onClick={()=>void chooseLogo(r,'logo2')}><img src={r.url} alt=""/><span>{r.name}</span></button>)}</div><label className="brand-upload secondary">Subir segundo logo<input type="file" accept="image/png" onChange={e=>{void uploadLogo(e.target.files?.[0],'logo2');e.target.value=''}}/></label><label className="brand-check"><input type="checkbox" checked={showLogo2} onChange={e=>setShowLogo2(e.target.checked)}/>Mostrar segundo logo</label><button onClick={()=>{setSecondEnabled(false);setLogo2(null);setLogo2Id('');setShowLogo2(true);setTransforms(t=>({...t,logo2:initialLogo2}));if(target==='logo2')setTarget('logo')}}>Quitar segundo logo</button></>}</section>
- <section className="brand-card"><h2>2. Agrega texto</h2><label>Texto del logotipo<textarea rows={3} maxLength={240} value={text} placeholder="Nombre de tu grupo o frase" onChange={e=>{setText(e.target.value.split('\n').slice(0,6).join('\n'));setTarget('text')}}/></label><label>Tipografía<select value={fontId} onChange={e=>setFontId(e.target.value)}><option value="" disabled>Selecciona una tipografía</option>{resources.filter(r=>r.kind==='font').map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>{!catalogLoading&&!resources.some(r=>r.kind==='font')&&<p>No hay tipografías disponibles en la galería.</p>}{fontBusy&&<p role="status">Cargando tipografía…</p>}{fontError&&<p role="alert" className="brand-error">{fontError}</p>}<label>Color del texto<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label>{text&&<button onClick={()=>setText('')}>Quitar texto</button>}<p className="brand-hint">Hasta 6 líneas. El texto se añade sin fondo.</p>{fontId==='brand-ringbearer'&&<p className="brand-hint">Ringbearer: uso privado, no comercial. <a href="/marca/ringbearer-original.zip">Archivo original y condiciones</a>.</p>}</section>
- <section className="brand-card"><h2>3. Ajusta cada elemento</h2><div className="brand-actions"><button aria-pressed={target==='logo'} className={target==='logo'?'selected':''} onClick={()=>setTarget('logo')}>Logo 1</button>{secondEnabled&&<button aria-pressed={target==='logo2'} className={target==='logo2'?'selected':''} onClick={()=>setTarget('logo2')}>Logo 2</button>}<button aria-pressed={target==='text'} className={target==='text'?'selected':''} onClick={()=>setTarget('text')}>Texto</button></div><p className="brand-hint">Ajustando: {target==='logo'?'logo 1':target==='logo2'?'logo 2':'texto'}</p><div className="brand-positions">{positions.map((label,i)=><button key={label} aria-label={label} title={label} disabled={!videoInfo} onClick={()=>quick(i)}><span style={{justifySelf:['start','center','end'][i%3],alignSelf:['start','center','end'][Math.floor(i/3)]}}>•</span></button>)}</div><label>Tamaño: {Math.round(t.size*100)}%<input type="range" min=".05" max="1" step=".01" value={t.size} onChange={e=>update({size:Number(e.target.value)})}/></label><label>Opacidad: {Math.round(t.opacity*100)}%<input type="range" min=".1" max="1" step=".01" value={t.opacity} onChange={e=>update({opacity:Number(e.target.value)})}/></label><label>Rotación: {t.rotation}°<input type="range" min="-180" max="180" step="1" value={t.rotation} onChange={e=>update({rotation:Number(e.target.value)})}/></label><button onClick={()=>update(target==='logo'?initialLogo:target==='logo2'?initialLogo2:initialText)}>Restablecer {target==='logo'?'logo 1':target==='logo2'?'logo 2':'texto'}</button></section>
- <section className="brand-card brand-export"><h2>4. Descarga tu video</h2><button className="brand-primary" disabled={!videoInfo||busy||fontBusy||!!recordError||(!!text.trim()&&!family)} onClick={()=>void exportVideo()}>{busy?`Grabando… ${progress??0}%`:'Descargar video'}</button><p className="brand-hint">Tu video se procesa en este dispositivo, sin subirse a ningún servidor. La descarga tarda lo mismo que la duración del video y se guarda en WebM (o MP4 si tu navegador lo soporta). Funciona mejor en Chrome, Edge o Firefox actualizados; algunos navegadores de iPhone pueden no ser compatibles.</p></section></aside></div></div></main>;
+ return <main className="brand-app brand-video-artifact">
+  <div className="brand-container">
+   <p className="brand-eyebrow">FGDLL · HERRAMIENTAS INSTITUCIONALES</p>
+   <h1>Tu video, con identidad.</h1>
+   <p className="brand-lead">Sube un video, coloca hasta dos logotipos y un texto, ajusta la posición y descárgalo con la marca aplicada. Todo se procesa en tu dispositivo: nada se sube a ningún servidor.</p>
+
+   <div className="brand-editor-layout">
+    <section className="brand-card brand-workspace brand-video-workspace">
+     <label className="brand-upload brand-upload-compact">{videoInfo?'Cambiar video':'Subir video'}<input type="file" accept="video/*" onChange={e=>{uploadVideo(e.target.files?.[0]);e.target.value=''}}/></label>
+     <div className="brand-canvas-wrap" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();uploadVideo(e.dataTransfer.files[0])}}>
+      {!videoInfo?<div className="brand-empty"><strong>Tu video aparecerá aquí</strong><span>Selecciona un archivo para comenzar.</span></div>:<canvas ref={canvasRef} aria-label="Video con logo y texto" onPointerDown={down} onPointerMove={move} onPointerUp={()=>{drag.current=null}} onPointerCancel={()=>{drag.current=null}}/>}
+      <video ref={videoRef} playsInline onSeeked={()=>redraw()} onLoadedData={()=>redraw()} style={{position:'absolute',width:1,height:1,opacity:0,pointerEvents:'none'}}/>
+     </div>
+     {videoInfo&&<><p className="brand-hint">{videoInfo.width} × {videoInfo.height} px · {Number.isFinite(videoInfo.duration)?`${Math.round(videoInfo.duration)} s`:'duración no disponible'} · Se exporta hasta {MAX_DIMENSION}px en su lado mayor.</p><label>Vista previa en el segundo {scrub.toFixed(1)}<input type="range" min={0} max={Number.isFinite(videoInfo.duration)?Math.max(videoInfo.duration-.1,0):0} step={.1} value={scrub} onChange={e=>scrubTo(Number(e.target.value))} disabled={busy}/></label></>}
+     <p className="brand-status" role="status">{status}</p>
+     {recordError&&<p role="alert" className="brand-error">{recordError}</p>}
+    </section>
+
+    <aside className="brand-controls">
+     <section className="brand-card">
+      <h2>1. Logotipo principal</h2>
+      {catalogLoading&&<p className="brand-hint">Cargando recursos…</p>}
+      {catalogError&&<p role="alert" className="brand-error">{catalogError}</p>}
+      <label className="brand-upload brand-upload-compact secondary">Subir logo (PNG)<input type="file" accept="image/png" onChange={e=>{void uploadLogo(e.target.files?.[0],'logo');e.target.value=''}}/></label>
+      <label className="brand-check"><input type="checkbox" checked={showLogo} onChange={e=>setShowLogo(e.target.checked)}/>Mostrar logo</label>
+     </section>
+
+     <section className="brand-card">
+      <h2>Segundo logotipo</h2>
+      {!secondEnabled?
+       <button className="brand-add-logo" onClick={()=>{setSecondEnabled(true);setTarget('logo2')}}>Añadir un logotipo más</button>:
+       <div className="brand-second-logo">
+        <label className="brand-upload brand-upload-compact secondary">Subir segundo logo (PNG)<input type="file" accept="image/png" onChange={e=>{void uploadLogo(e.target.files?.[0],'logo2');e.target.value=''}}/></label>
+        <label className="brand-check"><input type="checkbox" checked={showLogo2} onChange={e=>setShowLogo2(e.target.checked)}/>Mostrar segundo logo</label>
+        <button onClick={()=>{setSecondEnabled(false);setLogo2(null);setLogo2Id('');setShowLogo2(true);setTransforms(t=>({...t,logo2:initialLogo2}));if(target==='logo2')setTarget('logo')}}>Quitar segundo logo</button>
+       </div>}
+     </section>
+
+     <section className="brand-card">
+      <h2>2 · Texto</h2>
+      <label>Texto del logotipo<textarea rows={3} maxLength={240} value={text} placeholder="Nombre de tu grupo o frase" onChange={e=>{setText(e.target.value.split('\n').slice(0,6).join('\n'));setTarget('text')}}/></label>
+      <label>Tipografía<select value={fontId} onChange={e=>setFontId(e.target.value)}><option value="" disabled>Selecciona una tipografía</option>{resources.filter(r=>r.kind==='font').map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+      {fontBusy&&<p role="status" className="brand-hint">Cargando tipografía…</p>}
+      {fontError&&<p role="alert" className="brand-error">{fontError}</p>}
+      <label>Color del texto<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label>
+     </section>
+
+     <section className="brand-card">
+      <h2>3 · Ajusta cada elemento</h2>
+      <div className="brand-actions"><button aria-pressed={target==='logo'} className={target==='logo'?'selected':''} onClick={()=>setTarget('logo')}>Logo 1</button>{secondEnabled&&<button aria-pressed={target==='logo2'} className={target==='logo2'?'selected':''} onClick={()=>setTarget('logo2')}>Logo 2</button>}<button aria-pressed={target==='text'} className={target==='text'?'selected':''} onClick={()=>setTarget('text')}>Texto</button></div>
+      <div className="brand-positions">{positions.map((label,i)=><button key={label} aria-label={label} title={label} disabled={!videoInfo} onClick={()=>quick(i)}><span style={{justifySelf:['start','center','end'][i%3],alignSelf:['start','center','end'][Math.floor(i/3)]}}>•</span></button>)}</div>
+      <label>Tamaño: {Math.round(t.size*100)}%<input type="range" min=".05" max="1" step=".01" value={t.size} onChange={e=>update({size:Number(e.target.value)})}/></label>
+      <label>Opacidad: {Math.round(t.opacity*100)}%<input type="range" min=".1" max="1" step=".01" value={t.opacity} onChange={e=>update({opacity:Number(e.target.value)})}/></label>
+      <label>Rotación: {t.rotation}°<input type="range" min="-180" max="180" step="1" value={t.rotation} onChange={e=>update({rotation:Number(e.target.value)})}/></label>
+      <label className="brand-check brand-all-video"><input type="checkbox" checked readOnly/>Mostrar durante todo el video</label>
+      <button className="brand-reset" onClick={()=>update(target==='logo'?initialLogo:target==='logo2'?initialLogo2:initialText)}>Restablecer</button>
+     </section>
+
+     <section className="brand-card brand-export">
+      <h2>4 · Descarga tu video</h2>
+      <button className="brand-primary" disabled={!videoInfo||busy||fontBusy||!!recordError||(!!text.trim()&&!family)} onClick={()=>void exportVideo()}>{busy?`Grabando… ${progress??0}%`:'Descargar video'}</button>
+      <p className="brand-hint">La descarga tarda lo mismo que la duración del video (se graba en tiempo real) y se guarda en WebM o MP4 según lo soporte tu navegador. Funciona mejor en Chrome, Edge o Firefox actualizados; en Safari/iPhone puede no estar disponible.</p>
+     </section>
+    </aside>
+   </div>
+  </div>
+ </main>;
 }
