@@ -1,0 +1,68 @@
+name: Diagnose Hostinger routing
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/diagnose-hostinger-routing.yml'
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    env:
+      HOSTINGER_HOST: 145.223.104.153
+      HOSTINGER_PORT: '65002'
+      HOSTINGER_USER: u697333779
+      HOSTINGER_SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure SSH
+        shell: bash
+        run: |
+          set -eu
+          mkdir -p "$HOME/.ssh"
+          printf '%b\n' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r' > "$HOME/.ssh/hostinger_fgdll"
+          chmod 600 "$HOME/.ssh/hostinger_fgdll"
+          ssh-keyscan -p "$HOSTINGER_PORT" "$HOSTINGER_HOST" >> "$HOME/.ssh/known_hosts"
+      - name: Inspect public_html and routing
+        shell: bash
+        run: |
+          ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" '
+              set +e
+              echo "--- HOME ---"
+              pwd
+              echo "--- PUBLIC_HTML TOP ---"
+              ls -la "$HOME/public_html" | sed -n "1,160p"
+              echo "--- TOOL DIR ---"
+              find "$HOME/public_html/herramientas/marca-videos" -maxdepth 2 -type f -printf "%p %s bytes\n" 2>/dev/null
+              echo "--- MARCA FILES ---"
+              find "$HOME/public_html/marca" -maxdepth 1 -type f -printf "%f %s bytes\n" 2>/dev/null | sort | sed -n "1,80p"
+              echo "--- HTACCESS ---"
+              for f in "$HOME/public_html/.htaccess" "$HOME/.htaccess"; do
+                if [ -f "$f" ]; then echo "### $f"; cat "$f"; fi
+              done
+              echo "--- INDEX HEAD ---"
+              sed -n "1,80p" "$HOME/public_html/index.html" 2>/dev/null || true
+              echo "--- POSSIBLE DOMAIN ROOTS ---"
+              find "$HOME" -maxdepth 3 -type d \( -name "portal.fgdll.org" -o -name "fgdll.org" -o -name "domains" \) -print 2>/dev/null
+            '
+      - name: Check public URLs
+        shell: bash
+        run: |
+          set +e
+          for u in \
+            "https://portal.fgdll.org/" \
+            "https://portal.fgdll.org/herramientas/marca-videos/" \
+            "https://portal.fgdll.org/herramientas/marca-videos/index.html" \
+            "https://fgdll.org/" \
+            "https://fgdll.org/herramientas/marca-videos/" \
+            "https://fgdll.org/herramientas/marca-videos/index.html"
+          do
+            echo "### $u"
+            curl -L -sS -o /tmp/body -D /tmp/headers "$u"
+            head -n 20 /tmp/headers
+            printf "BODY_HEAD: "
+            head -c 160 /tmp/body | tr '\n' ' '
+            echo
+          done
