@@ -58,29 +58,17 @@ jobs:
           ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
             "$HOSTINGER_USER@$HOSTINGER_HOST" 'printf "Hostinger SSH OK\n"'
 
-      - name: Inspect portal.fgdll.org document root and runtime
+      - name: Resolve Hostinger targets
         if: steps.hostinger.outputs.ready == 'true'
-        id: portalroot
         shell: bash
         run: |
-          ROOT="$HOME_PLACEHOLDER"
-          ROOT=$(ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
-            "$HOSTINGER_USER@$HOSTINGER_HOST" 'printf "%s\n" "$HOME/public_html"')
-          echo "root=$ROOT" >> "$GITHUB_OUTPUT"
-          echo "Detected portal root: $ROOT"
           ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
             "$HOSTINGER_USER@$HOSTINGER_HOST" '
-              set +e
-              printf "Portal root: %s\n" "$HOME/public_html"
-              printf "Node: "; node --version 2>&1 || true
-              printf "npm: "; npm --version 2>&1 || true
-              printf "npx: "; npx --version 2>&1 || true
-              printf "pm2: "; (pm2 --version 2>&1 | head -1) || true
-              printf "Passenger: "; (passenger-config --version 2>&1 | head -1) || true
-              printf "PHP: "; (php --version 2>&1 | head -1) || true
-              printf "Processes allowed: "; ulimit -u 2>&1 || true
-              printf "public_html package.json:\n"
-              cat "$HOME/public_html/package.json" 2>/dev/null || true
+              set -eu
+              printf "Repository mirror: %s\n" "$HOME/fgdll-web"
+              printf "Legacy static root: %s\n" "$HOME/public_html"
+              printf "Portal subdomain root: %s\n" "$HOME/domains/fgdll.org/public_html/portal"
+              printf "Hostinger backup root: %s\n" "$HOME/domains/fgdll.org/respaldo/public_html"
             '
 
       - name: Sync repository mirror
@@ -121,7 +109,7 @@ jobs:
           cp -R public/marca/. .hostinger-publish/marca/
           printf '%s\n' "$GITHUB_SHA" > .hostinger-publish/herramientas/marca-videos/.github-deployed-sha
 
-      - name: Deploy Marca de Videos to Hostinger public_html
+      - name: Deploy Marca de Videos to Hostinger targets
         if: steps.hostinger.outputs.ready == 'true'
         shell: bash
         run: |
@@ -130,24 +118,37 @@ jobs:
           ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
             "$HOSTINGER_USER@$HOSTINGER_HOST" '
               set -eu
-              ROOT="$HOME/public_html"
-              NEXT="$HOME/.fgdll-tools-next"
-              DEST="$ROOT/herramientas/marca-videos"
-              PREV="$HOME/.fgdll-marca-videos-prev"
-              rm -rf "$NEXT"
-              mkdir -p "$NEXT"
-              tar -xzf - -C "$NEXT"
-              mkdir -p "$ROOT/herramientas" "$ROOT/marca"
-              rm -rf "$PREV"
-              if [ -d "$DEST" ]; then mv "$DEST" "$PREV"; fi
-              mv "$NEXT/herramientas/marca-videos" "$DEST"
-              cp -R "$NEXT/marca/." "$ROOT/marca/"
-              rm -rf "$NEXT" "$PREV"
-              test -f "$DEST/index.html"
-              test -f "$DEST/.github-deployed-sha"
-              test -f "$ROOT/marca/ringbearer.ttf"
-              test -f "$ROOT/marca/logo-1.png"
-              printf "Hostinger tool deployed: %s\n" "$DEST"
+              STAGE="$HOME/.fgdll-tools-stage"
+              rm -rf "$STAGE"
+              mkdir -p "$STAGE"
+              tar -xzf - -C "$STAGE"
+
+              deploy_root() {
+                ROOT="$1"
+                mkdir -p "$ROOT/herramientas" "$ROOT/marca"
+                rm -rf "$ROOT/herramientas/marca-videos"
+                cp -R "$STAGE/herramientas/marca-videos" "$ROOT/herramientas/marca-videos"
+                cp -R "$STAGE/marca/." "$ROOT/marca/"
+                test -f "$ROOT/herramientas/marca-videos/index.html"
+                test -f "$ROOT/herramientas/marca-videos/.github-deployed-sha"
+                test -f "$ROOT/marca/ringbearer.ttf"
+                test -f "$ROOT/marca/logo-1.png"
+                printf "Deployed tool to %s\n" "$ROOT"
+              }
+
+              # Keep the legacy static mirror current.
+              deploy_root "$HOME/public_html"
+
+              # Restore the historical document-root layout used by portal.fgdll.org.
+              PORTAL_ROOT="$HOME/domains/fgdll.org/public_html/portal"
+              mkdir -p "$PORTAL_ROOT"
+              deploy_root "$PORTAL_ROOT"
+
+              # Keep the Hostinger backup tree current without changing the production Sites app.
+              BACKUP_ROOT="$HOME/domains/fgdll.org/respaldo/public_html"
+              deploy_root "$BACKUP_ROOT"
+
+              rm -rf "$STAGE"
             '
 
       - name: Verify Hostinger deployed revision
@@ -155,7 +156,35 @@ jobs:
         shell: bash
         run: |
           set -eu
-          REMOTE_SHA=$(ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
-            "$HOSTINGER_USER@$HOSTINGER_HOST" 'cat "$HOME/public_html/herramientas/marca-videos/.github-deployed-sha"')
-          test "$REMOTE_SHA" = "$GITHUB_SHA"
-          echo "Hostinger public_html is on $REMOTE_SHA"
+          ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" '
+              set -eu
+              for f in \
+                "$HOME/public_html/herramientas/marca-videos/.github-deployed-sha" \
+                "$HOME/domains/fgdll.org/public_html/portal/herramientas/marca-videos/.github-deployed-sha" \
+                "$HOME/domains/fgdll.org/respaldo/public_html/herramientas/marca-videos/.github-deployed-sha"
+              do
+                test -s "$f"
+                printf "%s: %s\n" "$f" "$(cat "$f")"
+              done
+            '
+
+      - name: Verify portal.fgdll.org public tool
+        if: steps.hostinger.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -eu
+          URL="https://portal.fgdll.org/herramientas/marca-videos/"
+          STATUS=""
+          for attempt in 1 2 3 4 5 6; do
+            STATUS=$(curl -L -sS -o /tmp/portal-tool.html -w '%{http_code}' "$URL?rev=$GITHUB_SHA")
+            echo "Attempt $attempt: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              grep -q "Tu video, con identidad" /tmp/portal-tool.html
+              echo "Hostinger public tool is live at $URL"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::warning::Hostinger files are deployed, but portal.fgdll.org still returns HTTP $STATUS. DNS/CDN routing may still point at an unconfigured Hostinger origin."
+          exit 0
