@@ -26,7 +26,7 @@ export async function listBrandResources() {
   const result = await db().prepare("SELECT * FROM brand_resources").all<BrandRow>();
   const rows = new Map<string,BrandRow>(seeds.map(x=>[x.id,x]));
   for (const row of result.results ?? []) rows.set(row.id,row);
-  return [...rows.values()].filter(x=>!x.deleted).map(x=>({id:x.id,name:x.name,kind:x.kind,revision:x.revision,fileName:x.file_name,url:`/api/brand/file?id=${encodeURIComponent(x.id)}&v=${x.revision}`}));
+  return [...rows.values()].filter(x=>!x.deleted).map(x=>({id:x.id,name:x.name,kind:x.kind,revision:x.revision,fileName:x.file_name,url:x.kind==='text'?'':`/api/brand/file?id=${encodeURIComponent(x.id)}&v=${x.revision}`,content:x.kind==='text'?x.file_name:undefined}));
 }
 export async function validateBrandFile(file: File, kind: string) {
   if (!file.size || file.size > 10*1024*1024) throw new PortalError("El archivo debe pesar entre 1 byte y 10 MB.");
@@ -59,12 +59,18 @@ export async function saveBrandResource(profile: PortalProfile, form: FormData) 
   if(id && (!existing || existing.deleted)) throw new PortalError('El recurso ya no existe.',404);
   if(existing && Number(form.get('revision'))!==existing.revision) throw new PortalError('El recurso cambió. Actualiza la galería.',409);
   const kind=existing?.kind ?? String(form.get('kind'));
-  if(!['logo','font'].includes(kind)) throw new PortalError('Selecciona logo o tipografía.');
+  if(!['logo','font','text'].includes(kind)) throw new PortalError('Selecciona logo, tipografía o texto.');
+  const textValue=String(form.get('text') || '').trim();
   const fileValue=form.get('file'); const file=fileValue instanceof File && fileValue.size ? fileValue : null;
-  if(!existing && !file) throw new PortalError('Selecciona un archivo.');
+  if(kind==='text') {
+    if(!textValue || textValue.length>240) throw new PortalError('Escribe un texto de hasta 240 caracteres.');
+    if(file) throw new PortalError('Los textos predeterminados no requieren archivo.');
+  } else if(!existing && !file) throw new PortalError('Selecciona un archivo.');
   const next:BrandRow=existing ? {...existing,name,revision:existing.revision+1} : {id:crypto.randomUUID(),name,kind,static_url:null,file_key:null,file_name:'',file_type:'',file_size:0,deleted:0,revision:1};
   let uploaded:string|null=null;
-  if(file) {
+  if(kind==='text') {
+    Object.assign(next,{file_key:null,static_url:null,file_name:textValue,file_type:'text/plain',file_size:new TextEncoder().encode(textValue).length});
+  } else if(file) {
     const validated=await validateBrandFile(file,kind);
     uploaded=`brand/${next.id}/${crypto.randomUUID()}`;
     await bucket().put(uploaded,validated.bytes,{httpMetadata:{contentType:validated.contentType}});
@@ -87,6 +93,7 @@ export async function deleteBrandResource(profile:PortalProfile,input:Record<str
 export async function brandFile(id:string,request:Request) {
   const row=await brandRow(id);
   if(!row || row.deleted) throw new PortalError('Recurso no disponible.',404);
+  if(row.kind==='text') throw new PortalError('Este recurso es un texto y no tiene archivo.',404);
   if(row.static_url) return new Response(null,{status:307,headers:{location:new URL(row.static_url,request.url).href,'cache-control':'no-store'}});
   if(!row.file_key) throw new PortalError('Archivo no disponible.',404);
   const object=await bucket().get(row.file_key);

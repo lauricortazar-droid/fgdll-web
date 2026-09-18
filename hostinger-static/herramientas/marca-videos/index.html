@@ -22,7 +22,7 @@ input[type=range]{padding:0;accent-color:var(--gold)}input[type=color]{height:34
 .tabs{display:flex;gap:8px;flex-wrap:wrap}.tabs button.sel{background:var(--gold);color:#171109;border-color:var(--gold)}
 .pos{display:grid;grid-template-columns:repeat(3,44px);gap:8px;margin:10px 0}.pos button{width:44px;height:44px;color:var(--gold)}
 .timing{border-top:1px solid var(--line);margin-top:14px;padding-top:14px}.timinghead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}.timinghead span{color:var(--gold)}
-.twocol{display:grid;gap:8px}.primary{width:100%;background:#765c27;border-color:#765c27;color:#120f09}.muted{color:var(--muted);font-size:12px}.status{font-size:13px;font-weight:650}
+.twocol{display:grid;gap:8px}.textpresets{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.textpresets button{font-size:12px;min-height:36px}.timingjump{width:100%;margin-top:8px}.primary{width:100%;background:#765c27;border-color:#765c27;color:#120f09}.muted{color:var(--muted);font-size:12px}.status{font-size:13px;font-weight:650}
 @media(min-width:800px){main{padding:24px}.grid{grid-template-columns:minmax(0,1.32fr) minmax(360px,.98fr)}.workspace{position:sticky;top:16px}.twocol{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.pos{grid-template-columns:repeat(3,minmax(44px,1fr))}.pos button{width:100%}}
 </style>
@@ -48,6 +48,7 @@ input[type=range]{padding:0;accent-color:var(--gold)}input[type=color]{height:34
 <div class="gallery" id="gallery1"></div>
 <label class="upload">Subir logo PNG<input id="logoFile1" type="file" accept="image/png"></label>
 <label class="check"><input id="show1" type="checkbox" checked>Mostrar logo 1</label>
+<button class="timingjump" data-jump="logo">Elegir tiempo de Logo 1</button>
 </section>
 
 <section class="card">
@@ -58,15 +59,19 @@ input[type=range]{padding:0;accent-color:var(--gold)}input[type=color]{height:34
 <div class="gallery" id="gallery2"></div>
 <label class="upload">Subir segundo logo PNG<input id="logoFile2" type="file" accept="image/png"></label>
 <label class="check"><input id="show2" type="checkbox" checked>Mostrar logo 2</label>
+<button class="timingjump" data-jump="logo2">Elegir tiempo de Logo 2</button>
 <button id="remove2">Quitar segundo logo</button>
 </div>
 </section>
 
 <section class="card">
 <h2>2 · Texto</h2>
+<p class="muted">Elige un texto de la base institucional o escribe uno personalizado.</p>
+<div class="textpresets" id="textPresets"></div>
 <label>Texto<textarea id="txt" rows="3" maxlength="240" placeholder="Nombre de tu grupo o frase"></textarea></label>
 <label>Tipografía<select id="font"><option value="Ringbearer">Ringbearer</option><option value="Georgia">Georgia</option><option value="Arial">Arial</option></select></label>
 <label>Color<input id="color" type="color" value="#ffffff"></label>
+<button class="timingjump" data-jump="text">Elegir tiempo del Texto</button>
 </section>
 
 <section class="card">
@@ -99,6 +104,7 @@ input[type=range]{padding:0;accent-color:var(--gold)}input[type=color]{height:34
 const $=id=>document.getElementById(id);
 const canvas=$('canvas'),ctx=canvas.getContext('2d'),video=$('video');
 const baseLogos=Array.from({length:9},(_,i)=>({name:'Logo '+(i+1),url:'/marca/logo-'+(i+1)+'.png'}));
+const baseTexts=[{name:'FGDLL',text:'FGDLL'},{name:'Guerreros de la Luz',text:'GUERREROS DE LA LUZ'},{name:'Fraternidad',text:'FRATERNIDAD GUERREROS DE LA LUZ'}];
 const initial={logo:{x:.78,y:.78,size:.2,opacity:1,rotation:0},logo2:{x:.22,y:.78,size:.2,opacity:1,rotation:0},text:{x:.5,y:.88,size:.65,opacity:1,rotation:0}};
 let tr=structuredClone(initial),timing={logo:{all:true,start:0,end:0},logo2:{all:true,start:0,end:0},text:{all:true,start:0,end:0}};
 let target='logo',logo1=null,logo2=null,enabled2=false,duration=0,busy=false,sourceName='video';
@@ -106,6 +112,7 @@ function loadImg(src){return new Promise((res,rej)=>{const im=new Image();im.onl
 async function setLogo(which,src,btn){try{const im=await loadImg(src);if(which==='logo')logo1=im;else logo2=im;document.querySelectorAll('#gallery'+(which==='logo'?'1':'2')+' button').forEach(b=>b.classList.remove('sel'));if(btn)btn.classList.add('sel');draw()}catch{}}
 function gallery(el,which){baseLogos.forEach((l,i)=>{const b=document.createElement('button');b.innerHTML='<img src="'+l.url+'" alt=""><span>'+l.name+'</span>';b.onclick=()=>setLogo(which,l.url,b);el.appendChild(b);if(i===7&&which==='logo')setTimeout(()=>b.click(),0);if(i===0&&which==='logo2')setTimeout(()=>setLogo('logo2',l.url,b),0)})}
 gallery($('gallery1'),'logo');gallery($('gallery2'),'logo2');
+baseTexts.forEach(item=>{const b=document.createElement('button');b.type='button';b.textContent=item.name;b.onclick=()=>{$('txt').value=item.text;document.querySelector('[data-target="text"]').click();draw()};$('textPresets').appendChild(b)});
 function visible(which){const t=timing[which],ct=video.currentTime||0;return t.all||(ct>=t.start&&ct<=t.end)}
 function textBox(){ctx.font='200px '+$('font').value;const lines=$('txt').value.split('\n').slice(0,6),ms=lines.map(l=>ctx.measureText(l||' '));const w=Math.max(1,...ms.map(m=>m.width))+40,h=240*lines.length+40;return{lines,w,h}}
 function dims(which){const t=tr[which],w=canvas.width*t.size;if(which==='text'){const b=textBox();return{w,h:w*b.h/b.w}}const im=which==='logo'?logo1:logo2;return{w,h:im?w*im.height/im.width:w}}
@@ -114,6 +121,7 @@ function draw(){if(!duration)return;ctx.clearRect(0,0,canvas.width,canvas.height
 function syncControls(){const t=tr[target],tm=timing[target],label=target==='logo'?'Logo 1':target==='logo2'?'Logo 2':'Texto';$('size').value=t.size;$('opacity').value=t.opacity;$('rot').value=t.rotation;$('sizeVal').textContent=Math.round(t.size*100)+'%';$('opacityVal').textContent=Math.round(t.opacity*100)+'%';$('rotVal').textContent=t.rotation+'°';$('timingTitle').textContent='Tiempo de '+label;$('allTime').checked=tm.all;$('timeControls').hidden=tm.all;$('timingSummary').textContent=tm.all?'Todo el video':tm.start.toFixed(1)+' s — '+tm.end.toFixed(1)+' s';['start','end'].forEach(k=>{$(k).max=duration;$(k+'Num').max=duration;$(k).value=tm[k];$(k+'Num').value=tm[k];$(k+'Label').textContent=tm[k].toFixed(1)+' s'})}
 function setT(k,v){const tm=timing[target];v=Math.max(0,Math.min(duration,Number(v)||0));tm[k]=v;if(tm.start>tm.end){if(k==='start')tm.end=tm.start;else tm.start=tm.end}syncControls();draw()}
 document.querySelectorAll('[data-target]').forEach(b=>b.onclick=()=>{target=b.dataset.target;document.querySelectorAll('[data-target]').forEach(x=>x.classList.toggle('sel',x===b));syncControls()});
+document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>{const tab=document.querySelector('[data-target="'+b.dataset.jump+'"]');if(tab&&!tab.hidden){tab.click();document.querySelector('.timing').scrollIntoView({behavior:'smooth',block:'center'})}});
 ['size','opacity','rot'].forEach(id=>$(id).oninput=e=>{const k=id==='rot'?'rotation':id;tr[target][k]=Number(e.target.value);syncControls();draw()});
 $('allTime').onchange=e=>{timing[target].all=e.target.checked;syncControls();draw()};$('start').oninput=e=>setT('start',e.target.value);$('startNum').oninput=e=>setT('start',e.target.value);$('end').oninput=e=>setT('end',e.target.value);$('endNum').oninput=e=>setT('end',e.target.value);
 const pos=Array.from({length:9},(_,i)=>i);pos.forEach(i=>{const b=document.createElement('button');b.textContent='•';b.title=['Superior izquierda','Superior centro','Superior derecha','Centro izquierda','Centro','Centro derecha','Inferior izquierda','Inferior centro','Inferior derecha'][i];b.onclick=()=>{tr[target].x=[.12,.5,.88][i%3];tr[target].y=[.12,.5,.88][Math.floor(i/3)];draw()};$('positions').appendChild(b)});

@@ -1,4 +1,4 @@
-export type BrandResource={id:string; name:string; kind:'logo'|'font'; revision:number; fileName:string; url:string};
+export type BrandResource={id:string; name:string; kind:'logo'|'font'|'text'; revision:number; fileName:string; url:string; content?:string};
 export async function brandJson(response:Response){const data=await response.json();if(!response.ok)throw new Error(data.error || 'No se pudo completar la operación.');return data;}
 const loaded=new Map<string,Promise<string>>();
 export function loadBrandFont(resource:BrandResource):Promise<string>{
