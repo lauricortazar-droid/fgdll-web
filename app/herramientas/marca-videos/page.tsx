@@ -5,6 +5,7 @@ import {brandJson,loadBrandFont,type BrandResource} from '../../lib/brand-client
 import '../marca-imagenes/editor.css';
 
 type Transform={x:number;y:number;size:number;opacity:number;rotation:number};
+type Timing={all:boolean;start:number;end:number};
 type Target='logo'|'logo2'|'text';
 type Picture={el:HTMLImageElement;name:string;width:number;height:number};
 type VideoInfo={name:string;width:number;height:number;duration:number};
@@ -28,6 +29,7 @@ export default function VideoEditor(){
  const [logo2,setLogo2]=useState<Picture|null>(null),[logo2Id,setLogo2Id]=useState(''),[showLogo2,setShowLogo2]=useState(true),[secondEnabled,setSecondEnabled]=useState(false);
  const [text,setText]=useState(''),[color,setColor]=useState('#ffffff'),[fontId,setFontId]=useState(''),[family,setFamily]=useState(''),[fontBusy,setFontBusy]=useState(false),[fontError,setFontError]=useState('');
  const [target,setTarget]=useState<Target>('logo'),[transforms,setTransforms]=useState({logo:initialLogo,logo2:initialLogo2,text:initialText});
+ const [timings,setTimings]=useState<Record<Target,Timing>>({logo:{all:true,start:0,end:0},logo2:{all:true,start:0,end:0},text:{all:true,start:0,end:0}});
  const [busy,setBusy]=useState(false),[progress,setProgress]=useState<number|null>(null),[status,setStatus]=useState('Sube un video para comenzar.'),[recordError,setRecordError]=useState('');
  const videoRef=useRef<HTMLVideoElement>(null),canvasRef=useRef<HTMLCanvasElement>(null),drag=useRef<{id:number;target:Target;dx:number;dy:number}|null>(null);
  const logoRequest=useRef(0),logo2Request=useRef(0),videoUrlRef=useRef('');
@@ -72,6 +74,8 @@ export default function VideoEditor(){
    if(previous)URL.revokeObjectURL(previous);
    videoUrlRef.current=url;
    setVideoInfo({name:file.name,width:v.videoWidth,height:v.videoHeight,duration:v.duration});
+   const fullDuration=Number.isFinite(v.duration)&&v.duration>0?v.duration:0;
+   setTimings({logo:{all:true,start:0,end:fullDuration},logo2:{all:true,start:0,end:fullDuration},text:{all:true,start:0,end:fullDuration}});
    setScrub(0);
    const scale=Math.min(1,MAX_DIMENSION/Math.max(v.videoWidth,v.videoHeight));
    const canvas=canvasRef.current;
@@ -87,12 +91,25 @@ export default function VideoEditor(){
 
  function textLayout(ctx:CanvasRenderingContext2D){ctx.font=`200px "${family}"`;ctx.textAlign='left';ctx.textBaseline='alphabetic';const lines=text.split('\n').slice(0,6);const metrics=lines.map(line=>ctx.measureText(line||' '));const ascent=Math.max(200,...metrics.map(m=>m.actualBoundingBoxAscent||0)),descent=Math.max(50,...metrics.map(m=>m.actualBoundingBoxDescent||0));const lineHeight=ascent+descent+20;const width=Math.max(1,...metrics.map(m=>Math.max(m.width,m.actualBoundingBoxRight||0)+Math.max(0,m.actualBoundingBoxLeft||0)))+40;return{lines,metrics,width,height:lineHeight*lines.length+40,lineHeight,ascent}}
  function layerDims(which:Target,width:number,ctx:CanvasRenderingContext2D){const t=transforms[which];const w=width*t.size;if(which!=='text'){const pic=which==='logo2'?logo2:logo;return{w,h:pic?w*pic.height/pic.width:w}}const l=textLayout(ctx);return{w,h:w*l.height/l.width}}
- function drawLayer(ctx:CanvasRenderingContext2D,which:Target,width:number,height:number){if(which==='logo'&&(!logo||!showLogo))return;if(which==='logo2'&&(!logo2||!showLogo2||!secondEnabled))return;if(which==='text'&&(!text.trim()||!family||fontBusy))return;const t=transforms[which];const{w,h}=layerDims(which,width,ctx);ctx.save();ctx.translate(t.x*width,t.y*height);ctx.rotate(t.rotation*Math.PI/180);ctx.globalAlpha=t.opacity;if(which!=='text')ctx.drawImage((which==='logo2'?logo2:logo)!.el,-w/2,-h/2,w,h);else{const l=textLayout(ctx);ctx.translate(-w/2,-h/2);ctx.scale(w/l.width,w/l.width);ctx.font=`200px "${family}"`;ctx.fillStyle=color;ctx.textBaseline='alphabetic';l.lines.forEach((line,i)=>{const m=l.metrics[i];const left=Math.max(0,m.actualBoundingBoxLeft||0);ctx.fillText(line,20+left+(l.width-40-m.width-left)/2,20+l.ascent+i*l.lineHeight)})}ctx.restore()}
+ function drawLayer(ctx:CanvasRenderingContext2D,which:Target,width:number,height:number){if(which==='logo'&&(!logo||!showLogo))return;if(which==='logo2'&&(!logo2||!showLogo2||!secondEnabled))return;if(which==='text'&&(!text.trim()||!family||fontBusy))return;const timing=timings[which],time=videoRef.current?.currentTime??0;if(!timing.all&&(time<timing.start||time>timing.end))return;const t=transforms[which];const{w,h}=layerDims(which,width,ctx);ctx.save();ctx.translate(t.x*width,t.y*height);ctx.rotate(t.rotation*Math.PI/180);ctx.globalAlpha=t.opacity;if(which!=='text')ctx.drawImage((which==='logo2'?logo2:logo)!.el,-w/2,-h/2,w,h);else{const l=textLayout(ctx);ctx.translate(-w/2,-h/2);ctx.scale(w/l.width,w/l.width);ctx.font=`200px "${family}"`;ctx.fillStyle=color;ctx.textBaseline='alphabetic';l.lines.forEach((line,i)=>{const m=l.metrics[i];const left=Math.max(0,m.actualBoundingBoxLeft||0);ctx.fillText(line,20+left+(l.width-40-m.width-left)/2,20+l.ascent+i*l.lineHeight)})}ctx.restore()}
  function drawFrame(){const canvas=canvasRef.current,v=videoRef.current;if(!canvas||!v||!videoInfo)return;const ctx=canvas.getContext('2d');if(!ctx)return;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(v,0,0,canvas.width,canvas.height);drawLayer(ctx,'logo',canvas.width,canvas.height);drawLayer(ctx,'logo2',canvas.width,canvas.height);drawLayer(ctx,'text',canvas.width,canvas.height)}
  function redraw(){requestAnimationFrame(drawFrame)}
- useEffect(()=>{redraw()},[videoInfo,logo,showLogo,logo2,showLogo2,secondEnabled,text,color,family,fontBusy,transforms]);
+ useEffect(()=>{redraw()},[videoInfo,logo,showLogo,logo2,showLogo2,secondEnabled,text,color,family,fontBusy,transforms,timings]);
 
  function update(p:Partial<Transform>){setTransforms(t=>({...t,[target]:{...t[target],...p}}))}
+ function updateTiming(p:Partial<Timing>){
+  setTimings(all=>{
+   const max=videoInfo&&Number.isFinite(videoInfo.duration)?Math.max(0,videoInfo.duration):0;
+   const next={...all[target],...p};
+   next.start=clamp(Number(next.start)||0,0,max);
+   next.end=clamp(Number(next.end)||0,0,max);
+   if(next.start>next.end){
+    if(Object.prototype.hasOwnProperty.call(p,'start'))next.end=next.start;
+    else next.start=next.end;
+   }
+   return {...all,[target]:next};
+  });
+ }
  function point(e:PE<HTMLCanvasElement>){const r=e.currentTarget.getBoundingClientRect();return{x:(e.clientX-r.left)*e.currentTarget.width/r.width,y:(e.clientY-r.top)*e.currentTarget.height/r.height}}
  function down(e:PE<HTMLCanvasElement>){const c=e.currentTarget,ctx=c.getContext('2d');if(!ctx)return;const p=point(e);for(const which of ['text','logo2','logo'] as Target[]){if(which==='logo'&&(!logo||!showLogo)||which==='logo2'&&(!logo2||!showLogo2||!secondEnabled)||which==='text'&&(!text.trim()||!family))continue;const t=transforms[which],d=layerDims(which,c.width,ctx),angle=-t.rotation*Math.PI/180,dx=p.x-t.x*c.width,dy=p.y-t.y*c.height;const x=dx*Math.cos(angle)-dy*Math.sin(angle),y=dx*Math.sin(angle)+dy*Math.cos(angle);if(Math.abs(x)<=d.w/2+10&&Math.abs(y)<=d.h/2+10){setTarget(which);drag.current={id:e.pointerId,target:which,dx,dy};c.setPointerCapture(e.pointerId);break}}}
  function move(e:PE<HTMLCanvasElement>){const d=drag.current;if(!d||d.id!==e.pointerId)return;const p=point(e),c=e.currentTarget;setTransforms(t=>({...t,[d.target]:{...t[d.target],x:clamp((p.x-d.dx)/c.width,0,1),y:clamp((p.y-d.dy)/c.height,0,1)}}))}
@@ -136,6 +153,9 @@ export default function VideoEditor(){
  }
 
  const t=transforms[target];
+ const timing=timings[target];
+ const duration=videoInfo&&Number.isFinite(videoInfo.duration)?Math.max(0,videoInfo.duration):0;
+ const targetLabel=target==='logo'?'Logo 1':target==='logo2'?'Logo 2':'Texto';
  return <main className="brand-app brand-video-artifact">
   <div className="brand-container">
    <p className="brand-eyebrow">FGDLL · HERRAMIENTAS INSTITUCIONALES</p>
@@ -157,9 +177,11 @@ export default function VideoEditor(){
     <aside className="brand-controls">
      <section className="brand-card">
       <h2>1. Logotipo principal</h2>
-      {catalogLoading&&<p className="brand-hint">Cargando recursos…</p>}
-      {catalogError&&<p role="alert" className="brand-error">{catalogError}</p>}
-      <label className="brand-upload brand-upload-compact secondary">Subir logo (PNG)<input type="file" accept="image/png" onChange={e=>{void uploadLogo(e.target.files?.[0],'logo');e.target.value=''}}/></label>
+      {catalogLoading&&<p className="brand-hint">Cargando galería de logotipos…</p>}
+      {catalogError&&<p role="alert" className="brand-error">{catalogError} <button onClick={()=>void refresh()}>Reintentar</button></p>}
+      <p className="brand-hint">Elige un PNG sin fondo de la base institucional o sube el tuyo.</p>
+      <div className="brand-logo-gallery brand-video-logo-gallery">{resources.filter(r=>r.kind==='logo').map(r=><button key={r.id} className={logoId===r.id?'selected':''} aria-pressed={logoId===r.id} onClick={()=>{void chooseLogo(r,'logo');setTarget('logo')}}><img src={r.url} alt=""/><span>{r.name}</span></button>)}</div>
+      <label className="brand-upload brand-upload-compact secondary">Subir logo (PNG sin fondo)<input type="file" accept="image/png" onChange={e=>{void uploadLogo(e.target.files?.[0],'logo');e.target.value='';setTarget('logo')}}/></label>
       <label className="brand-check"><input type="checkbox" checked={showLogo} onChange={e=>setShowLogo(e.target.checked)}/>Mostrar logo</label>
      </section>
 
@@ -168,16 +190,18 @@ export default function VideoEditor(){
       {!secondEnabled?
        <button className="brand-add-logo" onClick={()=>{setSecondEnabled(true);setTarget('logo2')}}>Añadir un logotipo más</button>:
        <div className="brand-second-logo">
-        <label className="brand-upload brand-upload-compact secondary">Subir segundo logo (PNG)<input type="file" accept="image/png" onChange={e=>{void uploadLogo(e.target.files?.[0],'logo2');e.target.value=''}}/></label>
+        <p className="brand-hint">Elige otro PNG sin fondo de la misma base institucional.</p>
+        <div className="brand-logo-gallery brand-video-logo-gallery">{resources.filter(r=>r.kind==='logo').map(r=><button key={r.id} className={logo2Id===r.id?'selected':''} aria-pressed={logo2Id===r.id} onClick={()=>{void chooseLogo(r,'logo2');setTarget('logo2')}}><img src={r.url} alt=""/><span>{r.name}</span></button>)}</div>
+        <label className="brand-upload brand-upload-compact secondary">Subir segundo logo (PNG sin fondo)<input type="file" accept="image/png" onChange={e=>{void uploadLogo(e.target.files?.[0],'logo2');e.target.value='';setTarget('logo2')}}/></label>
         <label className="brand-check"><input type="checkbox" checked={showLogo2} onChange={e=>setShowLogo2(e.target.checked)}/>Mostrar segundo logo</label>
-        <button onClick={()=>{setSecondEnabled(false);setLogo2(null);setLogo2Id('');setShowLogo2(true);setTransforms(t=>({...t,logo2:initialLogo2}));if(target==='logo2')setTarget('logo')}}>Quitar segundo logo</button>
+        <button onClick={()=>{++logo2Request.current;setSecondEnabled(false);setLogo2(null);setLogo2Id('');setShowLogo2(true);setTransforms(t=>({...t,logo2:initialLogo2}));if(target==='logo2')setTarget('logo')}}>Quitar segundo logo</button>
        </div>}
      </section>
 
      <section className="brand-card">
       <h2>2 · Texto</h2>
       <label>Texto del logotipo<textarea rows={3} maxLength={240} value={text} placeholder="Nombre de tu grupo o frase" onChange={e=>{setText(e.target.value.split('\n').slice(0,6).join('\n'));setTarget('text')}}/></label>
-      <label>Tipografía<select value={fontId} onChange={e=>setFontId(e.target.value)}><option value="" disabled>Selecciona una tipografía</option>{resources.filter(r=>r.kind==='font').map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+      <label>Tipografía de la base institucional<select value={fontId} onChange={e=>setFontId(e.target.value)}><option value="" disabled>Selecciona una tipografía</option>{resources.filter(r=>r.kind==='font').map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
       {fontBusy&&<p role="status" className="brand-hint">Cargando tipografía…</p>}
       {fontError&&<p role="alert" className="brand-error">{fontError}</p>}
       <label>Color del texto<input type="color" value={color} onChange={e=>setColor(e.target.value)}/></label>
@@ -190,7 +214,15 @@ export default function VideoEditor(){
       <label>Tamaño: {Math.round(t.size*100)}%<input type="range" min=".05" max="1" step=".01" value={t.size} onChange={e=>update({size:Number(e.target.value)})}/></label>
       <label>Opacidad: {Math.round(t.opacity*100)}%<input type="range" min=".1" max="1" step=".01" value={t.opacity} onChange={e=>update({opacity:Number(e.target.value)})}/></label>
       <label>Rotación: {t.rotation}°<input type="range" min="-180" max="180" step="1" value={t.rotation} onChange={e=>update({rotation:Number(e.target.value)})}/></label>
-      <label className="brand-check brand-all-video"><input type="checkbox" checked readOnly/>Mostrar durante todo el video</label>
+      <div className="brand-timing">
+       <div className="brand-timing-head"><strong>Tiempo de {targetLabel}</strong>{videoInfo&&<span>{timing.all?'Todo el video':`${timing.start.toFixed(1)} s — ${timing.end.toFixed(1)} s`}</span>}</div>
+       <label className="brand-check brand-all-video"><input type="checkbox" checked={timing.all} onChange={e=>updateTiming({all:e.target.checked})}/>Mostrar durante todo el video</label>
+       {videoInfo&&!timing.all&&<div className="brand-time-controls">
+        <label>Empieza en <strong>{timing.start.toFixed(1)} s</strong><input type="range" min="0" max={duration} step=".1" value={timing.start} onChange={e=>updateTiming({start:Number(e.target.value)})}/><input type="number" min="0" max={duration} step=".1" value={timing.start} onChange={e=>updateTiming({start:Number(e.target.value)})}/></label>
+        <label>Termina en <strong>{timing.end.toFixed(1)} s</strong><input type="range" min="0" max={duration} step=".1" value={timing.end} onChange={e=>updateTiming({end:Number(e.target.value)})}/><input type="number" min="0" max={duration} step=".1" value={timing.end} onChange={e=>updateTiming({end:Number(e.target.value)})}/></label>
+       </div>}
+       {!videoInfo&&<p className="brand-hint">Sube un video para elegir el segundo exacto de entrada y salida.</p>}
+      </div>
       <button className="brand-reset" onClick={()=>update(target==='logo'?initialLogo:target==='logo2'?initialLogo2:initialText)}>Restablecer</button>
      </section>
 
