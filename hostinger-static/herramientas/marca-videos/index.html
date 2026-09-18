@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Marca de videos | FGDLL</title>
+<style>
+@font-face{font-family:Ringbearer;src:url('/marca/ringbearer.ttf') format('truetype');font-display:swap}
+:root{color-scheme:dark;--bg:#090909;--card:#11100f;--line:#383226;--gold:#d7a43f;--text:#f4f0e7;--muted:#aaa397}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{width:min(1180px,100%);margin:auto;padding:18px 14px 40px}.eyebrow{color:var(--gold);font-size:11px;font-weight:800;letter-spacing:.16em;margin:0 0 8px}
+h1{font-size:clamp(38px,7vw,70px);line-height:.98;letter-spacing:-.05em;margin:0 0 12px}.lead{max-width:720px;color:var(--muted);margin:0 0 28px}
+.grid{display:grid;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}.workspace{min-height:520px}.controls{display:grid;gap:14px}
+button,.upload,input,select,textarea{font:inherit}button,.upload{min-height:40px;border:1px solid #433d32;border-radius:8px;background:#171512;color:#eee7da;padding:8px 11px;font-weight:650;cursor:pointer}
+.upload{display:inline-block;position:relative;overflow:hidden}.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}.canvaswrap{margin-top:14px;background:#000;border:1px dashed #34302a;border-radius:12px;min-height:260px;display:grid;place-items:center;overflow:hidden}
+canvas{display:block;max-width:100%;max-height:65vh;touch-action:none}.empty{text-align:center;color:#aaa;padding:50px 20px}.empty strong{display:block;color:#fff;margin-bottom:4px}
+label{display:grid;gap:7px;margin:11px 0;color:#bbb3a7;font-size:13px}input:not([type=checkbox]),select,textarea{width:100%;border:1px solid #4a4438;border-radius:8px;background:#0d0c0b;color:#fff;min-height:42px;padding:9px 10px}
+input[type=range]{padding:0;accent-color:var(--gold)}input[type=color]{height:34px;min-height:34px;padding:4px}
+.check{display:flex;align-items:center;gap:9px;color:#fff;font-weight:650}.check input{width:16px;height:16px;accent-color:var(--gold)}
+.gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:230px;overflow:auto}.gallery button{min-height:92px;padding:7px 4px;display:grid;place-items:center;gap:5px}
+.gallery img{width:54px;height:54px;object-fit:contain}.gallery span{font-size:11px;color:#c6beb1}.gallery button.sel{border-color:var(--gold);background:#2a2112}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}.tabs button.sel{background:var(--gold);color:#171109;border-color:var(--gold)}
+.pos{display:grid;grid-template-columns:repeat(3,44px);gap:8px;margin:10px 0}.pos button{width:44px;height:44px;color:var(--gold)}
+.timing{border-top:1px solid var(--line);margin-top:14px;padding-top:14px}.timinghead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}.timinghead span{color:var(--gold)}
+.twocol{display:grid;gap:8px}.primary{width:100%;background:#765c27;border-color:#765c27;color:#120f09}.muted{color:var(--muted);font-size:12px}.status{font-size:13px;font-weight:650}
+@media(min-width:800px){main{padding:24px}.grid{grid-template-columns:minmax(0,1.32fr) minmax(360px,.98fr)}.workspace{position:sticky;top:16px}.twocol{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.pos{grid-template-columns:repeat(3,minmax(44px,1fr))}.pos button{width:100%}}
+</style>
+</head>
+<body>
+<main>
+<p class="eyebrow">FGDLL · HERRAMIENTAS INSTITUCIONALES</p>
+<h1>Tu video, con identidad.</h1>
+<p class="lead">Sube un video, coloca hasta dos logotipos y un texto, define cuándo aparece cada elemento y descarga el resultado. Todo se procesa en tu dispositivo.</p>
+<div class="grid">
+<section class="card workspace">
+<label class="upload">Subir video<input id="videoFile" type="file" accept="video/*"></label>
+<div class="canvaswrap"><div class="empty" id="empty"><strong>Tu video aparecerá aquí</strong>Selecciona un archivo para comenzar.</div><canvas id="canvas" hidden></canvas></div>
+<video id="video" playsinline hidden></video>
+<label id="scrubWrap" hidden>Vista previa en el segundo <span id="scrubLabel">0.0</span><input id="scrub" type="range" min="0" value="0" step=".1"></label>
+<p class="status" id="status">Sube un video para comenzar.</p>
+</section>
+
+<aside class="controls">
+<section class="card">
+<h2>1. Logotipo principal</h2>
+<p class="muted">Elige un PNG sin fondo de la base institucional o sube el tuyo.</p>
+<div class="gallery" id="gallery1"></div>
+<label class="upload">Subir logo PNG<input id="logoFile1" type="file" accept="image/png"></label>
+<label class="check"><input id="show1" type="checkbox" checked>Mostrar logo 1</label>
+</section>
+
+<section class="card">
+<h2>Segundo logotipo</h2>
+<button id="enable2">Añadir un logotipo más</button>
+<div id="logo2Panel" hidden>
+<p class="muted">Elige otro PNG sin fondo de la misma base.</p>
+<div class="gallery" id="gallery2"></div>
+<label class="upload">Subir segundo logo PNG<input id="logoFile2" type="file" accept="image/png"></label>
+<label class="check"><input id="show2" type="checkbox" checked>Mostrar logo 2</label>
+<button id="remove2">Quitar segundo logo</button>
+</div>
+</section>
+
+<section class="card">
+<h2>2 · Texto</h2>
+<label>Texto<textarea id="txt" rows="3" maxlength="240" placeholder="Nombre de tu grupo o frase"></textarea></label>
+<label>Tipografía<select id="font"><option value="Ringbearer">Ringbearer</option><option value="Georgia">Georgia</option><option value="Arial">Arial</option></select></label>
+<label>Color<input id="color" type="color" value="#ffffff"></label>
+</section>
+
+<section class="card">
+<h2>3 · Ajusta cada elemento</h2>
+<div class="tabs"><button data-target="logo" class="sel">Logo 1</button><button data-target="logo2" id="tab2" hidden>Logo 2</button><button data-target="text">Texto</button></div>
+<div class="pos" id="positions"></div>
+<label>Tamaño: <span id="sizeVal">20%</span><input id="size" type="range" min=".05" max="1" value=".2" step=".01"></label>
+<label>Opacidad: <span id="opacityVal">100%</span><input id="opacity" type="range" min=".1" max="1" value="1" step=".01"></label>
+<label>Rotación: <span id="rotVal">0°</span><input id="rot" type="range" min="-180" max="180" value="0" step="1"></label>
+<div class="timing">
+<div class="timinghead"><strong id="timingTitle">Tiempo de Logo 1</strong><span id="timingSummary">Todo el video</span></div>
+<label class="check"><input id="allTime" type="checkbox" checked>Mostrar durante todo el video</label>
+<div class="twocol" id="timeControls" hidden>
+<label>Empieza en <strong id="startLabel">0.0 s</strong><input id="start" type="range" min="0" step=".1" value="0"><input id="startNum" type="number" min="0" step=".1" value="0"></label>
+<label>Termina en <strong id="endLabel">0.0 s</strong><input id="end" type="range" min="0" step=".1" value="0"><input id="endNum" type="number" min="0" step=".1" value="0"></label>
+</div>
+</div>
+<button id="reset">Restablecer</button>
+</section>
+
+<section class="card">
+<h2>4 · Descarga tu video</h2>
+<button class="primary" id="export" disabled>Descargar video</button>
+<p class="muted">Se graba en tiempo real. El formato final depende de lo que soporte tu navegador; funciona mejor en Chrome, Edge o Firefox.</p>
+</section>
+</aside>
+</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const canvas=$('canvas'),ctx=canvas.getContext('2d'),video=$('video');
+const baseLogos=Array.from({length:9},(_,i)=>({name:'Logo '+(i+1),url:'/marca/logo-'+(i+1)+'.png'}));
+const initial={logo:{x:.78,y:.78,size:.2,opacity:1,rotation:0},logo2:{x:.22,y:.78,size:.2,opacity:1,rotation:0},text:{x:.5,y:.88,size:.65,opacity:1,rotation:0}};
+let tr=structuredClone(initial),timing={logo:{all:true,start:0,end:0},logo2:{all:true,start:0,end:0},text:{all:true,start:0,end:0}};
+let target='logo',logo1=null,logo2=null,enabled2=false,duration=0,busy=false,sourceName='video';
+function loadImg(src){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src})}
+async function setLogo(which,src,btn){try{const im=await loadImg(src);if(which==='logo')logo1=im;else logo2=im;document.querySelectorAll('#gallery'+(which==='logo'?'1':'2')+' button').forEach(b=>b.classList.remove('sel'));if(btn)btn.classList.add('sel');draw()}catch{}}
+function gallery(el,which){baseLogos.forEach((l,i)=>{const b=document.createElement('button');b.innerHTML='<img src="'+l.url+'" alt=""><span>'+l.name+'</span>';b.onclick=()=>setLogo(which,l.url,b);el.appendChild(b);if(i===7&&which==='logo')setTimeout(()=>b.click(),0);if(i===0&&which==='logo2')setTimeout(()=>setLogo('logo2',l.url,b),0)})}
+gallery($('gallery1'),'logo');gallery($('gallery2'),'logo2');
+function visible(which){const t=timing[which],ct=video.currentTime||0;return t.all||(ct>=t.start&&ct<=t.end)}
+function textBox(){ctx.font='200px '+$('font').value;const lines=$('txt').value.split('\n').slice(0,6),ms=lines.map(l=>ctx.measureText(l||' '));const w=Math.max(1,...ms.map(m=>m.width))+40,h=240*lines.length+40;return{lines,w,h}}
+function dims(which){const t=tr[which],w=canvas.width*t.size;if(which==='text'){const b=textBox();return{w,h:w*b.h/b.w}}const im=which==='logo'?logo1:logo2;return{w,h:im?w*im.height/im.width:w}}
+function layer(which){if(!visible(which))return;if(which==='logo'&&(!logo1||!$('show1').checked))return;if(which==='logo2'&&(!enabled2||!logo2||!$('show2').checked))return;if(which==='text'&&!$('txt').value.trim())return;const t=tr[which],d=dims(which);ctx.save();ctx.translate(t.x*canvas.width,t.y*canvas.height);ctx.rotate(t.rotation*Math.PI/180);ctx.globalAlpha=t.opacity;if(which!=='text'){ctx.drawImage(which==='logo'?logo1:logo2,-d.w/2,-d.h/2,d.w,d.h)}else{const b=textBox();ctx.translate(-d.w/2,-d.h/2);ctx.scale(d.w/b.w,d.w/b.w);ctx.font='200px '+$('font').value;ctx.fillStyle=$('color').value;ctx.textBaseline='top';b.lines.forEach((line,i)=>{const m=ctx.measureText(line);ctx.fillText(line,(b.w-m.width)/2,20+i*240)})}ctx.restore()}
+function draw(){if(!duration)return;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(video,0,0,canvas.width,canvas.height);layer('logo');layer('logo2');layer('text')}
+function syncControls(){const t=tr[target],tm=timing[target],label=target==='logo'?'Logo 1':target==='logo2'?'Logo 2':'Texto';$('size').value=t.size;$('opacity').value=t.opacity;$('rot').value=t.rotation;$('sizeVal').textContent=Math.round(t.size*100)+'%';$('opacityVal').textContent=Math.round(t.opacity*100)+'%';$('rotVal').textContent=t.rotation+'°';$('timingTitle').textContent='Tiempo de '+label;$('allTime').checked=tm.all;$('timeControls').hidden=tm.all;$('timingSummary').textContent=tm.all?'Todo el video':tm.start.toFixed(1)+' s — '+tm.end.toFixed(1)+' s';['start','end'].forEach(k=>{$(k).max=duration;$(k+'Num').max=duration;$(k).value=tm[k];$(k+'Num').value=tm[k];$(k+'Label').textContent=tm[k].toFixed(1)+' s'})}
+function setT(k,v){const tm=timing[target];v=Math.max(0,Math.min(duration,Number(v)||0));tm[k]=v;if(tm.start>tm.end){if(k==='start')tm.end=tm.start;else tm.start=tm.end}syncControls();draw()}
+document.querySelectorAll('[data-target]').forEach(b=>b.onclick=()=>{target=b.dataset.target;document.querySelectorAll('[data-target]').forEach(x=>x.classList.toggle('sel',x===b));syncControls()});
+['size','opacity','rot'].forEach(id=>$(id).oninput=e=>{const k=id==='rot'?'rotation':id;tr[target][k]=Number(e.target.value);syncControls();draw()});
+$('allTime').onchange=e=>{timing[target].all=e.target.checked;syncControls();draw()};$('start').oninput=e=>setT('start',e.target.value);$('startNum').oninput=e=>setT('start',e.target.value);$('end').oninput=e=>setT('end',e.target.value);$('endNum').oninput=e=>setT('end',e.target.value);
+const pos=Array.from({length:9},(_,i)=>i);pos.forEach(i=>{const b=document.createElement('button');b.textContent='•';b.title=['Superior izquierda','Superior centro','Superior derecha','Centro izquierda','Centro','Centro derecha','Inferior izquierda','Inferior centro','Inferior derecha'][i];b.onclick=()=>{tr[target].x=[.12,.5,.88][i%3];tr[target].y=[.12,.5,.88][Math.floor(i/3)];draw()};$('positions').appendChild(b)});
+$('reset').onclick=()=>{tr[target]=structuredClone(initial[target]);syncControls();draw()};
+$('enable2').onclick=()=>{enabled2=true;$('logo2Panel').hidden=false;$('enable2').hidden=true;$('tab2').hidden=false;draw()};$('remove2').onclick=()=>{enabled2=false;$('logo2Panel').hidden=true;$('enable2').hidden=false;$('tab2').hidden=true;if(target==='logo2'){target='logo';document.querySelector('[data-target="logo"]').click()}draw()};
+$('txt').oninput=draw;$('font').onchange=draw;$('color').oninput=draw;$('show1').onchange=draw;$('show2').onchange=draw;
+async function localLogo(file,which){if(!file)return;const url=URL.createObjectURL(file);await setLogo(which,url);URL.revokeObjectURL(url)}
+$('logoFile1').onchange=e=>{localLogo(e.target.files[0],'logo');e.target.value=''};$('logoFile2').onchange=e=>{localLogo(e.target.files[0],'logo2');e.target.value=''};
+$('videoFile').onchange=e=>{const f=e.target.files[0];if(!f)return;sourceName=f.name.replace(/\.[^.]+$/,'');const url=URL.createObjectURL(f);video.onloadedmetadata=()=>{duration=video.duration;const scale=Math.min(1,1280/Math.max(video.videoWidth,video.videoHeight));canvas.width=Math.round(video.videoWidth*scale);canvas.height=Math.round(video.videoHeight*scale);canvas.hidden=false;$('empty').hidden=true;$('scrubWrap').hidden=false;$('scrub').max=Math.max(0,duration-.1);for(const k of ['logo','logo2','text'])timing[k]={all:true,start:0,end:duration};$('export').disabled=false;$('status').textContent=video.videoWidth+' × '+video.videoHeight+' px · '+Math.round(duration)+' s. Video listo.';syncControls();draw()};video.src=url;video.load()};
+$('scrub').oninput=e=>{video.currentTime=Number(e.target.value);$('scrubLabel').textContent=Number(e.target.value).toFixed(1)};video.onseeked=draw;
+function captureStream(el){return el.captureStream?el.captureStream():el.mozCaptureStream?el.mozCaptureStream():null}
+function mime(){return ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||''}
+$('export').onclick=async()=>{if(busy||!duration)return;const m=mime(),cs=canvas.captureStream&&canvas.captureStream(30),vs=captureStream(video);if(!m||!cs||!vs){$('status').textContent='Este navegador no permite exportar el video. Prueba Chrome, Edge o Firefox.';return}busy=true;$('export').disabled=true;const stream=new MediaStream([...cs.getVideoTracks(),...vs.getAudioTracks()]),rec=new MediaRecorder(stream,{mimeType:m,videoBitsPerSecond:6000000}),chunks=[];rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);video.currentTime=0;video.muted=true;await new Promise(r=>setTimeout(r,80));rec.start(250);const loop=()=>{if(!video.paused&&!video.ended){draw();$('export').textContent='Grabando… '+Math.min(99,Math.round(video.currentTime/duration*100))+'%';requestAnimationFrame(loop)}};await video.play().catch(()=>{});requestAnimationFrame(loop);await new Promise(r=>video.onended=r);const blob=await new Promise(r=>{rec.onstop=()=>r(new Blob(chunks,{type:m.split(';')[0]}));rec.stop()});const a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=sourceName+'-FGDLL.'+(m.startsWith('video/mp4')?'mp4':'webm');a.click();setTimeout(()=>URL.revokeObjectURL(u),60000);video.currentTime=0;busy=false;$('export').disabled=false;$('export').textContent='Descargar video';$('status').textContent='Video listo. Se descargó a tu dispositivo.';draw()};
+syncControls();
+</script>
+</body></html>
