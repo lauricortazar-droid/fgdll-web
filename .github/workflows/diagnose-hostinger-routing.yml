@@ -24,45 +24,23 @@ jobs:
           printf '%b\n' "$HOSTINGER_SSH_PRIVATE_KEY" | tr -d '\r' > "$HOME/.ssh/hostinger_fgdll"
           chmod 600 "$HOME/.ssh/hostinger_fgdll"
           ssh-keyscan -p "$HOSTINGER_PORT" "$HOSTINGER_HOST" >> "$HOME/.ssh/known_hosts"
-      - name: Inspect public_html and routing
+      - name: Inspect Hostinger domain tree
         shell: bash
         run: |
           ssh -i "$HOME/.ssh/hostinger_fgdll" -p "$HOSTINGER_PORT" -o BatchMode=yes \
             "$HOSTINGER_USER@$HOSTINGER_HOST" '
               set +e
-              echo "--- HOME ---"
-              pwd
-              echo "--- PUBLIC_HTML TOP ---"
-              ls -la "$HOME/public_html" | sed -n "1,160p"
-              echo "--- TOOL DIR ---"
-              find "$HOME/public_html/herramientas/marca-videos" -maxdepth 2 -type f -printf "%p %s bytes\n" 2>/dev/null
-              echo "--- MARCA FILES ---"
-              find "$HOME/public_html/marca" -maxdepth 1 -type f -printf "%f %s bytes\n" 2>/dev/null | sort | sed -n "1,80p"
-              echo "--- HTACCESS ---"
-              for f in "$HOME/public_html/.htaccess" "$HOME/.htaccess"; do
-                if [ -f "$f" ]; then echo "### $f"; cat "$f"; fi
+              echo "--- DOMAINS TREE ---"
+              find "$HOME/domains" -maxdepth 4 -printf "%M %u %g %p\n" 2>/dev/null | sed -n "1,400p"
+              echo "--- FGDLL DOMAIN ROOT FILES ---"
+              for d in "$HOME/domains/fgdll.org" "$HOME/domains/fgdll.org/public_html" "$HOME/domains/fgdll.org/portal" "$HOME/domains/fgdll.org/portal/public_html"; do
+                if [ -e "$d" ]; then
+                  echo "### $d"
+                  ls -la "$d" | sed -n "1,160p"
+                  if [ -f "$d/.htaccess" ]; then echo "HTACCESS:"; cat "$d/.htaccess"; fi
+                  if [ -f "$d/index.html" ]; then echo "INDEX TITLE:"; grep -i -m1 "<title" "$d/index.html" || true; fi
+                fi
               done
-              echo "--- INDEX HEAD ---"
-              sed -n "1,80p" "$HOME/public_html/index.html" 2>/dev/null || true
-              echo "--- POSSIBLE DOMAIN ROOTS ---"
-              find "$HOME" -maxdepth 3 -type d \( -name "portal.fgdll.org" -o -name "fgdll.org" -o -name "domains" \) -print 2>/dev/null
+              echo "--- HOME SYMLINKS ---"
+              find "$HOME" -maxdepth 2 -type l -ls 2>/dev/null | sed -n "1,120p"
             '
-      - name: Check public URLs
-        shell: bash
-        run: |
-          set +e
-          for u in \
-            "https://portal.fgdll.org/" \
-            "https://portal.fgdll.org/herramientas/marca-videos/" \
-            "https://portal.fgdll.org/herramientas/marca-videos/index.html" \
-            "https://fgdll.org/" \
-            "https://fgdll.org/herramientas/marca-videos/" \
-            "https://fgdll.org/herramientas/marca-videos/index.html"
-          do
-            echo "### $u"
-            curl -L -sS -o /tmp/body -D /tmp/headers "$u"
-            head -n 20 /tmp/headers
-            printf "BODY_HEAD: "
-            head -c 160 /tmp/body | tr '\n' ' '
-            echo
-          done
