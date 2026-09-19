@@ -31,7 +31,18 @@ export default function VideoEditor(){
  const [target,setTarget]=useState<Target>('logo'),[transforms,setTransforms]=useState({logo:initialLogo,logo2:initialLogo2,text:initialText});
  const [timings,setTimings]=useState<Record<Target,Timing>>({logo:{all:true,start:0,end:0},logo2:{all:true,start:0,end:0},text:{all:true,start:0,end:0}});
  const [busy,setBusy]=useState(false),[progress,setProgress]=useState<number|null>(null),[status,setStatus]=useState('Sube un video para comenzar.'),[recordError,setRecordError]=useState('');
- const videoRef=useRef<HTMLVideoElement>(null),canvasRef=useRef<HTMLCanvasElement>(null),drag=useRef<{id:number;target:Target;dx:number;dy:number}|null>(null);
+ const videoRef=useRef<HTMLVideoElement>(null),canvasRef=useRef<HTMLCanvasElement>(null);
+ const pointers=useRef(new Map<number,{x:number;y:number}>());
+ const gesture=useRef<{
+  target:Target;
+  mode:'drag'|'pinch';
+  pointerIds:number[];
+  startCenter:{x:number;y:number};
+  startDistance:number;
+  startAngle:number;
+  start:Transform;
+  dragOffset:{x:number;y:number};
+ }|null>(null);
  const logoRequest=useRef(0),logo2Request=useRef(0),videoUrlRef=useRef('');
 
  useEffect(()=>{
@@ -111,8 +122,47 @@ export default function VideoEditor(){
   });
  }
  function point(e:PE<HTMLCanvasElement>){const r=e.currentTarget.getBoundingClientRect();return{x:(e.clientX-r.left)*e.currentTarget.width/r.width,y:(e.clientY-r.top)*e.currentTarget.height/r.height}}
- function down(e:PE<HTMLCanvasElement>){const c=e.currentTarget,ctx=c.getContext('2d');if(!ctx)return;const p=point(e);for(const which of ['text','logo2','logo'] as Target[]){if(which==='logo'&&(!logo||!showLogo)||which==='logo2'&&(!logo2||!showLogo2||!secondEnabled)||which==='text'&&(!text.trim()||!family))continue;const t=transforms[which],d=layerDims(which,c.width,ctx),angle=-t.rotation*Math.PI/180,dx=p.x-t.x*c.width,dy=p.y-t.y*c.height;const x=dx*Math.cos(angle)-dy*Math.sin(angle),y=dx*Math.sin(angle)+dy*Math.cos(angle);if(Math.abs(x)<=d.w/2+10&&Math.abs(y)<=d.h/2+10){setTarget(which);drag.current={id:e.pointerId,target:which,dx,dy};c.setPointerCapture(e.pointerId);break}}}
- function move(e:PE<HTMLCanvasElement>){const d=drag.current;if(!d||d.id!==e.pointerId)return;const p=point(e),c=e.currentTarget;setTransforms(t=>({...t,[d.target]:{...t[d.target],x:clamp((p.x-d.dx)/c.width,0,1),y:clamp((p.y-d.dy)/c.height,0,1)}}))}
+ function center(a:{x:number;y:number},b:{x:number;y:number}){return{x:(a.x+b.x)/2,y:(a.y+b.y)/2}}
+ function distance(a:{x:number;y:number},b:{x:number;y:number}){return Math.hypot(b.x-a.x,b.y-a.y)}
+ function angle(a:{x:number;y:number},b:{x:number;y:number}){return Math.atan2(b.y-a.y,b.x-a.x)}
+ function hitTarget(c:HTMLCanvasElement,p:{x:number;y:number}){const ctx=c.getContext('2d');if(!ctx)return null;const r=c.getBoundingClientRect();const pad=Math.max(18,28*c.width/Math.max(r.width,1));for(const which of ['text','logo2','logo'] as Target[]){if(which==='logo'&&(!logo||!showLogo)||which==='logo2'&&(!logo2||!showLogo2||!secondEnabled)||which==='text'&&(!text.trim()||!family))continue;const t=transforms[which],d=layerDims(which,c.width,ctx),a=-t.rotation*Math.PI/180,dx=p.x-t.x*c.width,dy=p.y-t.y*c.height;const x=dx*Math.cos(a)-dy*Math.sin(a),y=dx*Math.sin(a)+dy*Math.cos(a);if(Math.abs(x)<=d.w/2+pad&&Math.abs(y)<=d.h/2+pad)return which}return null}
+ function down(e:PE<HTMLCanvasElement>){
+  e.preventDefault();
+  const c=e.currentTarget,p=point(e);pointers.current.set(e.pointerId,p);
+  try{c.setPointerCapture(e.pointerId)}catch{}
+  const active=[...pointers.current.entries()];
+  if(active.length===1){
+   const which=hitTarget(c,p);if(!which){gesture.current=null;return}
+   setTarget(which);const t=transforms[which];
+   gesture.current={target:which,mode:'drag',pointerIds:[e.pointerId],startCenter:p,startDistance:0,startAngle:0,start:{...t},dragOffset:{x:p.x-t.x*c.width,y:p.y-t.y*c.height}};
+   setStatus('Elemento seleccionado. Arrástralo con un dedo; usa dos dedos para tamaño y rotación.');
+  }else if(active.length>=2){
+   const [a,b]=active.slice(0,2);const which=gesture.current?.target??target,p1=a[1],p2=b[1],m=center(p1,p2),t=transforms[which];
+   gesture.current={target:which,mode:'pinch',pointerIds:[a[0],b[0]],startCenter:m,startDistance:Math.max(1,distance(p1,p2)),startAngle:angle(p1,p2),start:{...t},dragOffset:{x:0,y:0}};
+  }
+ }
+ function move(e:PE<HTMLCanvasElement>){
+  if(!pointers.current.has(e.pointerId))return;e.preventDefault();
+  const c=e.currentTarget,p=point(e);pointers.current.set(e.pointerId,p);
+  const g=gesture.current;if(!g)return;
+  const active=g.pointerIds.map(id=>pointers.current.get(id)).filter(Boolean) as {x:number;y:number}[];
+  if(g.mode==='pinch'&&active.length>=2){
+   const p1=active[0],p2=active[1],m=center(p1,p2),ratio=distance(p1,p2)/Math.max(1,g.startDistance),delta=(angle(p1,p2)-g.startAngle)*180/Math.PI;
+   setTransforms(all=>({...all,[g.target]:{...all[g.target],x:clamp((g.start.x*c.width+(m.x-g.startCenter.x))/c.width,0,1),y:clamp((g.start.y*c.height+(m.y-g.startCenter.y))/c.height,0,1),size:clamp(g.start.size*ratio,.05,1.5),rotation:Math.round(g.start.rotation+delta)}}));
+  }else if(g.mode==='drag'&&active.length>=1){
+   const q=active[0];
+   setTransforms(all=>({...all,[g.target]:{...all[g.target],x:clamp((q.x-g.dragOffset.x)/c.width,0,1),y:clamp((q.y-g.dragOffset.y)/c.height,0,1)}}));
+  }
+ }
+ function endPointer(e:PE<HTMLCanvasElement>){
+  e.preventDefault();pointers.current.delete(e.pointerId);
+  try{e.currentTarget.releasePointerCapture(e.pointerId)}catch{}
+  const g=gesture.current;if(!g)return;
+  const remaining=[...pointers.current.entries()];
+  if(!remaining.length){gesture.current=null;return}
+  const [id,p]=remaining[0];const current=transforms[g.target];
+  gesture.current={target:g.target,mode:'drag',pointerIds:[id],startCenter:p,startDistance:0,startAngle:0,start:{...current},dragOffset:{x:p.x-current.x*e.currentTarget.width,y:p.y-current.y*e.currentTarget.height}};
+ }
  function quick(i:number){const c=canvasRef.current,ctx=c?.getContext('2d');if(!c||!ctx||!videoInfo)return;const d=layerDims(target,c.width,ctx),a=transforms[target].rotation*Math.PI/180;const mx=Math.min(.5,(Math.abs(d.w*Math.cos(a))+Math.abs(d.h*Math.sin(a)))/2/c.width+.02),my=Math.min(.5,(Math.abs(d.w*Math.sin(a))+Math.abs(d.h*Math.cos(a)))/2/c.height+.02);update({x:[mx,.5,1-mx][i%3],y:[my,.5,1-my][Math.floor(i/3)]})}
 
  function scrubTo(time:number){const v=videoRef.current;if(!v||!videoInfo)return;setScrub(time);v.currentTime=time}
@@ -161,16 +211,16 @@ export default function VideoEditor(){
   <div className="brand-container">
    <p className="brand-eyebrow">FGDLL · HERRAMIENTAS INSTITUCIONALES</p>
    <h1>Tu video, con identidad.</h1>
-   <p className="brand-lead">Sube un video, coloca hasta dos logotipos y un texto, define por separado cuándo aparece Logo 1, Logo 2 y Texto, y descárgalo con la marca aplicada. Todo se procesa en tu dispositivo: nada se sube a ningún servidor.</p>
+   <p className="brand-lead">Sube un video, coloca hasta dos logotipos y un texto, y ajústalos directamente sobre la pantalla. Un dedo mueve; dos dedos cambian tamaño y rotación. Todo se procesa en tu dispositivo.</p>
 
    <div className="brand-editor-layout">
     <section className="brand-card brand-workspace brand-video-workspace">
      <label className="brand-upload brand-upload-compact">{videoInfo?'Cambiar video':'Subir video'}<input type="file" accept="video/*" onChange={e=>{uploadVideo(e.target.files?.[0]);e.target.value=''}}/></label>
      <div className="brand-canvas-wrap" onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();uploadVideo(e.dataTransfer.files[0])}}>
-      {!videoInfo?<div className="brand-empty"><strong>Tu video aparecerá aquí</strong><span>Selecciona un archivo para comenzar.</span></div>:<canvas ref={canvasRef} aria-label="Video con logo y texto" onPointerDown={down} onPointerMove={move} onPointerUp={()=>{drag.current=null}} onPointerCancel={()=>{drag.current=null}}/>}
+      {!videoInfo?<div className="brand-empty"><strong>Tu video aparecerá aquí</strong><span>Selecciona un archivo para comenzar.</span></div>:<canvas ref={canvasRef} aria-label="Video con logo y texto. Toca un elemento para moverlo; pellizca con dos dedos para cambiar tamaño y rotación." onPointerDown={down} onPointerMove={move} onPointerUp={endPointer} onPointerCancel={endPointer} onPointerLeave={e=>{if(e.pointerType==='mouse'&&e.buttons===0)endPointer(e)}}/>}
       <video ref={videoRef} playsInline onSeeked={()=>redraw()} onLoadedData={()=>redraw()} style={{position:'absolute',width:1,height:1,opacity:0,pointerEvents:'none'}}/>
      </div>
-     {videoInfo&&<><p className="brand-hint">{videoInfo.width} × {videoInfo.height} px · {Number.isFinite(videoInfo.duration)?`${Math.round(videoInfo.duration)} s`:'duración no disponible'} · Se exporta hasta {MAX_DIMENSION}px en su lado mayor.</p><label>Vista previa en el segundo {scrub.toFixed(1)}<input type="range" min={0} max={Number.isFinite(videoInfo.duration)?Math.max(videoInfo.duration-.1,0):0} step={.1} value={scrub} onChange={e=>scrubTo(Number(e.target.value))} disabled={busy}/></label></>}
+     {videoInfo&&<><p className="brand-hint brand-touch-hint"><strong>Edición táctil:</strong> toca un logo o texto para seleccionarlo; arrástralo con un dedo. Pellizca con dos dedos para agrandar o reducir y gira los dedos para rotarlo.</p><p className="brand-hint">{videoInfo.width} × {videoInfo.height} px · {Number.isFinite(videoInfo.duration)?`${Math.round(videoInfo.duration)} s`:'duración no disponible'} · Se exporta hasta {MAX_DIMENSION}px en su lado mayor.</p><label>Vista previa en el segundo {scrub.toFixed(1)}<input type="range" min={0} max={Number.isFinite(videoInfo.duration)?Math.max(videoInfo.duration-.1,0):0} step={.1} value={scrub} onChange={e=>scrubTo(Number(e.target.value))} disabled={busy}/></label></>}
      <p className="brand-status" role="status">{status}</p>
      {recordError&&<p role="alert" className="brand-error">{recordError}</p>}
     </section>
