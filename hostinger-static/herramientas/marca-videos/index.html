@@ -10,7 +10,7 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 main{width:min(1180px,100%);margin:auto;padding:18px 14px 40px}.eyebrow{color:var(--gold);font-size:11px;font-weight:800;letter-spacing:.16em;margin:0 0 8px}
 h1{font-size:clamp(38px,7vw,70px);line-height:.98;letter-spacing:-.05em;margin:0 0 12px}.lead{max-width:720px;color:var(--muted);margin:0 0 28px}
-.grid{display:grid;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}.workspace{min-height:520px}.controls{display:grid;gap:14px}
+.topnav{display:flex;justify-content:space-between;gap:12px;margin:0 0 18px}.topnav a{color:var(--gold);text-decoration:none;font-weight:650;min-height:40px;display:flex;align-items:center}.grid{display:grid;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}.workspace{min-height:520px}.controls{display:grid;gap:14px}
 button,.upload,input,select,textarea{font:inherit}button,.upload{min-height:40px;border:1px solid #433d32;border-radius:8px;background:#171512;color:#eee7da;padding:8px 11px;font-weight:650;cursor:pointer}
 .upload{display:inline-block;position:relative;overflow:hidden}.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}.canvaswrap{margin-top:14px;background:#000;border:1px dashed #34302a;border-radius:12px;min-height:260px;display:grid;place-items:center;overflow:hidden}
 canvas{display:block;max-width:100%;max-height:65vh;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab}.canvaswrap{touch-action:none;overscroll-behavior:contain}.empty{text-align:center;color:#aaa;padding:50px 20px}.empty strong{display:block;color:#fff;margin-bottom:4px}
@@ -22,13 +22,14 @@ input[type=range]{padding:0;accent-color:var(--gold)}input[type=color]{height:34
 .tabs{display:flex;gap:8px;flex-wrap:wrap}.tabs button.sel{background:var(--gold);color:#171109;border-color:var(--gold)}
 .pos{display:grid;grid-template-columns:repeat(3,44px);gap:8px;margin:10px 0}.pos button{width:44px;height:44px;color:var(--gold)}
 .timing{border-top:1px solid var(--line);margin-top:14px;padding-top:14px}.timinghead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}.timinghead span{color:var(--gold)}
-.twocol{display:grid;gap:8px}.textpresets{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.textpresets button{font-size:12px;min-height:36px}.timingjump{width:100%;margin-top:8px}.primary{width:100%;background:#765c27;border-color:#765c27;color:#120f09}.muted{color:var(--muted);font-size:12px}.status{font-size:13px;font-weight:650}
+.twocol{display:grid;gap:8px}.result{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.result video{display:block;width:100%;max-height:420px;background:#000;border-radius:10px}.resultactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.textpresets{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.textpresets button{font-size:12px;min-height:36px}.timingjump{width:100%;margin-top:8px}.primary{width:100%;background:#765c27;border-color:#765c27;color:#120f09}.muted{color:var(--muted);font-size:12px}.status{font-size:13px;font-weight:650}
 @media(min-width:800px){main{padding:24px}.grid{grid-template-columns:minmax(0,1.32fr) minmax(360px,.98fr)}.workspace{position:sticky;top:16px}.twocol{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.pos{grid-template-columns:repeat(3,minmax(44px,1fr))}.pos button{width:100%}}
+@media(max-width:520px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.resultactions{grid-template-columns:1fr}.pos{grid-template-columns:repeat(3,minmax(44px,1fr))}.pos button{width:100%}}
 </style>
 </head>
 <body>
 <main>
+<nav class="topnav"><a href="https://fgdll.org/herramientas">← Herramientas FGDLL</a><a href="https://fgdll.org/">Inicio</a></nav>
 <p class="eyebrow">FGDLL · HERRAMIENTAS INSTITUCIONALES</p>
 <h1>Tu video, con identidad.</h1>
 <p class="lead">Sube un video y ajusta los elementos directamente con la mano: un dedo mueve; dos dedos cambian tamaño y rotación. Todo se procesa en tu dispositivo.</p>
@@ -95,8 +96,15 @@ input[type=range]{padding:0;accent-color:var(--gold)}input[type=color]{height:34
 
 <section class="card">
 <h2>4 · Descarga tu video</h2>
-<button class="primary" id="export" disabled>Descargar video</button>
-<p class="muted">Se graba en tiempo real. El formato final depende de lo que soporte tu navegador; funciona mejor en Chrome, Edge o Firefox.</p>
+<button class="primary" id="export" disabled>Generar video</button>
+<p class="muted">La generación tarda aproximadamente lo mismo que la duración del video. En iPhone, Safari puede generar la copia sin audio; las marcas, texto, posición y tiempos sí se conservan.</p>
+<div class="result" id="result" hidden>
+<h3>Video listo</h3>
+<video id="resultVideo" controls playsinline preload="metadata"></video>
+<div class="resultactions"><button class="primary" id="saveResult">Guardar / Compartir</button><button id="openResult">Abrir video</button></div>
+<p class="muted" id="resultNote"></p>
+<p class="muted">En iPhone: toca “Guardar / Compartir” y elige <strong>Guardar video</strong> o <strong>Guardar en Archivos</strong>.</p>
+</div>
 </section>
 </aside>
 </div>
@@ -108,7 +116,7 @@ const baseLogos=Array.from({length:9},(_,i)=>({name:'Logo '+(i+1),url:'/marca/lo
 const baseTexts=[{name:'FGDLL',text:'FGDLL'},{name:'Guerreros de la Luz',text:'GUERREROS DE LA LUZ'},{name:'Fraternidad',text:'FRATERNIDAD GUERREROS DE LA LUZ'}];
 const initial={logo:{x:.78,y:.78,size:.2,opacity:1,rotation:0},logo2:{x:.22,y:.78,size:.2,opacity:1,rotation:0},text:{x:.5,y:.88,size:.65,opacity:1,rotation:0}};
 let tr=structuredClone(initial),timing={logo:{all:true,start:0,end:0},logo2:{all:true,start:0,end:0},text:{all:true,start:0,end:0}};
-let target='logo',logo1=null,logo2=null,enabled2=false,duration=0,busy=false,sourceName='video';
+let target='logo',logo1=null,logo2=null,enabled2=false,duration=0,busy=false,sourceName='video',resultBlob=null,resultUrl='',resultName='';
 const pointers=new Map();
 let gesture=null;
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
@@ -151,7 +159,9 @@ $('videoFile').onchange=e=>{const f=e.target.files[0];if(!f)return;sourceName=f.
 $('scrub').oninput=e=>{video.currentTime=Number(e.target.value);$('scrubLabel').textContent=Number(e.target.value).toFixed(1)};video.onseeked=draw;
 function captureStream(el){return el.captureStream?el.captureStream():el.mozCaptureStream?el.mozCaptureStream():null}
 function mime(){return ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||''}
-$('export').onclick=async()=>{if(busy||!duration)return;const m=mime(),cs=canvas.captureStream&&canvas.captureStream(30),vs=captureStream(video);if(!m||!cs||!vs){$('status').textContent='Este navegador no permite exportar el video. Prueba Chrome, Edge o Firefox.';return}busy=true;$('export').disabled=true;const stream=new MediaStream([...cs.getVideoTracks(),...vs.getAudioTracks()]),rec=new MediaRecorder(stream,{mimeType:m,videoBitsPerSecond:6000000}),chunks=[];rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);video.currentTime=0;video.muted=true;await new Promise(r=>setTimeout(r,80));rec.start(250);const loop=()=>{if(!video.paused&&!video.ended){draw();$('export').textContent='Grabando… '+Math.min(99,Math.round(video.currentTime/duration*100))+'%';requestAnimationFrame(loop)}};await video.play().catch(()=>{});requestAnimationFrame(loop);await new Promise(r=>video.onended=r);const blob=await new Promise(r=>{rec.onstop=()=>r(new Blob(chunks,{type:m.split(';')[0]}));rec.stop()});const a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=sourceName+'-FGDLL.'+(m.startsWith('video/mp4')?'mp4':'webm');a.click();setTimeout(()=>URL.revokeObjectURL(u),60000);video.currentTime=0;busy=false;$('export').disabled=false;$('export').textContent='Descargar video';$('status').textContent='Video listo. Se descargó a tu dispositivo.';draw()};
+$('export').onclick=async()=>{if(busy||!duration)return;const m=mime(),cs=canvas.captureStream&&canvas.captureStream(30);if(!m||!cs){$('status').textContent='Este navegador no permite generar el video. Actualiza Safari/Chrome o usa una computadora.';return}const vs=captureStream(video),audio=vs?vs.getAudioTracks():[];busy=true;$('export').disabled=true;$('result').hidden=true;$('status').textContent=audio.length?'Preparando video con audio…':'Preparando video… Safari exportará esta copia sin audio.';const stream=new MediaStream([...cs.getVideoTracks(),...audio]),rec=new MediaRecorder(stream,{mimeType:m,videoBitsPerSecond:6000000}),chunks=[];rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);const wasMuted=video.muted;video.currentTime=0;video.muted=true;await new Promise(r=>setTimeout(r,120));rec.start(250);const loop=()=>{if(!video.paused&&!video.ended){draw();$('export').textContent='Generando… '+Math.min(99,Math.round(video.currentTime/duration*100))+'%';requestAnimationFrame(loop)}};try{await video.play()}catch{$('status').textContent='Safari bloqueó la reproducción necesaria para exportar. Toca nuevamente “Generar video”.';busy=false;$('export').disabled=false;$('export').textContent='Generar video';return}requestAnimationFrame(loop);await new Promise(r=>video.onended=r);await new Promise(r=>setTimeout(r,200));const blob=await new Promise(r=>{rec.onstop=()=>r(new Blob(chunks,{type:m.split(';')[0]}));rec.stop()});if(resultUrl)URL.revokeObjectURL(resultUrl);resultBlob=blob;resultName=sourceName+'-FGDLL.'+(m.startsWith('video/mp4')?'mp4':'webm');resultUrl=URL.createObjectURL(blob);$('resultVideo').src=resultUrl;$('resultNote').textContent=audio.length?'Video generado con audio cuando el navegador lo permite.':'Video generado sin audio porque Safari no permitió capturar la pista original.';$('result').hidden=false;video.muted=wasMuted;video.currentTime=0;busy=false;$('export').disabled=false;$('export').textContent='Generar video';$('status').textContent='Video generado. Toca “Guardar / Compartir” para guardarlo en tu iPhone.';draw()};
+$('saveResult').onclick=async()=>{if(!resultBlob||!resultName)return;const file=new File([resultBlob],resultName,{type:resultBlob.type||'video/mp4'});try{if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({files:[file],title:'Video FGDLL'});return}}catch{}const a=document.createElement('a');a.href=resultUrl;a.download=resultName;document.body.appendChild(a);a.click();a.remove();$('status').textContent='Si Safari no muestra la descarga, usa “Abrir video” y después Compartir → Guardar video.'};
+$('openResult').onclick=()=>{if(resultUrl)window.open(resultUrl,'_blank','noopener,noreferrer')};
 syncControls();
 </script>
 </body></html>
