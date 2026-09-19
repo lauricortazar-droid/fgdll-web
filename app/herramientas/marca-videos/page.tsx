@@ -31,6 +31,7 @@ export default function VideoEditor(){
  const [target,setTarget]=useState<Target>('logo'),[transforms,setTransforms]=useState({logo:initialLogo,logo2:initialLogo2,text:initialText});
  const [timings,setTimings]=useState<Record<Target,Timing>>({logo:{all:true,start:0,end:0},logo2:{all:true,start:0,end:0},text:{all:true,start:0,end:0}});
  const [busy,setBusy]=useState(false),[progress,setProgress]=useState<number|null>(null),[status,setStatus]=useState('Sube un video para comenzar.'),[recordError,setRecordError]=useState('');
+ const [resultUrl,setResultUrl]=useState(''),[resultName,setResultName]=useState(''),[resultNote,setResultNote]=useState('');
  const videoRef=useRef<HTMLVideoElement>(null),canvasRef=useRef<HTMLCanvasElement>(null);
  const pointers=useRef(new Map<number,{x:number;y:number}>());
  const gesture=useRef<{
@@ -43,14 +44,14 @@ export default function VideoEditor(){
   start:Transform;
   dragOffset:{x:number;y:number};
  }|null>(null);
- const logoRequest=useRef(0),logo2Request=useRef(0),videoUrlRef=useRef('');
+ const logoRequest=useRef(0),logo2Request=useRef(0),videoUrlRef=useRef(''),resultUrlRef=useRef(''),resultBlobRef=useRef<Blob|null>(null);
 
  useEffect(()=>{
   document.title='Logos y texto en videos | FGDLL';
   void refresh();
   fetch('/api/portal/me',{cache:'no-store'}).then(brandJson).then(d=>setAdmin(d.profile?.role==='admin')).catch(()=>{});
   if(typeof MediaRecorder==='undefined'||!pickMime())setRecordError('Tu navegador no permite grabar video aquí. Prueba con Chrome, Edge o Firefox actualizados.');
-  return()=>{if(videoUrlRef.current)URL.revokeObjectURL(videoUrlRef.current)};
+  return()=>{if(videoUrlRef.current)URL.revokeObjectURL(videoUrlRef.current);if(resultUrlRef.current)URL.revokeObjectURL(resultUrlRef.current)};
  },[]);
 
  const selectedFont=resources.find(r=>r.id===fontId&&r.kind==='font');
@@ -168,39 +169,55 @@ export default function VideoEditor(){
  function scrubTo(time:number){const v=videoRef.current;if(!v||!videoInfo)return;setScrub(time);v.currentTime=time}
  function focusTiming(which:Target){setTarget(which);requestAnimationFrame(()=>document.getElementById('video-element-settings')?.scrollIntoView({behavior:'smooth',block:'start'}))}
 
+ async function saveResult(){
+  const blob=resultBlobRef.current;if(!blob||!resultName)return;
+  const file=new File([blob],resultName,{type:blob.type||'video/mp4'});
+  const nav=navigator as Navigator&{canShare?:(data:{files?:File[]})=>boolean;share?:(data:{files?:File[];title?:string;text?:string})=>Promise<void>};
+  try{
+   if(nav.share&&(!nav.canShare||nav.canShare({files:[file]}))){await nav.share({files:[file],title:'Video FGDLL'});return}
+  }catch{}
+  downloadBlob(blob,resultName);
+  setStatus('Si Safari no muestra la descarga, usa “Abrir video” y después Compartir → Guardar video.');
+ }
+ function openResult(){if(resultUrlRef.current)window.open(resultUrlRef.current,'_blank','noopener,noreferrer')}
+
  async function exportVideo(){
   const canvas=canvasRef.current,v=videoRef.current;
   if(!canvas||!v||!videoInfo||busy||fontBusy||(text.trim()&&!family))return;
   const mime=pickMime();
-  if(!mime){setStatus('Tu navegador no permite grabar video aquí. Prueba con Chrome, Edge o Firefox actualizados.');return}
+  if(!mime){setStatus('Este navegador no permite generar el video aquí. Prueba Safari/Chrome actualizado o usa una computadora.');return}
   const canvasStream=(canvas as HTMLCanvasElement&{captureStream?:(fps?:number)=>MediaStream}).captureStream?.(30);
+  if(!canvasStream){setStatus('Este navegador no permite capturar el lienzo del video. Actualiza Safari/Chrome e inténtalo de nuevo.');return}
   const sourceStream=captureMedia(v);
-  if(!canvasStream||!sourceStream){setStatus('No se pudo iniciar la grabación en este navegador.');return}
-  const mixed=new MediaStream([...canvasStream.getVideoTracks(),...sourceStream.getAudioTracks()]);
+  const audioTracks=sourceStream?.getAudioTracks()??[];
+  const mixed=new MediaStream([...canvasStream.getVideoTracks(),...audioTracks]);
   let recorder:MediaRecorder;
-  try{recorder=new MediaRecorder(mixed,{mimeType:mime,videoBitsPerSecond:6_000_000})}catch{setStatus('No se pudo iniciar la grabación en este navegador.');return}
+  try{recorder=new MediaRecorder(mixed,{mimeType:mime,videoBitsPerSecond:6_000_000})}catch{setStatus('No se pudo iniciar la exportación en este navegador.');return}
   const chunks:BlobPart[]=[];
   recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
-  setBusy(true);setProgress(0);setStatus('Grabando…');
+  setBusy(true);setProgress(0);setResultNote('');setStatus(audioTracks.length?'Preparando video con audio…':'Preparando video… Safari exportará esta copia sin audio.');
   const wasMuted=v.muted;
   v.muted=true;
   v.currentTime=0;
-  await new Promise(res=>setTimeout(res,80));
+  await new Promise(res=>setTimeout(res,120));
   let raf=0;
   const durationKnown=Number.isFinite(videoInfo.duration)&&videoInfo.duration>0;
   const loop=()=>{if(v.paused||v.ended)return;drawFrame();setProgress(durationKnown?Math.min(99,Math.round(v.currentTime/videoInfo.duration*100)):0);raf=requestAnimationFrame(loop)};
   recorder.start(250);
-  try{await v.play()}catch{}
+  try{await v.play()}catch{
+   setBusy(false);setProgress(null);setStatus('Safari bloqueó la reproducción necesaria para exportar. Toca nuevamente “Descargar video”.');return
+  }
   raf=requestAnimationFrame(loop);
   await new Promise<void>(res=>{v.onended=()=>res()});
   cancelAnimationFrame(raf);
   await new Promise(res=>setTimeout(res,200));
   const blob=await new Promise<Blob>(resolve=>{recorder.onstop=()=>resolve(new Blob(chunks,{type:mime.split(';')[0]}));recorder.stop()});
   const ext=mime.startsWith('video/mp4')?'mp4':'webm';
-  downloadBlob(blob,`${videoInfo.name.replace(/\.[^.]+$/,'')}-FGDLL.${ext}`);
-  v.muted=wasMuted;
-  v.currentTime=0;
-  setProgress(null);setBusy(false);setStatus('Video listo. Se descargó a tu dispositivo.');
+  const name=`${videoInfo.name.replace(/\.[^.]+$/,'')}-FGDLL.${ext}`;
+  if(resultUrlRef.current)URL.revokeObjectURL(resultUrlRef.current);
+  const url=URL.createObjectURL(blob);resultUrlRef.current=url;resultBlobRef.current=blob;
+  setResultUrl(url);setResultName(name);setResultNote(audioTracks.length?'Video generado con audio cuando el navegador lo permite.':'Video generado sin audio porque Safari no permitió capturar la pista original.');
+  v.muted=wasMuted;v.currentTime=0;setProgress(null);setBusy(false);setStatus('Video generado. Ahora toca “Guardar / Compartir” para guardarlo en tu iPhone.');
  }
 
  const t=transforms[target];
@@ -209,6 +226,7 @@ export default function VideoEditor(){
  const targetLabel=target==='logo'?'Logo 1':target==='logo2'?'Logo 2':'Texto';
  return <main className="brand-app brand-video-artifact">
   <div className="brand-container">
+   <nav className="brand-video-nav"><Link href="/herramientas">← Herramientas FGDLL</Link><Link href="/">Inicio</Link></nav>
    <p className="brand-eyebrow">FGDLL · HERRAMIENTAS INSTITUCIONALES</p>
    <h1>Tu video, con identidad.</h1>
    <p className="brand-lead">Sube un video, coloca hasta dos logotipos y un texto, y ajústalos directamente sobre la pantalla. Un dedo mueve; dos dedos cambian tamaño y rotación. Todo se procesa en tu dispositivo.</p>
@@ -283,8 +301,9 @@ export default function VideoEditor(){
 
      <section className="brand-card brand-export">
       <h2>4 · Descarga tu video</h2>
-      <button className="brand-primary" disabled={!videoInfo||busy||fontBusy||!!recordError||(!!text.trim()&&!family)} onClick={()=>void exportVideo()}>{busy?`Grabando… ${progress??0}%`:'Descargar video'}</button>
-      <p className="brand-hint">La descarga tarda lo mismo que la duración del video (se graba en tiempo real) y se guarda en WebM o MP4 según lo soporte tu navegador. Funciona mejor en Chrome, Edge o Firefox actualizados; en Safari/iPhone puede no estar disponible.</p>
+      <button className="brand-primary" disabled={!videoInfo||busy||fontBusy||!!recordError||(!!text.trim()&&!family)} onClick={()=>void exportVideo()}>{busy?`Generando… ${progress??0}%`:'Generar video'}</button>
+      <p className="brand-hint">La generación tarda aproximadamente lo mismo que la duración del video. En iPhone, Safari puede generar la copia sin audio; las marcas, texto, posición y tiempos sí se conservan.</p>
+      {resultUrl&&<div className="brand-video-result"><h3>Video listo</h3><video src={resultUrl} controls playsInline preload="metadata"/><div className="brand-result-actions"><button className="brand-primary" onClick={()=>void saveResult()}>Guardar / Compartir</button><button onClick={openResult}>Abrir video</button></div>{resultNote&&<p className="brand-hint">{resultNote}</p>}<p className="brand-hint">En iPhone: toca “Guardar / Compartir” y elige <strong>Guardar video</strong> o <strong>Guardar en Archivos</strong>.</p></div>}
      </section>
     </aside>
    </div>
