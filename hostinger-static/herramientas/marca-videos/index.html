@@ -13,7 +13,7 @@ h1{font-size:clamp(38px,7vw,70px);line-height:.98;letter-spacing:-.05em;margin:0
 .grid{display:grid;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}.workspace{min-height:520px}.controls{display:grid;gap:14px}
 button,.upload,input,select,textarea{font:inherit}button,.upload{min-height:40px;border:1px solid #433d32;border-radius:8px;background:#171512;color:#eee7da;padding:8px 11px;font-weight:650;cursor:pointer}
 .upload{display:inline-block;position:relative;overflow:hidden}.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}.canvaswrap{margin-top:14px;background:#000;border:1px dashed #34302a;border-radius:12px;min-height:260px;display:grid;place-items:center;overflow:hidden}
-canvas{display:block;max-width:100%;max-height:65vh;touch-action:none}.empty{text-align:center;color:#aaa;padding:50px 20px}.empty strong{display:block;color:#fff;margin-bottom:4px}
+canvas{display:block;max-width:100%;max-height:65vh;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab}.canvaswrap{touch-action:none;overscroll-behavior:contain}.empty{text-align:center;color:#aaa;padding:50px 20px}.empty strong{display:block;color:#fff;margin-bottom:4px}
 label{display:grid;gap:7px;margin:11px 0;color:#bbb3a7;font-size:13px}input:not([type=checkbox]),select,textarea{width:100%;border:1px solid #4a4438;border-radius:8px;background:#0d0c0b;color:#fff;min-height:42px;padding:9px 10px}
 input[type=range]{padding:0;accent-color:var(--gold)}input[type=color]{height:34px;min-height:34px;padding:4px}
 .check{display:flex;align-items:center;gap:9px;color:#fff;font-weight:650}.check input{width:16px;height:16px;accent-color:var(--gold)}
@@ -31,12 +31,13 @@ input[type=range]{padding:0;accent-color:var(--gold)}input[type=color]{height:34
 <main>
 <p class="eyebrow">FGDLL · HERRAMIENTAS INSTITUCIONALES</p>
 <h1>Tu video, con identidad.</h1>
-<p class="lead">Sube un video, coloca hasta dos logotipos y un texto, define cuándo aparece cada elemento y descarga el resultado. Todo se procesa en tu dispositivo.</p>
+<p class="lead">Sube un video y ajusta los elementos directamente con la mano: un dedo mueve; dos dedos cambian tamaño y rotación. Todo se procesa en tu dispositivo.</p>
 <div class="grid">
 <section class="card workspace">
 <label class="upload">Subir video<input id="videoFile" type="file" accept="video/*"></label>
 <div class="canvaswrap"><div class="empty" id="empty"><strong>Tu video aparecerá aquí</strong>Selecciona un archivo para comenzar.</div><canvas id="canvas" hidden></canvas></div>
 <video id="video" playsinline hidden></video>
+<p class="muted" id="touchHelp" hidden><strong>Edición táctil:</strong> toca un logo o texto para seleccionarlo. Arrástralo con un dedo. Pellizca con dos dedos para agrandar o reducir y gira los dedos para rotarlo.</p>
 <label id="scrubWrap" hidden>Vista previa en el segundo <span id="scrubLabel">0.0</span><input id="scrub" type="range" min="0" value="0" step=".1"></label>
 <p class="status" id="status">Sube un video para comenzar.</p>
 </section>
@@ -78,7 +79,7 @@ input[type=range]{padding:0;accent-color:var(--gold)}input[type=color]{height:34
 <h2>3 · Ajusta cada elemento</h2>
 <div class="tabs"><button data-target="logo" class="sel">Logo 1</button><button data-target="logo2" id="tab2" hidden>Logo 2</button><button data-target="text">Texto</button></div>
 <div class="pos" id="positions"></div>
-<label>Tamaño: <span id="sizeVal">20%</span><input id="size" type="range" min=".05" max="1" value=".2" step=".01"></label>
+<label>Tamaño: <span id="sizeVal">20%</span><input id="size" type="range" min=".05" max="1.5" value=".2" step=".01"></label>
 <label>Opacidad: <span id="opacityVal">100%</span><input id="opacity" type="range" min=".1" max="1" value="1" step=".01"></label>
 <label>Rotación: <span id="rotVal">0°</span><input id="rot" type="range" min="-180" max="180" value="0" step="1"></label>
 <div class="timing">
@@ -108,6 +109,12 @@ const baseTexts=[{name:'FGDLL',text:'FGDLL'},{name:'Guerreros de la Luz',text:'G
 const initial={logo:{x:.78,y:.78,size:.2,opacity:1,rotation:0},logo2:{x:.22,y:.78,size:.2,opacity:1,rotation:0},text:{x:.5,y:.88,size:.65,opacity:1,rotation:0}};
 let tr=structuredClone(initial),timing={logo:{all:true,start:0,end:0},logo2:{all:true,start:0,end:0},text:{all:true,start:0,end:0}};
 let target='logo',logo1=null,logo2=null,enabled2=false,duration=0,busy=false,sourceName='video';
+const pointers=new Map();
+let gesture=null;
+const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+const center=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2});
+const distance=(a,b)=>Math.hypot(b.x-a.x,b.y-a.y);
+const pointerAngle=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
 function loadImg(src){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src})}
 async function setLogo(which,src,btn){try{const im=await loadImg(src);if(which==='logo')logo1=im;else logo2=im;document.querySelectorAll('#gallery'+(which==='logo'?'1':'2')+' button').forEach(b=>b.classList.remove('sel'));if(btn)btn.classList.add('sel');draw()}catch{}}
 function gallery(el,which){baseLogos.forEach((l,i)=>{const b=document.createElement('button');b.innerHTML='<img src="'+l.url+'" alt=""><span>'+l.name+'</span>';b.onclick=()=>setLogo(which,l.url,b);el.appendChild(b);if(i===7&&which==='logo')setTimeout(()=>b.click(),0);if(i===0&&which==='logo2')setTimeout(()=>setLogo('logo2',l.url,b),0)})}
@@ -120,7 +127,17 @@ function layer(which){if(!visible(which))return;if(which==='logo'&&(!logo1||!$('
 function draw(){if(!duration)return;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(video,0,0,canvas.width,canvas.height);layer('logo');layer('logo2');layer('text')}
 function syncControls(){const t=tr[target],tm=timing[target],label=target==='logo'?'Logo 1':target==='logo2'?'Logo 2':'Texto';$('size').value=t.size;$('opacity').value=t.opacity;$('rot').value=t.rotation;$('sizeVal').textContent=Math.round(t.size*100)+'%';$('opacityVal').textContent=Math.round(t.opacity*100)+'%';$('rotVal').textContent=t.rotation+'°';$('timingTitle').textContent='Tiempo de '+label;$('allTime').checked=tm.all;$('timeControls').hidden=tm.all;$('timingSummary').textContent=tm.all?'Todo el video':tm.start.toFixed(1)+' s — '+tm.end.toFixed(1)+' s';['start','end'].forEach(k=>{$(k).max=duration;$(k+'Num').max=duration;$(k).value=tm[k];$(k+'Num').value=tm[k];$(k+'Label').textContent=tm[k].toFixed(1)+' s'})}
 function setT(k,v){const tm=timing[target];v=Math.max(0,Math.min(duration,Number(v)||0));tm[k]=v;if(tm.start>tm.end){if(k==='start')tm.end=tm.start;else tm.start=tm.end}syncControls();draw()}
-document.querySelectorAll('[data-target]').forEach(b=>b.onclick=()=>{target=b.dataset.target;document.querySelectorAll('[data-target]').forEach(x=>x.classList.toggle('sel',x===b));syncControls()});
+function pointFromEvent(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}
+function hitTarget(p){const r=canvas.getBoundingClientRect(),pad=Math.max(18,28*canvas.width/Math.max(r.width,1));for(const which of ['text','logo2','logo']){if(which==='logo'&&(!logo1||!$('show1').checked)||which==='logo2'&&(!enabled2||!logo2||!$('show2').checked)||which==='text'&&!$('txt').value.trim())continue;const t=tr[which],d=dims(which),a=-t.rotation*Math.PI/180,dx=p.x-t.x*canvas.width,dy=p.y-t.y*canvas.height,x=dx*Math.cos(a)-dy*Math.sin(a),y=dx*Math.sin(a)+dy*Math.cos(a);if(Math.abs(x)<=d.w/2+pad&&Math.abs(y)<=d.h/2+pad)return which}return null}
+function chooseTarget(which){target=which;document.querySelectorAll('[data-target]').forEach(x=>x.classList.toggle('sel',x.dataset.target===which));syncControls()}
+function pointerDown(e){e.preventDefault();const p=pointFromEvent(e);pointers.set(e.pointerId,p);try{canvas.setPointerCapture(e.pointerId)}catch{}const active=[...pointers.entries()];if(active.length===1){const which=hitTarget(p);if(!which){gesture=null;return}chooseTarget(which);const t=tr[which];gesture={target:which,mode:'drag',ids:[e.pointerId],startCenter:p,startDistance:0,startAngle:0,start:{...t},offset:{x:p.x-t.x*canvas.width,y:p.y-t.y*canvas.height}};$('status').textContent='Elemento seleccionado. Arrástralo con un dedo; usa dos dedos para tamaño y rotación.'}else if(active.length>=2){const [a,b]=active.slice(0,2),which=gesture?.target||target,p1=a[1],p2=b[1],m=center(p1,p2);gesture={target:which,mode:'pinch',ids:[a[0],b[0]],startCenter:m,startDistance:Math.max(1,distance(p1,p2)),startAngle:pointerAngle(p1,p2),start:{...tr[which]},offset:{x:0,y:0}}}}
+function pointerMove(e){if(!pointers.has(e.pointerId))return;e.preventDefault();const p=pointFromEvent(e);pointers.set(e.pointerId,p);if(!gesture)return;const active=gesture.ids.map(id=>pointers.get(id)).filter(Boolean);if(gesture.mode==='pinch'&&active.length>=2){const p1=active[0],p2=active[1],m=center(p1,p2),ratio=distance(p1,p2)/Math.max(1,gesture.startDistance),delta=(pointerAngle(p1,p2)-gesture.startAngle)*180/Math.PI;tr[gesture.target]={...tr[gesture.target],x:clamp((gesture.start.x*canvas.width+(m.x-gesture.startCenter.x))/canvas.width,0,1),y:clamp((gesture.start.y*canvas.height+(m.y-gesture.startCenter.y))/canvas.height,0,1),size:clamp(gesture.start.size*ratio,.05,1.5),rotation:Math.round(gesture.start.rotation+delta)};syncControls();draw()}else if(gesture.mode==='drag'&&active.length){const q=active[0];tr[gesture.target]={...tr[gesture.target],x:clamp((q.x-gesture.offset.x)/canvas.width,0,1),y:clamp((q.y-gesture.offset.y)/canvas.height,0,1)};syncControls();draw()}}
+function pointerEnd(e){e.preventDefault();pointers.delete(e.pointerId);try{canvas.releasePointerCapture(e.pointerId)}catch{}if(!gesture)return;const rest=[...pointers.entries()];if(!rest.length){gesture=null;return}const [id,p]=rest[0],cur=tr[gesture.target];gesture={target:gesture.target,mode:'drag',ids:[id],startCenter:p,startDistance:0,startAngle:0,start:{...cur},offset:{x:p.x-cur.x*canvas.width,y:p.y-cur.y*canvas.height}}}
+canvas.addEventListener('pointerdown',pointerDown,{passive:false});
+canvas.addEventListener('pointermove',pointerMove,{passive:false});
+canvas.addEventListener('pointerup',pointerEnd,{passive:false});
+canvas.addEventListener('pointercancel',pointerEnd,{passive:false});
+document.querySelectorAll('[data-target]').forEach(b=>b.onclick=()=>chooseTarget(b.dataset.target));
 document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>{const tab=document.querySelector('[data-target="'+b.dataset.jump+'"]');if(tab&&!tab.hidden){tab.click();document.querySelector('.timing').scrollIntoView({behavior:'smooth',block:'center'})}});
 ['size','opacity','rot'].forEach(id=>$(id).oninput=e=>{const k=id==='rot'?'rotation':id;tr[target][k]=Number(e.target.value);syncControls();draw()});
 $('allTime').onchange=e=>{timing[target].all=e.target.checked;syncControls();draw()};$('start').oninput=e=>setT('start',e.target.value);$('startNum').oninput=e=>setT('start',e.target.value);$('end').oninput=e=>setT('end',e.target.value);$('endNum').oninput=e=>setT('end',e.target.value);
@@ -130,7 +147,7 @@ $('enable2').onclick=()=>{enabled2=true;$('logo2Panel').hidden=false;$('enable2'
 $('txt').oninput=draw;$('font').onchange=draw;$('color').oninput=draw;$('show1').onchange=draw;$('show2').onchange=draw;
 async function localLogo(file,which){if(!file)return;const url=URL.createObjectURL(file);await setLogo(which,url);URL.revokeObjectURL(url)}
 $('logoFile1').onchange=e=>{localLogo(e.target.files[0],'logo');e.target.value=''};$('logoFile2').onchange=e=>{localLogo(e.target.files[0],'logo2');e.target.value=''};
-$('videoFile').onchange=e=>{const f=e.target.files[0];if(!f)return;sourceName=f.name.replace(/\.[^.]+$/,'');const url=URL.createObjectURL(f);video.onloadedmetadata=()=>{duration=video.duration;const scale=Math.min(1,1280/Math.max(video.videoWidth,video.videoHeight));canvas.width=Math.round(video.videoWidth*scale);canvas.height=Math.round(video.videoHeight*scale);canvas.hidden=false;$('empty').hidden=true;$('scrubWrap').hidden=false;$('scrub').max=Math.max(0,duration-.1);for(const k of ['logo','logo2','text'])timing[k]={all:true,start:0,end:duration};$('export').disabled=false;$('status').textContent=video.videoWidth+' × '+video.videoHeight+' px · '+Math.round(duration)+' s. Video listo.';syncControls();draw()};video.src=url;video.load()};
+$('videoFile').onchange=e=>{const f=e.target.files[0];if(!f)return;sourceName=f.name.replace(/\.[^.]+$/,'');const url=URL.createObjectURL(f);video.onloadedmetadata=()=>{duration=video.duration;const scale=Math.min(1,1280/Math.max(video.videoWidth,video.videoHeight));canvas.width=Math.round(video.videoWidth*scale);canvas.height=Math.round(video.videoHeight*scale);canvas.hidden=false;$('empty').hidden=true;$('touchHelp').hidden=false;$('scrubWrap').hidden=false;$('scrub').max=Math.max(0,duration-.1);for(const k of ['logo','logo2','text'])timing[k]={all:true,start:0,end:duration};$('export').disabled=false;$('status').textContent=video.videoWidth+' × '+video.videoHeight+' px · '+Math.round(duration)+' s. Video listo.';syncControls();draw()};video.src=url;video.load()};
 $('scrub').oninput=e=>{video.currentTime=Number(e.target.value);$('scrubLabel').textContent=Number(e.target.value).toFixed(1)};video.onseeked=draw;
 function captureStream(el){return el.captureStream?el.captureStream():el.mozCaptureStream?el.mozCaptureStream():null}
 function mime(){return ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||''}
