@@ -266,7 +266,7 @@ export default function VideoEditor(){
       <h2>3 · Ajusta cada elemento</h2>
       <div className="brand-actions"><button aria-pressed={target==='logo'} className={target==='logo'?'selected':''} onClick={()=>setTarget('logo')}>Logo 1</button>{secondEnabled&&<button aria-pressed={target==='logo2'} className={target==='logo2'?'selected':''} onClick={()=>setTarget('logo2')}>Logo 2</button>}<button aria-pressed={target==='text'} className={target==='text'?'selected':''} onClick={()=>setTarget('text')}>Texto</button></div>
       <div className="brand-positions">{positions.map((label,i)=><button key={label} aria-label={label} title={label} disabled={!videoInfo} onClick={()=>quick(i)}><span style={{justifySelf:['start','center','end'][i%3],alignSelf:['start','center','end'][Math.floor(i/3)]}}>•</span></button>)}</div>
-      <label>Tamaño: {Math.round(t.size*100)}%<input type="range" min=".05" max="1" step=".01" value={t.size} onChange={e=>update({size:Number(e.target.value)})}/></label>
+      <label>Tamaño: {Math.round(t.size*100)}%<input type="range" min=".05" max="1.5" step=".01" value={t.size} onChange={e=>update({size:Number(e.target.value)})}/></label>
       <label>Opacidad: {Math.round(t.opacity*100)}%<input type="range" min=".1" max="1" step=".01" value={t.opacity} onChange={e=>update({opacity:Number(e.target.value)})}/></label>
       <label>Rotación: {t.rotation}°<input type="range" min="-180" max="180" step="1" value={t.rotation} onChange={e=>update({rotation:Number(e.target.value)})}/></label>
       <div className="brand-timing">
