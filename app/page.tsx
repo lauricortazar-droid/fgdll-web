@@ -128,6 +128,9 @@ function Header() {
           <a href="#agenda" onClick={() => setOpen(false)}>
             Agenda
           </a>
+          <Link href="/formacion" onClick={() => setOpen(false)}>
+            Formación
+          </Link>
           <Link href="/etica" onClick={() => setOpen(false)}>
             Ética
           </Link>

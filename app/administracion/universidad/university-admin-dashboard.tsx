@@ -43,7 +43,10 @@ export function UniversityAdminDashboard() {
     try { const data = await fetch("/api/admin/university", { cache: "no-store" }).then(json); setUsers(data.users || []); setCenters(data.centerBatches || []); setCertificates(data.certificateRequests || []); setContent(data.content || { programs: [], modules: [], materials: [], settings: {} }); }
     catch (error) { setMessage(error instanceof Error ? error.message : "No fue posible cargar Formación."); }
   }
-  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    const task = window.setTimeout(() => { void load(); }, 0);
+    return () => window.clearTimeout(task);
+  }, []);
   const filteredUsers = useMemo(() => { const term = search.toLowerCase(); return users.filter((item) => `${item.full_name} ${item.email} ${item.organization}`.toLowerCase().includes(term)); }, [users, search]);
 
   async function addUser(event: FormEvent<HTMLFormElement>) {
@@ -65,7 +68,7 @@ export function UniversityAdminDashboard() {
     <main className="university-admin-page">
       <section className="administration-hero"><div className="shell"><div><span className="eyebrow light">Formación FGDLL</span><h1>Formación en un solo lugar.</h1><p>Administra usuarios, centros, reconocimientos y todos los contenidos de la plataforma educativa.</p></div><aside><span>USUARIOS ACTIVOS</span><strong>{users.filter((item) => item.status === "active").length}</strong><p>{users.length} registros totales</p></aside></div></section>
       <section className="section"><div className="shell">
-        <div className="uni-admin-navigation"><div className="uni-admin-tabs"><button className={view === "users" ? "active" : ""} onClick={() => setView("users")}>Usuarios · {users.length}</button><button className={view === "centers" ? "active" : ""} onClick={() => setView("centers")}>Centros · {centers.length}</button><button className={view === "certificates" ? "active" : ""} onClick={() => setView("certificates")}>Solicitudes · {certificates.length}</button><button className={view === "content" ? "active" : ""} onClick={() => setView("content")}>Diplomados y materiales</button></div><Link className="button button-gold" href="/administracion/universidad/reconocimientos">Emitir reconocimientos</Link></div>
+        <div className="uni-admin-navigation"><div className="uni-admin-tabs"><button className={view === "users" ? "active" : ""} onClick={() => setView("users")}>Solicitudes de Formación · {users.length}</button><button className={view === "centers" ? "active" : ""} onClick={() => setView("centers")}>Registros de centros · {centers.length}</button><button className={view === "certificates" ? "active" : ""} onClick={() => setView("certificates")}>Solicitudes de reconocimiento · {certificates.length}</button><button className={view === "content" ? "active" : ""} onClick={() => setView("content")}>Diplomados y materiales</button></div><Link className="button button-gold" href="/administracion/universidad/reconocimientos">Emitir reconocimientos</Link></div>
         {message && <div className="admin-message">{message}</div>}
 
         {view === "users" && <div className="uni-admin-layout">

@@ -26,6 +26,7 @@ type InboxItem = {
 type InboxData = { items: InboxItem[]; summary: { total: number; urgent: number; byArea: Record<string, number> } };
 type EditorKind = "topic" | "material" | "announcement";
 type DeleteTarget = { kind: EditorKind; id: string; title: string };
+type InboxView = "all" | "portal" | "university" | "recognition" | "other";
 
 const emptyTopic = {
   id: "", title: "", shortTitle: "", category: "General", intensity: "Media", moment: "Mitad",
@@ -80,6 +81,7 @@ export default function ContentAdminPage() {
       : "topics"
   ));
   const [search, setSearch] = useState("");
+  const [inboxView, setInboxView] = useState<InboxView>("all");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -134,8 +136,17 @@ export default function ContentAdminPage() {
   }, [announcements, search]);
   const filteredInbox = useMemo(() => {
     const term = search.trim().toLocaleLowerCase("es");
-    return inbox.items.filter((item) => !term || `${item.area} ${item.title} ${item.contactName} ${item.email} ${item.phone} ${item.id}`.toLocaleLowerCase("es").includes(term));
-  }, [inbox.items, search]);
+    const universityKinds = new Set(["university_user", "university_center"]);
+    const recognitionKinds = new Set(["certificate", "issued_recognition"]);
+    return inbox.items.filter((item) => {
+      const matchesView = inboxView === "all"
+        || (inboxView === "portal" && item.kind === "access")
+        || (inboxView === "university" && universityKinds.has(item.kind))
+        || (inboxView === "recognition" && recognitionKinds.has(item.kind))
+        || (inboxView === "other" && item.kind !== "access" && !universityKinds.has(item.kind) && !recognitionKinds.has(item.kind));
+      return matchesView && (!term || `${item.area} ${item.title} ${item.contactName} ${item.email} ${item.phone} ${item.id}`.toLocaleLowerCase("es").includes(term));
+    });
+  }, [inbox.items, inboxView, search]);
 
   function openNew(kind: EditorKind) {
     setEditorKind(kind);
@@ -256,7 +267,7 @@ export default function ContentAdminPage() {
       <section className="content-admin-work"><div className="shell">
         {(error || notice) && <div className={`panel-alert ${error ? "error" : "ok"}`}><span>{error ? "!" : "✓"}</span><p>{error || notice}</p><button onClick={() => { setError(""); setNotice(""); }} aria-label="Cerrar aviso">×</button></div>}
         <div className="content-admin-tabs"><button className={tab === "topics" ? "active" : ""} onClick={() => { setTab("topics"); setSearch(""); }}>Testimonios <b>{topics.length}</b></button><button className={tab === "materials" ? "active" : ""} onClick={() => { setTab("materials"); setSearch(""); }}>Materiales <b>{materials.length}</b></button><button className={tab === "announcements" ? "active" : ""} onClick={() => { setTab("announcements"); setSearch(""); }}>Avisos y solicitudes <b>{announcements.length + inbox.summary.total}</b></button></div>
-        <div className="content-admin-toolbar"><label><span>⌕</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar en esta sección…" /></label><button className="button button-gold" onClick={() => openNew(tab === "topics" ? "topic" : tab === "materials" ? "material" : "announcement")}>+ {tab === "topics" ? "Subir tema" : tab === "materials" ? "Añadir material" : "Nuevo aviso"}</button></div>
+        <div className="content-admin-toolbar"><label><span>⌕</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar en esta sección…" /></label>{tab === "announcements" && <select aria-label="Tipo de solicitud" value={inboxView} onChange={(event) => setInboxView(event.target.value as InboxView)}><option value="all">Todas las solicitudes</option><option value="portal">Portal general</option><option value="university">Formación y materiales</option><option value="recognition">Reconocimientos</option><option value="other">Otras áreas</option></select>}<button className="button button-gold" onClick={() => openNew(tab === "topics" ? "topic" : tab === "materials" ? "material" : "announcement")}>+ {tab === "topics" ? "Subir tema" : tab === "materials" ? "Añadir material" : "Nuevo aviso"}</button></div>
 
         {tab === "topics" && <section className="content-library-panel"><div className="content-panel-heading"><div><span>BIBLIOTECA DE TESTIMONIOS</span><h2>Temas y archivos de apoyo</h2></div><p>Los {topics.length} temas actuales ya pueden editarse. Los nuevos se incorporan mediante un archivo y una ficha breve.</p></div><div className="content-record-list">{filteredTopics.map((item) => <article key={item.id}><div className="record-icon">T</div><div className="record-main"><div><span>{item.categoria || "General"}</span><small className={`content-status ${item.status}`}>{statusLabels[item.status] || item.status}</small></div><h3>{item.titulo}</h3><p>{item.objetivo || "Sin descripción todavía."}</p><small>{item.fileName || (item.origin === "catalog" ? "Ficha del catálogo institucional" : "Archivo pendiente")} · {friendlyDate(item.updatedAt)}</small></div><div className="record-actions"><button onClick={() => editTopic(item)}>Editar</button><button className="danger" onClick={() => { setDeleteTarget({ kind: "topic", id: item.id, title: item.titulo }); setDeleteConfirmation(""); }}>Borrar</button></div></article>)}</div></section>}
 

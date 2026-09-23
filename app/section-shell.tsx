@@ -84,6 +84,7 @@ export function SubFooter() {
           <Link href="/ayuda-adicciones-merida">Necesito ayuda</Link>
           <Link href="/#directorio">Directorio</Link>
           <Link href="/centros">Centros aliados</Link>
+          <Link href="/formacion">Formación</Link>
           <Link href="/etica">Ética</Link>
           <Link href="/lider">Liderazgo</Link>
         </div>

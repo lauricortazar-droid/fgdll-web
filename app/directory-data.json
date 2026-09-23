@@ -832,6 +832,7 @@
       "zona": "Jaguar",
       "nombre": "La Vida Continúa",
       "ciudad": "Chicxulub Pueblo, Yucatán",
+			"estado": "Yucatán",
       "lider": "Mari IX",
       "whatsapp": "9993529190",
       "facebook": null,
@@ -843,7 +844,8 @@
     {
       "zona": "Jaguar",
       "nombre": "Motul",
-      "ciudad": "Yucatán",
+      "ciudad": "Motul",
+		"estado": "Yucatán",
       "lider": "Anselmo pareja mut",
       "whatsapp": "9911725189",
       "facebook": null,

@@ -36,8 +36,8 @@ type UserDraft = {
 
 const zones = ["Jaguar", "Tiburón", "Delfín", "Colibrí", "Águila"];
 const fieldLabels: Record<string, string> = {
-  zone: "Zona", name: "Nombre del grupo", city: "Ciudad", leaderName: "Líder",
-  subleaderName: "Sublíder / OSG", whatsapp: "WhatsApp", email: "Correo del grupo",
+  zone: "Zona", name: "Nombre del grupo", city: "Ciudad", state: "Estado", leaderName: "Líder",
+  subleaderName: "Sublíder", whatsapp: "WhatsApp", email: "Correo del grupo",
   facebook: "Facebook", address: "Dirección", mapsUrl: "Enlace de mapa", schedules: "Horarios", sessionTypes: "Tipos de sesiones", status: "Estado",
 };
 const sensitiveFields = new Set(["zone", "name", "leaderName", "status"]);
